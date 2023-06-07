@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.spongepowered.asm.mixin.Mixin;
 
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
+import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,9 +25,7 @@ public abstract class MixinLivingEntity extends Entity {
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
 		
-		this.HITBOX_PROFILE = Optional.empty();
+		this.HITBOX_PROFILE = MHLibDatapackLoaders.getHitboxProfile(pEntityType);
 	}
-	
-	
 
 }

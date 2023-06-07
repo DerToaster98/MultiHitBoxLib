@@ -8,7 +8,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 
 public record HitboxProfile(
-		ResourceLocation entityID,
 		AssetEnforcementConfig assetConfig,
 		List<String> synchedBones,
 		SubPartConfig mainHitboxConfig,
@@ -17,7 +16,6 @@ public record HitboxProfile(
 	
 	public static final Codec<HitboxProfile> CODEC = RecordCodecBuilder.create(instance -> {
 		return instance.group(
-				ResourceLocation.CODEC.fieldOf("entityID").forGetter(HitboxProfile::entityID),
 				AssetEnforcementConfig.CODEC.fieldOf("synched-assets").forGetter(HitboxProfile::assetConfig),
 				Codec.STRING.listOf().fieldOf("synched-bones").forGetter(HitboxProfile::synchedBones),
 				SubPartConfig.CODEC.fieldOf("main-hitbox").forGetter(HitboxProfile::mainHitboxConfig),
