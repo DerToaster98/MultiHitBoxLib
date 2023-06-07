@@ -16,11 +16,18 @@ buildscript {
     }
 }
 
+plugins {
+    // this version works on gradle 7.x
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
 
 version = "$mcVersion-$modVersion"
 group = 'de.dertoaster.multihitboxlib'
@@ -28,6 +35,10 @@ archivesBaseName = "$modName"
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+configurations {
+	shade
+}
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
@@ -112,6 +123,9 @@ repositories {
 
     // CurseForge
     maven { url 'https://www.cursemaven.com' }
+	
+	// java repo to get databuddy from
+	maven { url "https://cubicinterpolation.net/maven/" }
 }
 
 dependencies {
@@ -124,6 +138,20 @@ dependencies {
     implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.19.4:4.1.3')
 	// Mixin
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+	
+	// Databuddy
+	implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+	shade fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+}
+
+shadowJar {
+	classifier = ''
+	configurations = [project.configurations.shade]
+	relocate 'commoble.databuddy', "${project.group}.shadow.commoble.databuddy"
+}
+
+reobf {
+    shadowJar { }
 }
 
 mixin {
@@ -169,6 +197,9 @@ static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
         }
     }
 }
+
+tasks.build.dependsOn reobfShadowJar
+jar.finalizedBy('reobfShadowJar')
 
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
