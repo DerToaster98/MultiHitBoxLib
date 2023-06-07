@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 public record HitboxProfile(
 		AssetEnforcementConfig assetConfig,
 		List<String> synchedBones,
-		SubPartConfig mainHitboxConfig,
+		MainHitboxConfig mainHitboxConfig,
 		List<SubPartConfig> partConfigs
 		) {
 	
@@ -16,7 +16,7 @@ public record HitboxProfile(
 		return instance.group(
 				AssetEnforcementConfig.CODEC.fieldOf("synched-assets").forGetter(HitboxProfile::assetConfig),
 				Codec.STRING.listOf().fieldOf("synched-bones").forGetter(HitboxProfile::synchedBones),
-				SubPartConfig.CODEC.fieldOf("main-hitbox").forGetter(HitboxProfile::mainHitboxConfig),
+				MainHitboxConfig.CODEC.fieldOf("main-hitbox").forGetter(HitboxProfile::mainHitboxConfig),
 				SubPartConfig.CODEC.listOf().fieldOf("parts").forGetter(HitboxProfile::partConfigs)
 				
 			).apply(instance, HitboxProfile::new);
