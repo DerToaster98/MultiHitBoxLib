@@ -10,6 +10,7 @@ import de.dertoaster.multihitboxlib.network.server.SPacketHandlerBoneInformation
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor.PacketTarget;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class MHLibPackets {
@@ -23,7 +24,15 @@ public class MHLibPackets {
 		registerClientToServer(CPacketBoneInformation.class, SPacketHandlerBoneInformation.class);
 		
 	}
-
+	
+	public static <T extends Object> void send(T packet, PacketTarget target) {
+		MHLIB_NETWORK.send(target, packet);
+	}
+	
+	public static <T extends Object> void sendToServer(T packet) {
+		MHLIB_NETWORK.sendToServer(packet);
+	}
+	
 	protected static <MSG> void registerClientToServer(Class<? extends IMessage<MSG>> clsMessage, Class<? extends IMessageHandler<MSG>> clsHandler) {
 		register(clsMessage, clsHandler, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 	}
@@ -56,7 +65,7 @@ public class MHLibPackets {
 		assert (handler != null && message != null);
 		register(message, handler, networkDirection);
 	}
-
+	
 	protected static <MSG> void register(IMessage<MSG> message, IMessageHandler<MSG> handler) {
 		register(message, handler, Optional.empty());
 	}
