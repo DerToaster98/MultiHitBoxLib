@@ -17,7 +17,7 @@ public record MainHitboxConfig(
 				Codec.BOOL.fieldOf("collidable").forGetter(MainHitboxConfig::collidable),
 				Codec.BOOL.fieldOf("canReceiveDamage").forGetter(MainHitboxConfig::canReceiveDamage),
 				Codec.DOUBLE.optionalFieldOf("damageModifier", 1.0D).forGetter(MainHitboxConfig::damageModifier),
-				Vec3.CODEC.fieldOf("size").forGetter(MainHitboxConfig::baseSize)
+				Vec3.CODEC.optionalFieldOf("size", Vec3.ZERO).forGetter(MainHitboxConfig::baseSize)
 			).apply(instance, MainHitboxConfig::new);
 			
 	});

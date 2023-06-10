@@ -28,6 +28,8 @@ public interface IMultipartEntity<T extends Entity> {
 		return entity.hurt(source, damage);
 	}
 	
+	public boolean callSuperHurt(DamageSource source, float damage);
+	
 	@Nullable
 	public UUID getMasterUUID();
 	
@@ -102,5 +104,7 @@ public interface IMultipartEntity<T extends Entity> {
 	public default float mhlibGetEntityRotationZForPartOffset() {
 		return 0;
 	}
+	
+	public Optional<HitboxProfile> getHitboxProfile();
 	
 }
