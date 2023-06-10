@@ -17,6 +17,10 @@ public class MHLibDatapackLoaders {
 
 	public static final CodecJsonDataManager<HitboxProfile> HITBOX_PROFILES = new CodecJsonDataManager<>("entity/hitbox_profiles", HitboxProfile.CODEC);
 	
+	public static void init() {
+		//HITBOX_PROFILES.subscribeAsSyncable(MHLibPackets.MHLIB_NETWORK, null);
+	}
+	
 	@SubscribeEvent
 	public static void onAddReloadListeners(AddReloadListenerEvent event) {
 		event.addListener(HITBOX_PROFILES);

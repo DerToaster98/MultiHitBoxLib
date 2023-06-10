@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.world.phys.Vec3;
 
-public record MainHitboxConfig(String name,
+public record MainHitboxConfig(
 		boolean collidable,
 		boolean canReceiveDamage,
 		double damageModifier,
@@ -14,7 +14,6 @@ public record MainHitboxConfig(String name,
 	
 	public static final Codec<MainHitboxConfig> CODEC = RecordCodecBuilder.create(instance -> {
 		return instance.group(
-				Codec.STRING.fieldOf("name").forGetter(MainHitboxConfig::name),
 				Codec.BOOL.fieldOf("collidable").forGetter(MainHitboxConfig::collidable),
 				Codec.BOOL.fieldOf("canReceiveDamage").forGetter(MainHitboxConfig::canReceiveDamage),
 				Codec.DOUBLE.optionalFieldOf("damageModifier", 1.0D).forGetter(MainHitboxConfig::damageModifier),

@@ -15,7 +15,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class MHLibPackets {
 
-	private static final SimpleChannel MHLIB_NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MODID, "main"), () -> Constants.NETWORK_VERSION, Constants.NETWORK_VERSION::equals, Constants.NETWORK_VERSION::equals);
+	public static final SimpleChannel MHLIB_NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MODID, "main"), () -> Constants.NETWORK_VERSION, Constants.NETWORK_VERSION::equals, Constants.NETWORK_VERSION::equals);
 
 	// Start the IDs at 1 so any unregistered messages (ID 0) throw a more obvious exception when received
 	private static int messageID = 0;

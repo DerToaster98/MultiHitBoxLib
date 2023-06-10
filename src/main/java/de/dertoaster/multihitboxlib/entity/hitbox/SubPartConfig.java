@@ -9,7 +9,7 @@ public record SubPartConfig(
 		String name,
 		boolean collidable,
 		boolean canReceiveDamage,
-		double damageModifier,
+		float damageModifier,
 		Vec3 baseSize,
 		Vec3 baseRotation,
 		Vec3 basePosition,
@@ -20,12 +20,12 @@ public record SubPartConfig(
 		return instance.group(
 				Codec.STRING.fieldOf("name").forGetter(SubPartConfig::name),
 				Codec.BOOL.fieldOf("collidable").forGetter(SubPartConfig::collidable),
-				Codec.BOOL.fieldOf("canReceiveDamage").forGetter(SubPartConfig::canReceiveDamage),
-				Codec.DOUBLE.optionalFieldOf("damageModifier", 1.0D).forGetter(SubPartConfig::damageModifier),
+				Codec.BOOL.fieldOf("can-receive-damage").forGetter(SubPartConfig::canReceiveDamage),
+				Codec.FLOAT.optionalFieldOf("damage-modifier", 1.0F).forGetter(SubPartConfig::damageModifier),
 				Vec3.CODEC.fieldOf("size").forGetter(SubPartConfig::baseSize),
 				Vec3.CODEC.optionalFieldOf("rotation", Vec3.ZERO).forGetter(SubPartConfig::baseRotation),
 				Vec3.CODEC.fieldOf("position").forGetter(SubPartConfig::basePosition),
-				Vec3.CODEC.optionalFieldOf("pivotOffset", Vec3.ZERO).forGetter(SubPartConfig::pivotOffset)
+				Vec3.CODEC.optionalFieldOf("pivot-offset", Vec3.ZERO).forGetter(SubPartConfig::pivotOffset)
 			).apply(instance, SubPartConfig::new);
 			
 	});
