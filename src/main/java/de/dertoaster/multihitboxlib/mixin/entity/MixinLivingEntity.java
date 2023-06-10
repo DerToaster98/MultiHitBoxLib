@@ -1,5 +1,6 @@
 package de.dertoaster.multihitboxlib.mixin.entity;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import de.dertoaster.multihitboxlib.api.IModifiableMultipartEntity;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
@@ -22,8 +24,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -36,10 +39,10 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 
 	private Optional<HitboxProfile> HITBOX_PROFILE;
 
-	private EntityDimensions _mhlib_MainHitboxDimensions;
-
-	protected Map<String, MHLibPartEntity<LivingEntity>> partMap;
+	protected Map<String, MHLibPartEntity<LivingEntity>> partMap = new HashMap<>();
 	private PartEntity<?>[] partArray;
+	
+	private boolean hurtFromPart = false;
 
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
@@ -52,6 +55,10 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	private void mixinConstructor(CallbackInfo ci) {
 		// Load base profile
 		this.HITBOX_PROFILE = MHLibDatapackLoaders.getHitboxProfile(this.getType());
+		
+		if(!this.HITBOX_PROFILE.isPresent()) {
+			return;
+		}
 		
 		// Initialize map and array
 		int partCount = this.HITBOX_PROFILE.isPresent() ? this.HITBOX_PROFILE.get().partConfigs().size() : 0;
@@ -74,6 +81,37 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (this.isMultipartEntity() && this.getParts() != null) {
 			this.setId(Entity.ENTITY_COUNTER.getAndAdd(this.getParts().length + 1) + 1);
 		}
+	}
+	
+	@Inject(
+			method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	private void mixinHurt(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> cir) {
+		if (pSource.is(DamageTypes.OUT_OF_WORLD)) {
+			return;
+		}
+		
+		if (pSource.isCreativePlayer()) {
+			//return;
+		}
+		
+		if (this.HITBOX_PROFILE != null && this.HITBOX_PROFILE.isPresent() && !this.HITBOX_PROFILE.get().mainHitboxConfig().canReceiveDamage()) {
+			if (!this.hurtFromPart) {
+				cir.setReturnValue(false);
+				cir.cancel();
+			}
+		}
+	}
+	
+	@Override
+	public boolean hurt(PartEntity<LivingEntity> subPart, DamageSource source, float damage) {
+		this.hurtFromPart = true;
+		boolean result = IMultipartEntity.super.hurt(subPart, source, damage);
+		this.hurtFromPart = false;
+		
+		return result;
 	}
 
 	// After ticking all parts => call alignment code
@@ -193,7 +231,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	public boolean isMultipartEntity() {
 		return super.isMultipartEntity() || !this.partMap.values().isEmpty();
 	}
-
+	
 	@Override
 	@Nullable
 	public PartEntity<?>[] getParts() {
@@ -212,6 +250,24 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 		
 		return this.getYRot();
+	}
+
+	public Optional<HitboxProfile> getHitboxProfile() {
+		if (this.HITBOX_PROFILE == null) {
+			return MHLibDatapackLoaders.getHitboxProfile(this.getType());
+		}
+		return this.HITBOX_PROFILE;
+	}
+	
+	@Override
+	public boolean canBeCollidedWith() {
+		boolean result = super.canBeCollidedWith();
+		
+		if(this.HITBOX_PROFILE != null && this.HITBOX_PROFILE.isPresent()) {
+			result = result && this.HITBOX_PROFILE.get().mainHitboxConfig().canReceiveDamage();
+		}
+
+		return result;
 	}
 
 }
