@@ -20,7 +20,13 @@ import net.minecraftforge.entity.PartEntity;
 
 public interface IMultipartEntity<T extends Entity> {
 	
-	public boolean hurt(PartEntity<T> subPart, DamageSource source, float damage);
+	public default boolean hurt(PartEntity<T> subPart, DamageSource source, float damage) {
+		if(!(this instanceof Entity)) {
+			throw new IllegalStateException("implementing class must extend " + Entity.class.descriptorString());
+		}
+		Entity entity = (Entity)this;
+		return entity.hurt(source, damage);
+	}
 	
 	@Nullable
 	public UUID getMasterUUID();
