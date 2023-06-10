@@ -117,7 +117,8 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	@Override
 	public void setPos(double pX, double pY, double pZ) {
 		super.setPosRaw(pX, pY, pZ);
-
+		this.setOldPosAndRot();
+		
 		this.setBoundingBox(this.getDimensions(Pose.STANDING).makeBoundingBox(pX, pY, pZ));
 	}
 
