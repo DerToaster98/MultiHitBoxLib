@@ -60,6 +60,8 @@ minecraft {
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
+			
+			property 'mixin.debug', 'true'
 
             // Recommended logging level for the console
             // You can set various levels here.
@@ -82,6 +84,8 @@ minecraft {
 			arg "-mixin.config=multihitboxlib.mixins.json"
 
             property 'forge.logging.markers', 'REGISTRIES'
+			
+			property 'mixin.debug', 'true'
 
             property 'forge.logging.console.level', 'debug'
 
@@ -135,7 +139,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.19.4-45.0.66'
 
     // GeckoLib
-    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.19.4:4.1.3')
+    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.19.4:4.2')
 	// Mixin
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 	
@@ -169,6 +173,10 @@ createMcpToSrg {
 // Tell mixin to use the fixed TSRG file
 mixin {
     reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
+	
+	debug.verbose = true
+	debug.export = true
+	debug = true
 }
 
 // Function that actually fixes the TSRG file
