@@ -260,8 +260,8 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	}
 	
 	@Override
-	public boolean canBeCollidedWith() {
-		boolean result = super.canBeCollidedWith();
+	public boolean isPickable() {
+		boolean result = super.isPickable();
 		
 		if(this.HITBOX_PROFILE != null && this.HITBOX_PROFILE.isPresent()) {
 			result = result && this.HITBOX_PROFILE.get().mainHitboxConfig().canReceiveDamage();
