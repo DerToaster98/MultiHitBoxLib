@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "de.dertoaster.multihitboxlib.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"refmap": "multihitboxlib.refmap.json",
+	"mixins": [
+		"entity.MixinLivingEntity",
+		"geckolib.MixinGeoEntityRenderer"
+	],
+	"minVersion": "0.8"
+}
