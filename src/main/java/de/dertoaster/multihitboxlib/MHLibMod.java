@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
+import de.dertoaster.multihitboxlib.init.MHLibPackets;
+import de.dertoaster.multihitboxlib.network.server.datapacksync.SPacketSyncHitboxProfile;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -29,9 +32,12 @@ public class MHLibMod {
 
 		// Register the item to a creative tab
 		modEventBus.addListener(this::addCreative);
+		
+		MHLibDatapackLoaders.HITBOX_PROFILES.subscribeAsSyncable(MHLibPackets.MHLIB_NETWORK, SPacketSyncHitboxProfile::new);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
+		MHLibPackets.init();
 	}
 
 	private void addCreative(CreativeModeTabEvent.BuildContents event) {
