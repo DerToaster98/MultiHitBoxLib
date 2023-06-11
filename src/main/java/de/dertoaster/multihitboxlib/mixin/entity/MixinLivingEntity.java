@@ -25,7 +25,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -83,12 +82,15 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 	}
 	
-	@Inject(
+	/*@Inject(
 			method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
 			at = @At("HEAD"),
 			cancellable = true
 	)
 	private void mixinHurt(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> cir) {
+		if(!(this.HITBOX_PROFILE != null && this.HITBOX_PROFILE.isPresent())) {
+			return;
+		}
 		if (pSource.is(DamageTypes.OUT_OF_WORLD)) {
 			return;
 		}
@@ -103,7 +105,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				cir.cancel();
 			}
 		}
-	}
+	}*/
 	
 	@Override
 	public boolean hurt(PartEntity<LivingEntity> subPart, DamageSource source, float damage) {
@@ -259,15 +261,15 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		return this.HITBOX_PROFILE;
 	}
 	
-	@Override
-	public boolean isPickable() {
-		boolean result = super.isPickable();
-		
+	@Inject(
+			method = "isPickable()Z",
+			at = @At("RETURN"),
+			cancellable = true
+	)
+	private void mixinIsPickable(CallbackInfoReturnable<Boolean> cir) {
 		if(this.HITBOX_PROFILE != null && this.HITBOX_PROFILE.isPresent()) {
-			result = result && this.HITBOX_PROFILE.get().mainHitboxConfig().canReceiveDamage();
+			cir.setReturnValue(cir.getReturnValue() && this.HITBOX_PROFILE.get().mainHitboxConfig().canReceiveDamage());
 		}
-
-		return result;
 	}
 
 }
