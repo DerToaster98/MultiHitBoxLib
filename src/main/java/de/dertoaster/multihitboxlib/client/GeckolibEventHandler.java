@@ -17,7 +17,6 @@ import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -26,19 +25,19 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 public class GeckolibEventHandler {
 	
 	@SubscribeEvent
-	public static void onPostRender(GeoRenderEvent.Entity.Post event) {
+	public static void onPostRenderEntity(GeoRenderEvent.Entity.Post event) {
 		Entity animatable = event.getEntity();
 		performCommonLogic(event.getPoseStack(), event.getRenderer(), event.getBufferSource(), event.getPartialTick(), event.getPackedLight(), event.getRenderer(), animatable);
 	}
 	
 	@SubscribeEvent
-	public static void onPostRender(GeoRenderEvent.ReplacedEntity.Post event) {
+	public static void onPostRenderReplacedEntity(GeoRenderEvent.ReplacedEntity.Post event) {
 		Entity animatable = event.getReplacedEntity();
 		performCommonLogic(event.getPoseStack(), event.getRenderer(), event.getBufferSource(), event.getPartialTick(), event.getPackedLight(), event.getRenderer(), animatable);
 	}
 
 	private static void performCommonLogic(PoseStack poseStack, EntityRenderer<?> entityRenderer, MultiBufferSource bufferSource, float partialTick, int packedLight, GeoRenderer<?> geoRenderer, Entity animatable) {
-		if (!(animatable instanceof GeoEntity && animatable instanceof LivingEntity le)) {
+		if (!(animatable instanceof LivingEntity le)) {
 			return;
 		}
 		if (le.isMultipartEntity() &&  animatable instanceof IMultipartEntity<?> ime && le.getParts() != null && le.getParts().length > 0) {

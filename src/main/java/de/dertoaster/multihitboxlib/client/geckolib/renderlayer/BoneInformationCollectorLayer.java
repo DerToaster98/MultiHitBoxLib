@@ -45,6 +45,7 @@ public class BoneInformationCollectorLayer<T extends GeoAnimatable> extends GeoR
 		}
 		
 		// Only collect once per tick!
+		// TODO: this check seems to fail?
 		if (entity != null && this.currentTick != entity.tickCount && animatable instanceof IMultipartEntity<?> ime && entity.isMultipartEntity()) {
 			if (ime.getHitboxProfile().isPresent() && ime.getHitboxProfile().get().syncToModel()) {
 				if (ime.getHitboxProfile().get().synchedBones().contains(bone.getName())) {
@@ -63,7 +64,7 @@ public class BoneInformationCollectorLayer<T extends GeoAnimatable> extends GeoR
 	}
 
 	public void onPostRender(Entity animatable) {
-		if (!(animatable instanceof GeoEntity && animatable instanceof LivingEntity le)) {
+		if (!(animatable instanceof LivingEntity le)) {
 			return;
 		}
 
