@@ -3,7 +3,9 @@ package de.dertoaster.multihitboxlib.mixin.entity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.LinkedTransferQueue;
 import java.util.function.BiConsumer;
 
 import javax.annotation.Nullable;
@@ -27,6 +29,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,6 +52,11 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	
 	@Unique
 	private Optional<CPacketBoneInformation.Builder> boneInformationBuilder = Optional.empty();
+	
+	@Unique
+	private final Queue<UUID> trackerQueue = new LinkedTransferQueue<>();
+	@Unique
+	private int _mhlibTicksSinceLastSync = 0;
 	
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
@@ -86,6 +94,29 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 
 		if (this.isMultipartEntity() && this.getParts() != null) {
 			this.setId(Entity.ENTITY_COUNTER.getAndAdd(this.getParts().length + 1) + 1);
+		}
+	}
+	
+	@Inject(
+			method = "startSeenByPlayer(Lnet/minecraft/server/level/ServerPlayer;)V",
+			at = @At("HEAD")
+	)
+	private void mixinStartSeenByPlayer(ServerPlayer sp, CallbackInfo ci) {
+		if (!this.trackerQueue.contains(sp.getUUID())) {
+			this.trackerQueue.add(sp.getUUID());
+		}
+	}
+	
+	@Inject(
+			method = "stopSeenByPlayer(Lnet/minecraft/server/level/ServerPlayer;)V",
+			at = @At("HEAD")
+	)
+	private void mixinStopSeenByPlayer(ServerPlayer sp, CallbackInfo ci) {
+		if (this.trackerQueue.contains(sp.getUUID())) {
+			this.trackerQueue.remove(sp.getUUID());
+		}
+		if (this.getMasterUUID() != null && this.getMasterUUID().equals(sp.getUUID())) {
+			this.setMasterUUID(null);
 		}
 	}
 	
@@ -155,18 +186,46 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel()) {
 			this.handleGlibSynching();
 		}
-	}
-
-	protected void handleGlibSynching() {
-		if (this.boneInformationBuilder.isPresent()) {
-			// Send packet
-			CPacketBoneInformation packet = this.boneInformationBuilder.get().build();
-		} else {
-			CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(this);
-			this.boneInformationBuilder = Optional.of(builder);
-		}
+		
+		this._mhlibTicksSinceLastSync++;
 	}
 	
+	protected void handleGlibSynching() {
+		if (!this.getLevel().isClientSide()) {
+			// If you already have a master, let's check them...
+			// If there was no packet for quite some time => elect a new master
+			if (this.getMasterUUID() != null && this._mhlibTicksSinceLastSync >= 10) {
+				this.setMasterUUID(null);
+			}
+			
+			// If you don't have a master anyway, elect a new one
+			if (this.getMasterUUID() == null) {
+				if (!this.trackerQueue.isEmpty()) {
+					this.setMasterUUID(this.trackerQueue.poll());
+				}
+			}
+		}
+		else {
+			if (this.boneInformationBuilder.isPresent()) {
+				// Send packet
+				CPacketBoneInformation packet = this.boneInformationBuilder.get().build();
+				packet.send();
+			} else {
+				CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(this);
+				this.boneInformationBuilder = Optional.of(builder);
+			}
+		}
+	}
+
+	@Unique
+	@Override
+	public void setMasterUUID(UUID id) {
+		if (this.getLevel().isClientSide()) {
+			return;
+		}
+		this.entityData.set(CURRENT_MASTER, Optional.ofNullable(id));
+	}
+
 	@Override
 	public synchronized boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling) {
 		if (!this.getLevel().isClientSide()) {
@@ -221,6 +280,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				
 			});
 		}
+		this._mhlibTicksSinceLastSync = 0;
 	}
 	
 	@Override

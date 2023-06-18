@@ -30,6 +30,8 @@ public interface IMultipartEntity<T extends Entity> {
 	
 	public boolean callSuperHurt(DamageSource source, float damage);
 	
+	public void setMasterUUID(UUID id);
+	
 	@Nullable
 	public UUID getMasterUUID();
 	
