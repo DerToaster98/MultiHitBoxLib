@@ -9,11 +9,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.client.MHLibClient;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -35,7 +38,7 @@ public abstract class MixinGeoEntityRenderer<T extends Entity & GeoAnimatable> e
 		super(pContext);
 	}
 	
-	/*@Inject(
+	@Inject(
 			method = "postRender("
 					+ "Lcom/mojang/blaze3d/vertex/PoseStack;"
 					+ "Ljava/lang/Object;"
@@ -62,13 +65,27 @@ public abstract class MixinGeoEntityRenderer<T extends Entity & GeoAnimatable> e
 			for(PartEntity<?> part : animatable.getParts()) {
 				if(part instanceof MHLibPartEntity<?> mhlpe) {
 					if (mhlpe.hasCustomRenderer()) {
-						// TODO: Allow custom part renderers
+						EntityRenderer<? extends MHLibPartEntity<? extends Entity>> renderer = MHLibClient.getRendererFor(mhlpe, this.entityRenderDispatcher);
+						if (renderer == null) {
+							continue;
+						}
+
+						float f = Mth.lerp(partialTick, mhlpe.yRotO, mhlpe.getYRot());
+
+						poseStack.pushPose();
+
+						Vec3 translate = mhlpe.position().subtract(animatable.position());
+						poseStack.translate(translate.x(), translate.y(), translate.z());
+
+						((EntityRenderer<MHLibPartEntity<?>>) renderer).render(mhlpe, f, partialTick, poseStack, bufferSource, packedLight);
+
+						poseStack.popPose();
 					} else {
 						continue;
 					}
 				}
 			}
 		}
-	}*/
+	}
 
 }
