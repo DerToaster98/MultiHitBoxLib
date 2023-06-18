@@ -19,7 +19,9 @@ import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
+import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
+import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -29,6 +31,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 
 @Mixin(LivingEntity.class)
@@ -42,7 +45,9 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	private PartEntity<?>[] partArray;
 	
 	private boolean hurtFromPart = false;
-
+	
+	private Optional<CPacketBoneInformation.Builder> boneInformationBuilder = Optional.empty();
+	
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
 	}
@@ -153,9 +158,47 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 		
 		this.tickParts((LivingEntity)(Object)this, this.partMap.values());
+		
+		if (this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel()) {
+			this.handleGlibSynching();
+		}
+	}
+
+	protected void handleGlibSynching() {
+		if (this.boneInformationBuilder.isPresent()) {
+			// Send packet
+			CPacketBoneInformation packet = this.boneInformationBuilder.get().build();
+		} else {
+			CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(this);
+			this.boneInformationBuilder = Optional.of(builder);
+		}
 	}
 	
-
+	@Override
+	public synchronized boolean tryAddBoneInformation(String boneName, Vec3 position, Vec3 scaling) {
+		if (!this.getLevel().isClientSide()) {
+			return false;
+		}
+		if (!this.getMasterUUID().equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
+			return false;
+		}
+		if (this.HITBOX_PROFILE.isPresent() && !this.HITBOX_PROFILE.get().syncToModel()) {
+			return false;
+		}
+		if (this.boneInformationBuilder.isEmpty()) {
+			return false;
+		}
+		
+		CPacketBoneInformation.Builder builder = this.boneInformationBuilder.get();
+		try {
+			builder = builder.addInfo(boneName).position(position).scaling(scaling).done();
+		} catch(IllegalStateException ise) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	@Override
 	@Nullable
 	public UUID getMasterUUID() {
