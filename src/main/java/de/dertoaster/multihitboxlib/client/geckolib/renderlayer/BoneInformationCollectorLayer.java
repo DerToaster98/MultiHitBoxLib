@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -45,14 +44,18 @@ public class BoneInformationCollectorLayer<T extends GeoAnimatable> extends GeoR
 		}
 		
 		// Only collect once per tick!
-		// TODO: this check seems to fail?
-		if (entity != null && this.currentTick != entity.tickCount && animatable instanceof IMultipartEntity<?> ime && entity.isMultipartEntity()) {
-			if (ime.getHitboxProfile().isPresent() && ime.getHitboxProfile().get().syncToModel()) {
-				if (ime.getHitboxProfile().get().synchedBones().contains(bone.getName())) {
-					final Vec3 worldPos = new Vec3(bone.getWorldPosition().x, bone.getWorldPosition().y, bone.getWorldPosition().z);
-					this.calcScales(bone);
-					ime.tryAddBoneInformation(bone.getName(), bone.isHidden(), worldPos, new Vec3(this.scaleX, this.scaleY, this.scaleZ));
+		if (entity != null && this.currentTick != entity.tickCount && entity.isMultipartEntity()) {
+			try {
+				IMultipartEntity<?> ime = (IMultipartEntity<?>) entity;
+				if (ime.getHitboxProfile().isPresent() && ime.getHitboxProfile().get().syncToModel()) {
+					if (ime.getHitboxProfile().get().synchedBones().contains(bone.getName())) {
+						final Vec3 worldPos = new Vec3(bone.getWorldPosition().x, bone.getWorldPosition().y, bone.getWorldPosition().z);
+						this.calcScales(bone);
+						ime.tryAddBoneInformation(bone.getName(), bone.isHidden(), worldPos, new Vec3(this.scaleX, this.scaleY, this.scaleZ));
+					}
 				}
+			} catch(ClassCastException cce) {
+				
 			}
 		}
 	}

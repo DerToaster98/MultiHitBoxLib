@@ -9,6 +9,7 @@ import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,7 +27,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,13 +39,15 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 
 	private static final EntityDataAccessor<Optional<UUID>> CURRENT_MASTER = SynchedEntityData.defineId(MixinLivingEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
+	@Unique
 	private Optional<HitboxProfile> HITBOX_PROFILE;
 
+	@Unique
 	protected Map<String, MHLibPartEntity<LivingEntity>> partMap = new HashMap<>();
+	@Unique
 	private PartEntity<?>[] partArray;
 	
-	private boolean hurtFromPart = false;
-	
+	@Unique
 	private Optional<CPacketBoneInformation.Builder> boneInformationBuilder = Optional.empty();
 	
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
@@ -112,15 +114,6 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 	}*/
 	
-	@Override
-	public boolean hurt(PartEntity<LivingEntity> subPart, DamageSource source, float damage) {
-		this.hurtFromPart = true;
-		boolean result = IMultipartEntity.super.hurt(subPart, source, damage);
-		this.hurtFromPart = false;
-		
-		return result;
-	}
-
 	// After ticking all parts => call alignment code
 	// Bind to interface to potentially cancel auto ticking and alignment
 	@Inject(
