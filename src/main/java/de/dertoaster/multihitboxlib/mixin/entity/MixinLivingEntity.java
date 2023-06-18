@@ -175,7 +175,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	}
 	
 	@Override
-	public synchronized boolean tryAddBoneInformation(String boneName, Vec3 position, Vec3 scaling) {
+	public synchronized boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling) {
 		if (!this.getLevel().isClientSide()) {
 			return false;
 		}
@@ -191,7 +191,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		CPacketBoneInformation.Builder builder = this.boneInformationBuilder.get();
 		try {
-			builder = builder.addInfo(boneName).position(position).scaling(scaling).done();
+			builder = builder.addInfo(boneName).hidden(hidden).position(position).scaling(scaling).done();
 		} catch(IllegalStateException ise) {
 			return false;
 		}

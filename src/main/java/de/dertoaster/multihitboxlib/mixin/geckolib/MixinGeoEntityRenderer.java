@@ -19,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -30,15 +31,59 @@ public abstract class MixinGeoEntityRenderer<T extends Entity & GeoAnimatable> e
 	private double scaleY = 1;
 	private double scaleZ = 1;
 	
-	private double rotX = 0.0D;
-	private double rotY = 0.0D;
-	private double rotZ = 0.0D;
+	private int currentTick = -1;
+	private boolean _isReRenderFromRecursively = false;
 	
 	protected MixinGeoEntityRenderer(Context pContext) {
 		super(pContext);
 	}
 	
+	private void mixinRenderRecursively() {
+		
+	}
+	
 	@Inject(
+			remap = false,
+			method = "renderCubesOfBone("
+					+ "Lcom/mojang/blaze3d/vertex/PoseStack;"
+					+ "Lsoftware/bernie/geckolib/cache/object/GeoBone;"
+					+ "Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+					+ "I"
+					+ "I"
+					+ "F"
+					+ "F"
+					+ "F"
+					+ "F"
+					+ ")V",
+			at = @At("HEAD")
+	)
+	private void mixinRenderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
+			   int packedOverlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
+		if (this._isReRenderFromRecursively) {
+			return;
+		}
+		
+		T animatable = this.getAnimatable();
+		// Only collect once per tick!
+		if (this.currentTick != animatable.tickCount && animatable instanceof IMultipartEntity<?> ime) {
+			if (ime.getHitboxProfile().isPresent() && ime.getHitboxProfile().get().syncToModel()) {
+				if (ime.getHitboxProfile().get().synchedBones().contains(bone.getName())) {
+					final Vec3 worldPos = new Vec3(bone.getWorldPosition().x, bone.getWorldPosition().y, bone.getWorldPosition().z);
+					this.calcScales(bone);
+					ime.tryAddBoneInformation(bone.getName(), bone.isHidden(), worldPos, new Vec3(this.scaleX, this.scaleY, this.scaleZ));
+				}
+			}
+		}
+	}
+	
+	private void calcScales(GeoBone bone) {
+		this.scaleX *= bone.getScaleX();
+		this.scaleY *= bone.getScaleY();
+		this.scaleZ *= bone.getScaleZ();
+	}
+
+	@Inject(
+			remap = false,
 			method = "postRender("
 					+ "Lcom/mojang/blaze3d/vertex/PoseStack;"
 					+ "Ljava/lang/Object;"
@@ -61,6 +106,7 @@ public abstract class MixinGeoEntityRenderer<T extends Entity & GeoAnimatable> e
 		if (isReRender) {
 			return;
 		}
+		// Custom part rendering
 		if (animatable.isMultipartEntity() &&  animatable instanceof IMultipartEntity<?> ime && animatable.getParts() != null && animatable.getParts().length > 0) {
 			for(PartEntity<?> part : animatable.getParts()) {
 				if(part instanceof MHLibPartEntity<?> mhlpe) {
@@ -86,6 +132,14 @@ public abstract class MixinGeoEntityRenderer<T extends Entity & GeoAnimatable> e
 				}
 			}
 		}
+		
+		if (this.currentTick != animatable.tickCount) {
+			this.currentTick = animatable.tickCount;
+		}
+		
+		this.scaleX = 1;
+		this.scaleY = 1;
+		this.scaleZ = 1;
 	}
 
 }
