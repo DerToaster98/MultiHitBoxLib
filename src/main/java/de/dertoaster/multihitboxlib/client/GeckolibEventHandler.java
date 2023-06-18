@@ -1,10 +1,13 @@
 package de.dertoaster.multihitboxlib.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.client.geckolib.renderlayer.BoneInformationCollectorLayer;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.mixin.accessor.AccessorEntityRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +19,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.event.GeoRenderEvent;
+import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 @EventBusSubscriber(modid = Constants.MODID, bus = Bus.FORGE)
@@ -24,6 +28,16 @@ public class GeckolibEventHandler {
 	@SubscribeEvent
 	public static void onPostRender(GeoRenderEvent.Entity.Post event) {
 		Entity animatable = event.getEntity();
+		performCommonLogic(event.getPoseStack(), event.getRenderer(), event.getBufferSource(), event.getPartialTick(), event.getPackedLight(), event.getRenderer(), animatable);
+	}
+	
+	@SubscribeEvent
+	public static void onPostRender(GeoRenderEvent.ReplacedEntity.Post event) {
+		Entity animatable = event.getReplacedEntity();
+		performCommonLogic(event.getPoseStack(), event.getRenderer(), event.getBufferSource(), event.getPartialTick(), event.getPackedLight(), event.getRenderer(), animatable);
+	}
+
+	private static void performCommonLogic(PoseStack poseStack, EntityRenderer<?> entityRenderer, MultiBufferSource bufferSource, float partialTick, int packedLight, GeoRenderer<?> geoRenderer, Entity animatable) {
 		if (!(animatable instanceof GeoEntity && animatable instanceof LivingEntity le)) {
 			return;
 		}
@@ -31,21 +45,21 @@ public class GeckolibEventHandler {
 			for(PartEntity<?> part : le.getParts()) {
 				if(part instanceof MHLibPartEntity<?> mhlpe) {
 					if (mhlpe.hasCustomRenderer()) {
-						EntityRenderer<? extends MHLibPartEntity<? extends Entity>> renderer = MHLibClient.getRendererFor(mhlpe, ((AccessorEntityRenderer)event.getRenderer()).getEntityRenderDispatcher());
+						EntityRenderer<? extends MHLibPartEntity<? extends Entity>> renderer = MHLibClient.getRendererFor(mhlpe, ((AccessorEntityRenderer)entityRenderer).getEntityRenderDispatcher());
 						if (renderer == null) {
 							continue;
 						}
 
-						float f = Mth.lerp(event.getPartialTick(), mhlpe.yRotO, mhlpe.getYRot());
+						float f = Mth.lerp(partialTick, mhlpe.yRotO, mhlpe.getYRot());
 
-						event.getPoseStack().pushPose();
+						poseStack.pushPose();
 
 						Vec3 translate = mhlpe.position().subtract(le.position());
-						event.getPoseStack().translate(translate.x(), translate.y(), translate.z());
+						poseStack.translate(translate.x(), translate.y(), translate.z());
 
-						((EntityRenderer<MHLibPartEntity<?>>) renderer).render(mhlpe, f, event.getPartialTick(), event.getPoseStack(), event.getBufferSource(), event.getPackedLight());
+						((EntityRenderer<MHLibPartEntity<?>>) renderer).render(mhlpe, f, partialTick, poseStack, bufferSource, packedLight);
 
-						event.getPoseStack().popPose();
+						poseStack.popPose();
 					} else {
 						continue;
 					}
@@ -53,9 +67,9 @@ public class GeckolibEventHandler {
 			}
 		}
 		
-		for(GeoRenderLayer<?> gle : event.getRenderer().getRenderLayers()) {
+		for(GeoRenderLayer<?> gle : geoRenderer.getRenderLayers()) {
 			if(gle instanceof BoneInformationCollectorLayer<?> bicl) {
-				bicl.onPostRender(event.getEntity());
+				bicl.onPostRender(animatable);
 			}
 		}
 	}
