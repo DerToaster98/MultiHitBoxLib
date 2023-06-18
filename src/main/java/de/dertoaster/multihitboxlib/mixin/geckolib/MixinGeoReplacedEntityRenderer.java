@@ -6,18 +6,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import de.dertoaster.multihitboxlib.client.geckolib.renderlayer.BoneInformationCollectorLayer;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
-@Mixin(GeoEntityRenderer.class)
-public abstract class MixinGeoEntityRenderer {
+@Mixin(GeoReplacedEntityRenderer.class)
+public abstract class MixinGeoReplacedEntityRenderer {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Inject(
-			method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererProvider;Lsoftware/bernie/geckolib/model/GeoModel;)V",
+			method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererProvider;Lsoftware/bernie/geckolib/model/GeoModel;Lsoftware/bernie/geckolib/core/animatable/GeoAnimatable;)V",
 			at = @At("TAIL")
 			)
 	private void mixinConstructor(CallbackInfo ci) {
-		GeoEntityRenderer self = (GeoEntityRenderer)(Object)this;
+		GeoReplacedEntityRenderer self = (GeoReplacedEntityRenderer)(Object)this;
 		self.addRenderLayer(new BoneInformationCollectorLayer(self));
 	}
 	

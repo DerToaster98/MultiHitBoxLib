@@ -5,7 +5,11 @@
 	"refmap": "multihitboxlib.refmap.json",
 	"mixins": [
 		"entity.MixinLivingEntity",
-		"geckolib.MixinGeoEntityRenderer"
+		"geckolib.MixinGeoEntityRenderer",
+		"geckolib.MixinGeoReplacedEntityRenderer"
+	],
+	"client": [
+		"accessor.AccessorEntityRenderer"
 	],
 	"minVersion": "0.8"
 }
