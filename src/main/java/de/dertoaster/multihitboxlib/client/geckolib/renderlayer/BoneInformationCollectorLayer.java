@@ -48,7 +48,7 @@ public class BoneInformationCollectorLayer<T extends GeoAnimatable> extends GeoR
 			try {
 				IMultipartEntity<?> ime = (IMultipartEntity<?>) entity;
 				if (ime.getHitboxProfile().isPresent() && ime.getHitboxProfile().get().syncToModel()) {
-					if (ime.getHitboxProfile().get().synchedBones().contains(bone.getName())) {
+					if (ime.getHitboxProfile().get().synchedBones().contains(bone.getName()) || true) {
 						final Vec3 worldPos = new Vec3(bone.getWorldPosition().x, bone.getWorldPosition().y, bone.getWorldPosition().z);
 						this.calcScales(bone);
 						ime.tryAddBoneInformation(bone.getName(), bone.isHidden(), worldPos, new Vec3(this.scaleX, this.scaleY, this.scaleZ));

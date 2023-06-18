@@ -172,7 +172,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (!this.getLevel().isClientSide()) {
 			return false;
 		}
-		if (!this.getMasterUUID().equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
+		if (this.getMasterUUID() == null || !this.getMasterUUID().equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
 			return false;
 		}
 		if (this.HITBOX_PROFILE.isPresent() && !this.HITBOX_PROFILE.get().syncToModel()) {
