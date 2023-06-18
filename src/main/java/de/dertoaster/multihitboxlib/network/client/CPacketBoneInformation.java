@@ -82,6 +82,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		private Optional<String> currentBoneName = Optional.empty();
 		private Optional<Vec3> currentBonePos = Optional.empty();
 		private Optional<Vec3> currentBoneScales = Optional.empty();
+		private Optional<Boolean> currentBoneHidden = Optional.empty();
 
 		Builder(final int entityID) {
 			this.entityID = entityID;
@@ -121,6 +122,14 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 
 			return this;
 		}
+		
+		public Builder hidden(final boolean hidden) {
+			this.checkState();
+			
+			this.currentBoneHidden = Optional.of(hidden);
+			
+			return this;
+		}
 
 		private void checkState() {
 			if (this.currentBoneName.isEmpty()) {
@@ -129,7 +138,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		}
 
 		private void compileAndAddBone() {
-			BoneInformation bi = new BoneInformation(this.currentBoneName.get(), this.currentBonePos.get(), this.currentBoneScales.orElse(BoneInformation.DEFAULT_SCALING));
+			BoneInformation bi = new BoneInformation(this.currentBoneName.get(), this.currentBoneHidden.get(), this.currentBonePos.get(), this.currentBoneScales.orElse(BoneInformation.DEFAULT_SCALING));
 			if (!this.boneInformation.add(bi)) {
 				throw new IllegalStateException("Unable to add information for bone " + bi.name());
 			}

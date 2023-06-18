@@ -107,6 +107,6 @@ public interface IMultipartEntity<T extends Entity> {
 	
 	public Optional<HitboxProfile> getHitboxProfile();
 	
-	public boolean tryAddBoneInformation(String boneName, Vec3 position, Vec3 scaling);
+	public boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling);
 	
 }
