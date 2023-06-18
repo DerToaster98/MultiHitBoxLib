@@ -73,7 +73,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		return new Builder(entity.getId());
 	}
 
-	static class Builder {
+	public static class Builder {
 		
 		private final int entityID;
 		private final Set<BoneInformation> boneInformation = new HashSet<>();

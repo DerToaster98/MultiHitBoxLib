@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.world.entity.player.Player;
