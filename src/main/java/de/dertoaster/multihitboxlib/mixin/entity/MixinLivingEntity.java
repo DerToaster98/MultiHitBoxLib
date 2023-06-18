@@ -97,6 +97,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 	}
 	
+	// TODO: Replace with event listeners!!!
 	@Inject(
 			method = "startSeenByPlayer(Lnet/minecraft/server/level/ServerPlayer;)V",
 			at = @At("HEAD")
