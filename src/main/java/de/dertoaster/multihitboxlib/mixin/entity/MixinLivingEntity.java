@@ -150,10 +150,11 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			return;
 		}
 		
+		// Won't align synched parts
+		this.alignSubParts((LivingEntity)(Object)this, this.partMap.values());
+		// Now, handle synched parts
 		if (this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel()) {
-			// EValuate model data
-		} else {
-			this.alignSubParts((LivingEntity)(Object)this, this.partMap.values());
+			// Evaluate model data
 		}
 	}
 	

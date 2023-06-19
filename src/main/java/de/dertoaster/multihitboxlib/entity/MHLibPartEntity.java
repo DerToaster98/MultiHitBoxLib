@@ -125,6 +125,10 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public Vec3 getConfigPositionOffset() {
 		return this.config.basePosition();
 	}
+	
+	public String getConfigName() {
+		return this.config.name();
+	}
 
 	@Override
 	protected void defineSynchedData() {

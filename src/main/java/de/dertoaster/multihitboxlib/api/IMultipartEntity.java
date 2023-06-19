@@ -70,6 +70,9 @@ public interface IMultipartEntity<T extends Entity> {
 		final double entityScale = this.mhlibGetEntitySizeScale(entity);
 		
 		for(MHLibPartEntity<T> part : parts) {
+			if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().synchedBones().contains(part.getConfigName())) {
+				continue;
+			}
 			Vec3 partOffset = part.getConfigPositionOffset();
 			partOffset = partOffset.xRot(rotX);
 			partOffset = partOffset.yRot(rotY);
