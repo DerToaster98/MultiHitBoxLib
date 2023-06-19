@@ -7,8 +7,9 @@
 		"textures": [
 		]
 	},
-	"sync-with-model": false,
+	"sync-with-model": true,
 	"synched-bones": [
+		"head"
 	],
 	"main-hitbox": {
 		"collidable": true,
@@ -43,12 +44,28 @@
 			"damage-modifier": 1.0,
 			"size": [
 				0.5,
-				1.25,
+				0.75,
 				0.5
 			],
 			"position": [
 				0,
 				0.5,
+				0
+			]
+		},
+		{
+			"name": "head",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 2.0,
+			"size": [
+				0.6,
+				0.6,
+				0.6
+			],
+			"position": [
+				0,
+				1.2,
 				0
 			]
 		}

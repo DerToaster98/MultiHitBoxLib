@@ -97,22 +97,15 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 	}
 	
-	// TODO: Replace with event listeners!!!
-	@Inject(
-			method = "startSeenByPlayer(Lnet/minecraft/server/level/ServerPlayer;)V",
-			at = @At("HEAD")
-	)
-	private void mixinStartSeenByPlayer(ServerPlayer sp, CallbackInfo ci) {
+	@Override
+	public void mhLibOnStartTrackingEvent(ServerPlayer sp) {
 		if (!this.trackerQueue.contains(sp.getUUID())) {
 			this.trackerQueue.add(sp.getUUID());
 		}
 	}
 	
-	@Inject(
-			method = "stopSeenByPlayer(Lnet/minecraft/server/level/ServerPlayer;)V",
-			at = @At("HEAD")
-	)
-	private void mixinStopSeenByPlayer(ServerPlayer sp, CallbackInfo ci) {
+	@Override
+	public void mhLibOnStopTrackingEvent(ServerPlayer sp) {
 		if (this.trackerQueue.contains(sp.getUUID())) {
 			this.trackerQueue.remove(sp.getUUID());
 		}

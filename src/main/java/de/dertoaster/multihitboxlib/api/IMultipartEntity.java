@@ -12,6 +12,7 @@ import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -110,5 +111,9 @@ public interface IMultipartEntity<T extends Entity> {
 	public Optional<HitboxProfile> getHitboxProfile();
 	
 	public boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling);
+	
+	public void mhLibOnStartTrackingEvent(ServerPlayer sp);
+	
+	public void mhLibOnStopTrackingEvent(ServerPlayer sp);
 	
 }

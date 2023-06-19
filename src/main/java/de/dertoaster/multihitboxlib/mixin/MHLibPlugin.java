@@ -16,7 +16,13 @@ import net.minecraftforge.fml.ModList;
 public class MHLibPlugin implements IMixinConfigPlugin {
 	
 	private static final Supplier<Boolean> TRUE = () -> true;
-	private static final Supplier<Boolean> GECKOLIB_LOADED = () -> ModList.get().isLoaded("geckolib");
+	private static final Supplier<Boolean> GECKOLIB_LOADED = () -> {
+		ModList ml = ModList.get();
+		if (ml == null) {
+			return false;
+		}
+		return ml.isLoaded("geckolib");
+	};
 	
 	private static final Map<String, Supplier<Boolean>> CONDITIONS = ImmutableMap.of(
 			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoEntityRenderer", GECKOLIB_LOADED,
