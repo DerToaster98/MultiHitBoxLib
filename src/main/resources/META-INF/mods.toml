@@ -53,7 +53,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
     side="BOTH"
 [[dependencies.multihitboxlib]]
     modId="geckolib"
-    mandatory=true
+    mandatory=false
     versionRange="[4.2,)"
     ordering="NONE"
     side="BOTH"
