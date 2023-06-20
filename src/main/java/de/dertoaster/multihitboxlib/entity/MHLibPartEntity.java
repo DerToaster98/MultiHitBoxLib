@@ -34,6 +34,8 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	public int deathTime;
 	public int hurtTime;
+	
+	private boolean enabled = true;
 
 	private Optional<Tuple<Float, Float>> currentSizeModifier = Optional.empty();
 
@@ -41,6 +43,10 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		super(parent);
 		this.config = properties;
 		this.baseSize = EntityDimensions.scalable((float) this.config.baseSize().x, (float) this.config.baseSize().y);
+	}
+	
+	public SubPartConfig getConfig() {
+		return this.config;
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -196,6 +202,10 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	@Override
 	public boolean isPickable() {
 		return this.config.collidable();
+	}
+
+	public void setHidden(boolean hidden) {
+		this.enabled = !hidden;
 	}
 	
 }
