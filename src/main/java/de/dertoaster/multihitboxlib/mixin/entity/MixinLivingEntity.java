@@ -159,16 +159,41 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		// Won't align synched parts
 		this.alignSubParts((LivingEntity)(Object)this, this.partMap.values());
+		
+		final double curX = this.getX();
+		final double curY = this.getY();
+		final double curZ = this.getZ();
+		
+		final float rotX = this.mhlibGetEntityRotationXForPartOffset();
+		final float rotY = this.mhlibGetEntityRotationYForPartOffset();
+		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
+		
+		final double entityScale = this.mhlibGetEntitySizeScale((LivingEntity)(Object)this);
+		
 		// Now, handle synched parts
 		if (this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel()) {
 			// Evaluate model data
 			for (String syncedBone : this.HITBOX_PROFILE.get().synchedBones()) {
+				//System.out.println("Synching bone: " + syncedBone);
 				Optional<MHLibPartEntity<LivingEntity>> optPart = this.getPartByName(syncedBone);
 				if (optPart.isEmpty()) {
+					//System.out.println("No part found!");
 					continue;
 				}
 				MHLibPartEntity<LivingEntity> part = optPart.get();
-				BoneInformation bi = this.syncDataMap.getOrDefault(syncedBone, new BoneInformation(syncedBone, false, part.getConfig() != null ? part.getConfig().basePosition() : Vec3.ZERO, BoneInformation.DEFAULT_SCALING));
+				
+				Vec3 partOffset = part.getConfigPositionOffset();
+				partOffset = partOffset.xRot(rotX);
+				partOffset = partOffset.yRot(rotY);
+				partOffset = partOffset.zRot(rotZ);
+				
+				partOffset = partOffset.scale(entityScale);
+				
+				//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
+				
+				BoneInformation bi = this.syncDataMap.getOrDefault(syncedBone, new BoneInformation(syncedBone, false, part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, BoneInformation.DEFAULT_SCALING));
+				
+				//System.out.println("Sync data: " + bi.toString());
 				
 				part.setPos(bi.worldPos());
 				part.setHidden(bi.hidden());
@@ -247,14 +272,17 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (!this.getLevel().isClientSide()) {
 			return false;
 		}
-		if (this.getMasterUUID() == null || !this.getMasterUUID().equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
-			return false;
+		UUID myMaster = this.getMasterUUID();
+		if (myMaster == null || !myMaster.equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
+			//return false;
 		}
 		if (this.HITBOX_PROFILE.isPresent() && !this.HITBOX_PROFILE.get().syncToModel()) {
 			return false;
 		}
 		if (this.boneInformationBuilder.isEmpty()) {
-			return false;
+			//return false;
+			CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(this);
+			this.boneInformationBuilder = Optional.of(builder);
 		}
 		
 		CPacketBoneInformation.Builder builder = this.boneInformationBuilder.get();
