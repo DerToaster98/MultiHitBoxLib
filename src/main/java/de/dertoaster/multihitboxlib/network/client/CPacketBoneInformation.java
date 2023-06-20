@@ -140,7 +140,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		private void compileAndAddBone() {
 			BoneInformation bi = new BoneInformation(this.currentBoneName.get(), this.currentBoneHidden.get(), this.currentBonePos.get(), this.currentBoneScales.orElse(BoneInformation.DEFAULT_SCALING));
 			if (!this.boneInformation.add(bi)) {
-				throw new IllegalStateException("Unable to add information for bone " + bi.name());
+				// throw new IllegalStateException("Unable to add information for bone " + bi.name());
 			}
 
 			this.currentBoneName = Optional.empty();
