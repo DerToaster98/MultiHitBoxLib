@@ -26,6 +26,7 @@ import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -47,6 +48,9 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 
 	@Unique
 	protected Map<String, MHLibPartEntity<LivingEntity>> partMap = new HashMap<>();
+	@Unique
+	protected Map<String, BoneInformation> syncDataMap = new HashMap<>();
+	
 	@Unique
 	private PartEntity<?>[] partArray;
 	
@@ -102,6 +106,9 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (!this.trackerQueue.contains(sp.getUUID())) {
 			this.trackerQueue.add(sp.getUUID());
 		}
+		if (this.getMasterUUID() == null) {
+			this.setMasterUUID(this.trackerQueue.poll());
+		}
 	}
 	
 	@Override
@@ -155,6 +162,17 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		// Now, handle synched parts
 		if (this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel()) {
 			// Evaluate model data
+			for (String syncedBone : this.HITBOX_PROFILE.get().synchedBones()) {
+				Optional<MHLibPartEntity<LivingEntity>> optPart = this.getPartByName(syncedBone);
+				if (optPart.isEmpty()) {
+					continue;
+				}
+				MHLibPartEntity<LivingEntity> part = optPart.get();
+				BoneInformation bi = this.syncDataMap.getOrDefault(syncedBone, new BoneInformation(syncedBone, false, part.getConfig() != null ? part.getConfig().basePosition() : Vec3.ZERO, BoneInformation.DEFAULT_SCALING));
+				
+				part.setPos(bi.worldPos());
+				part.setHidden(bi.hidden());
+			}
 		}
 	}
 	
@@ -185,12 +203,14 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		this._mhlibTicksSinceLastSync++;
 	}
 	
+	@Unique
 	protected void handleGlibSynching() {
 		if (!this.getLevel().isClientSide()) {
 			// If you already have a master, let's check them...
 			// If there was no packet for quite some time => elect a new master
 			if (this.getMasterUUID() != null && this._mhlibTicksSinceLastSync >= 10) {
 				this.setMasterUUID(null);
+				this.syncDataMap.clear();
 			}
 			
 			// If you don't have a master anyway, elect a new one
@@ -205,6 +225,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				// Send packet
 				CPacketBoneInformation packet = this.boneInformationBuilder.get().build();
 				packet.send();
+				this.boneInformationBuilder = Optional.empty();
 			} else {
 				CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(this);
 				this.boneInformationBuilder = Optional.of(builder);
@@ -247,6 +268,21 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	}
 	
 	@Override
+	public Component getCustomName() {
+		return Component.nullToEmpty(this.getMasterUUID() != null ? this.getMasterUUID().toString() : "NoMaster");
+	}
+	
+	@Override
+	public boolean hasCustomName() {
+		return true;
+	}
+	
+	@Override
+	public boolean isCustomNameVisible() {
+		return true;
+	}
+	
+	@Override
 	@Nullable
 	public UUID getMasterUUID() {
 		// Allow change of logic
@@ -272,7 +308,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		for (Map.Entry<String, BoneInformation> entry : boneInformation.entrySet()) {
 			Optional<MHLibPartEntity<LivingEntity>> optPart = this.getPartByName(entry.getKey());
 			optPart.ifPresent(part -> {
-				
+				this.syncDataMap.put(part.getConfigName(), entry.getValue());
 			});
 		}
 		this._mhlibTicksSinceLastSync = 0;
@@ -344,7 +380,8 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		return this.getYRot();
 	}
-
+	
+	@Override
 	public Optional<HitboxProfile> getHitboxProfile() {
 		if (this.HITBOX_PROFILE == null) {
 			return MHLibDatapackLoaders.getHitboxProfile(this.getType());
