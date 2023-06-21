@@ -5,6 +5,7 @@ import java.util.Optional;
 import commoble.databuddy.data.CodecJsonDataManager;
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
+import de.dertoaster.multihitboxlib.network.server.datapacksync.SPacketSyncHitboxProfile;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -18,7 +19,7 @@ public class MHLibDatapackLoaders {
 	public static final CodecJsonDataManager<HitboxProfile> HITBOX_PROFILES = new CodecJsonDataManager<>("entity/hitbox_profiles", HitboxProfile.CODEC);
 	
 	public static void init() {
-		//HITBOX_PROFILES.subscribeAsSyncable(MHLibPackets.MHLIB_NETWORK, null);
+		HITBOX_PROFILES.subscribeAsSyncable(MHLibPackets.MHLIB_NETWORK, SPacketSyncHitboxProfile::new);
 	}
 	
 	@SubscribeEvent
