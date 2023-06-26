@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
+import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -118,5 +119,15 @@ public interface IMultipartEntity<T extends Entity> {
 	public void mhLibOnStartTrackingEvent(ServerPlayer sp);
 	
 	public void mhLibOnStopTrackingEvent(ServerPlayer sp);
+	
+	public default void processSetMasterPacket(final SPacketSetMaster packet) {
+		if(this instanceof Entity entity) {
+			if (entity.getLevel().isClientSide()) {
+				this.setMasterUUID(packet.getMasterUUID());
+			}
+		} else {
+			throw new IllegalStateException("This interface may only be implemented on entities!");
+		}
+	}
 	
 }
