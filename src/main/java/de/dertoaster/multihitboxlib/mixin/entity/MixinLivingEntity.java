@@ -158,7 +158,11 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			at = @At("TAIL")
 	)
 	private void mixinAiStep(CallbackInfo ci) {
-		if(!this.isMultipartEntity()) {
+		if (!this.isMultipartEntity()) {
+			return;
+		}
+		
+		if (this.level.isClientSide()) {
 			return;
 		}
 		

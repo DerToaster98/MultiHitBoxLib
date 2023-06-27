@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
+import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.damagesource.DamageSource;
@@ -90,27 +90,31 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		while (this.getXRot() - xRotO >= 180F)
 			xRotO += 360F;
 	}
-
-	public void writeData(FriendlyByteBuf buffer) {
-		buffer.writeDouble(getX());
-		buffer.writeDouble(getY());
-		buffer.writeDouble(getZ());
-		buffer.writeFloat(this.getYRot());
-		buffer.writeFloat(this.getXRot());
-
-		buffer.writeFloat(this.baseSize.width);
-		buffer.writeFloat(this.baseSize.height);
-		buffer.writeBoolean(this.baseSize.fixed);
+	
+	public SPacketUpdateMultipart.PartDataHolder writeData() {
+		return new SPacketUpdateMultipart.PartDataHolder(
+				this.getX(),
+				this.getY(),
+				this.getZ(),
+				this.getYRot(),
+				this.getXRot(),
+				this.baseSize.width,
+				this.baseSize.height,
+				this.baseSize.fixed,
+				getEntityData().isDirty(),
+				getEntityData().isDirty() ? getEntityData().packDirty() : null);
 
 	}
 
-	public void readData(FriendlyByteBuf buffer) {
-		Vec3 vec = new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
-		setPositionAndRotationDirect(vec.x, vec.y, vec.z, buffer.readFloat(), buffer.readFloat(), 3);
-		final float w = buffer.readFloat();
-		final float h = buffer.readFloat();
-		this.baseSize = (buffer.readBoolean() ? EntityDimensions.fixed(w, h) : EntityDimensions.scalable(w, h));
+	public void readData(SPacketUpdateMultipart.PartDataHolder data) {
+		Vec3 vec = new Vec3(data.x(), data.y(), data.z());
+		this.setPositionAndRotationDirect(vec.x(), vec.y(), vec.z(), data.yRot(), data.xRot(), 3);
+		final float w = data.width();
+		final float h = data.height();
+		this.baseSize = (data.fixed() ? EntityDimensions.fixed(w, h) : EntityDimensions.scalable(w, h));
 		this.refreshDimensions();
+		if (data.dirty())
+			getEntityData().assignValues(data.data());
 	}
 
 	public final void updateLastPos() {
