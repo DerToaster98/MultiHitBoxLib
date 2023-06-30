@@ -37,7 +37,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.PacketDistributor.PacketTarget;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity implements IMultipartEntity<LivingEntity> {
