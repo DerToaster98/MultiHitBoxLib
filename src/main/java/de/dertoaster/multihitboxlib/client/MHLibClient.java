@@ -48,9 +48,9 @@ public class MHLibClient {
 
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event) {
+		EntityRenderEventHandlerCommonLogic.registerRelevantEventListeners(FMLJavaModLoadingContext.get().getModEventBus());
 		
 		// Fire part renderer event and collect
-		EntityRenderEventHandlerCommonLogic.registerRelevantEventListeners(FMLJavaModLoadingContext.get().getModEventBus());
 		final Map<Class<? extends MHLibPartEntity<?>>, Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>>> map = new HashMap<>();
 		PartRendererRegistrationEvent registrationEvent = new PartRendererRegistrationEvent(map);
 		MinecraftForge.EVENT_BUS.post(registrationEvent);
