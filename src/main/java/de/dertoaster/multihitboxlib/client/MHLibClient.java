@@ -16,6 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod.EventBusSubscriber(modid = Constants.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class MHLibClient {
@@ -49,6 +50,7 @@ public class MHLibClient {
 	public static void onClientSetup(FMLClientSetupEvent event) {
 		
 		// Fire part renderer event and collect
+		EntityRenderEventHandlerCommonLogic.registerRelevantEventListeners(FMLJavaModLoadingContext.get().getModEventBus());
 		final Map<Class<? extends MHLibPartEntity<?>>, Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>>> map = new HashMap<>();
 		PartRendererRegistrationEvent registrationEvent = new PartRendererRegistrationEvent(map);
 		MinecraftForge.EVENT_BUS.post(registrationEvent);
