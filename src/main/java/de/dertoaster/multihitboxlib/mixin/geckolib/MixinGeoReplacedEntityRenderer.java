@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import de.dertoaster.multihitboxlib.client.geckolib.renderlayer.BoneInformationCollectorLayer;
+import de.dertoaster.multihitboxlib.client.geckolib.renderlayer.GeckolibBoneInformationCollectorLayer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
 @Mixin(GeoReplacedEntityRenderer.class)
@@ -18,7 +18,7 @@ public abstract class MixinGeoReplacedEntityRenderer {
 			)
 	private void mixinConstructor(CallbackInfo ci) {
 		GeoReplacedEntityRenderer self = (GeoReplacedEntityRenderer)(Object)this;
-		self.addRenderLayer(new BoneInformationCollectorLayer(self));
+		self.addRenderLayer(new GeckolibBoneInformationCollectorLayer(self));
 	}
 	
 }

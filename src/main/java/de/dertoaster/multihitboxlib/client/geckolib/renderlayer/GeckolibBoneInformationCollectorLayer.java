@@ -14,9 +14,9 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
-public class BoneInformationCollectorLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> implements IBoneInformationCollectorLayerCommonLogic<GeoBone>{
+public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> implements IBoneInformationCollectorLayerCommonLogic<GeoBone>{
 
-	public BoneInformationCollectorLayer(GeoRenderer<T> entityRendererIn) {
+	public GeckolibBoneInformationCollectorLayer(GeoRenderer<T> entityRendererIn) {
 		super(entityRendererIn);
 	}
 	
