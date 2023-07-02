@@ -29,7 +29,7 @@ public abstract class AbstractCPacketHandlerSyncDatapackContent<C extends Object
 			if(context.get().getNetworkManager().getPacketListener() instanceof ServerPacketListener) {
 				sender = context.get().getSender();
 				if(sender != null) {
-					world = sender.level;
+					world = sender.level();
 				}
 			}
 			if(context.get().getNetworkManager().getPacketListener() instanceof ClientPacketListener) {

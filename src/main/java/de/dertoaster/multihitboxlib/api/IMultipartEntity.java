@@ -122,7 +122,7 @@ public interface IMultipartEntity<T extends Entity> {
 	
 	public default void processSetMasterPacket(final SPacketSetMaster packet) {
 		if(this instanceof Entity entity) {
-			if (entity.getLevel().isClientSide()) {
+			if (entity.level().isClientSide()) {
 				this.setMasterUUID(packet.getMasterUUID());
 			}
 		} else {

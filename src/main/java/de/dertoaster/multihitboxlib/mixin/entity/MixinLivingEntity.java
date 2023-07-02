@@ -161,7 +161,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			return;
 		}
 		
-		if (this.level.isClientSide()) {
+		if (this.level().isClientSide()) {
 			return;
 		}
 		
@@ -231,7 +231,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	
 	@Unique
 	protected void handleGlibSynching() {
-		if (!this.getLevel().isClientSide()) {
+		if (!this.level().isClientSide()) {
 			// If you already have a master, let's check them...
 			// If there was no packet for quite some time => elect a new master
 			System.out.println("Checking master answer time...");
@@ -271,7 +271,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 
 	@Override
 	public void setMasterUUID(UUID id) {
-		if (this.getLevel().isClientSide()) {
+		if (this.level().isClientSide()) {
 			System.out.println("Clientside, not setting master!");
 			this.masterUUID = id;
 			return;
@@ -290,7 +290,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 
 	@Override
 	public synchronized boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling) {
-		if (!this.getLevel().isClientSide()) {
+		if (!this.level().isClientSide()) {
 			return false;
 		}
 		UUID myMaster = this.getMasterUUID();
