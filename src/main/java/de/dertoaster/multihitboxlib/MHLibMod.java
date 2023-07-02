@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,6 +34,8 @@ public class MHLibMod {
 		modEventBus.addListener(this::addCreative);
 		
 		MHLibDatapackLoaders.init();
+		// Throws registration event and registers all asset enforcers
+		AbstractAssetEnforcementManager.init();
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
