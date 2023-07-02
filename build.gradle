@@ -42,7 +42,7 @@ configurations {
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.19.4'
+    mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.20.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -50,7 +50,7 @@ minecraft {
     // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
-			taskName 'runClient MHLib 1.19.4'
+			taskName 'runClient MHLib 1.20.1'
             workingDirectory project.file('run')
 			arg "-mixin.config=multihitboxlib.mixins.json"
 
@@ -79,7 +79,7 @@ minecraft {
         }
 
         server {
-			taskName 'runServer MHLib 1.19.4'
+			taskName 'runServer MHLib 1.20.1'
             workingDirectory project.file('run')
 			arg "-mixin.config=multihitboxlib.mixins.json"
 
@@ -99,7 +99,7 @@ minecraft {
         }
 
         data {
-			taskName 'runData MHLib 1.19.4'
+			taskName 'runData MHLib 1.20.1'
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'REGISTRIES'
@@ -136,10 +136,10 @@ dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.19.4-45.0.66'
+    minecraft 'net.minecraftforge:forge:1.20.1-47.0.35'
 
     // GeckoLib
-    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.19.4:4.2')
+    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.20:4.2')
 	// Mixin
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 	
