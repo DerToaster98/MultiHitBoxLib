@@ -24,8 +24,6 @@ public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 
 	@Override
 	protected Optional<byte[]> findAsset(ResourceLocation id) {
-		byte[] data = null;
-		
 		if (ModList.get() != null && ModList.get().isLoaded(id.getNamespace())) {
 			IModFileInfo imfi = ModList.get().getModFileById(id.getNamespace());
 			IModFile modFile = imfi.getFile();
@@ -36,7 +34,7 @@ public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 			return Optional.ofNullable(encodeFileToBase64(resourcePath));
 		}
 		
-		return Optional.ofNullable(data);
+		return Optional.empty();
 	}
 
 }
