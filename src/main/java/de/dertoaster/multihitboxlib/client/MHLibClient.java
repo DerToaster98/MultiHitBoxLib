@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import de.dertoaster.multihitboxlib.Constants;
-import de.dertoaster.multihitboxlib.client.event.PartRendererRegistrationEvent;
+import de.dertoaster.multihitboxlib.api.event.client.PartRendererRegistrationEvent;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
