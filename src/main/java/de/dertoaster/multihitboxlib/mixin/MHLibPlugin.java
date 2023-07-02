@@ -11,23 +11,48 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import com.google.common.collect.ImmutableMap;
 
+import de.dertoaster.multihitboxlib.Constants;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.LoadingModList;
 
 public class MHLibPlugin implements IMixinConfigPlugin {
 	
 	private static final Supplier<Boolean> TRUE = () -> true;
-	private static final Supplier<Boolean> GECKOLIB_LOADED = () -> {
-		ModList ml = ModList.get();
-		if (ml == null) {
-			return false;
+	
+	protected static class ModLoadedPredicate implements Supplier<Boolean> {
+		
+		private final String MODID;
+		
+		public ModLoadedPredicate(final String modid) {
+			this.MODID = modid;
 		}
-		return ml.isLoaded("geckolib");
-	};
+
+		@Override
+		public Boolean get() {
+			ModList ml = ModList.get();
+			if (ml == null) {
+				// try the loading modlist
+				LoadingModList lml = LoadingModList.get();
+				if (lml == null) {
+					// Odd
+					throw new RuntimeException("unable to lookup any modlist!"); 
+				} else {
+					// Janky, but gets the job done
+					return lml.getModFileById(this.MODID) != null;
+				}
+			}
+			return ml.isLoaded(this.MODID);
+		}
+		
+	}
+	
+	private static final Supplier<Boolean> GECKOLIB_LOADED = new ModLoadedPredicate(Constants.Dependencies.GECKOLIB_MODID);
+	private static final Supplier<Boolean> AZURELIB_LOADED = new ModLoadedPredicate(Constants.Dependencies.AZURELIB_MODID);
 	
 	private static final Map<String, Supplier<Boolean>> CONDITIONS = ImmutableMap.of(
 			// TODO: Fix, doesn't seem to work, if active the layer won't be added
-			/*"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoEntityRenderer", GECKOLIB_LOADED,
-			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoReplacedEntityRenderer", GECKOLIB_LOADED*/
+			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoEntityRenderer", GECKOLIB_LOADED,
+			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoReplacedEntityRenderer", GECKOLIB_LOADED
 	);
 
 	@Override
