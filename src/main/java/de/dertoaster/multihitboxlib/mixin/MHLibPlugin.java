@@ -50,9 +50,10 @@ public class MHLibPlugin implements IMixinConfigPlugin {
 	private static final Supplier<Boolean> AZURELIB_LOADED = new ModLoadedPredicate(Constants.Dependencies.AZURELIB_MODID);
 	
 	private static final Map<String, Supplier<Boolean>> CONDITIONS = ImmutableMap.of(
-			// TODO: Fix, doesn't seem to work, if active the layer won't be added
+			// Geckolib
 			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoEntityRenderer", GECKOLIB_LOADED,
 			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoReplacedEntityRenderer", GECKOLIB_LOADED
+			// Azurelib
 	);
 
 	@Override
