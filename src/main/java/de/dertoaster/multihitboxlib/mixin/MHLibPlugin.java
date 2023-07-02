@@ -26,8 +26,8 @@ public class MHLibPlugin implements IMixinConfigPlugin {
 	
 	private static final Map<String, Supplier<Boolean>> CONDITIONS = ImmutableMap.of(
 			// TODO: Fix, doesn't seem to work, if active the layer won't be added
-			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoEntityRenderer", GECKOLIB_LOADED,
-			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoReplacedEntityRenderer", GECKOLIB_LOADED
+			/*"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoEntityRenderer", GECKOLIB_LOADED,
+			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoReplacedEntityRenderer", GECKOLIB_LOADED*/
 	);
 
 	@Override
