@@ -24,6 +24,7 @@ public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 
 	@Override
 	protected Optional<byte[]> findAsset(ResourceLocation id) {
+		// TODO: Load from config folder instead, this is VERY unreliable
 		if (ModList.get() != null && ModList.get().isLoaded(id.getNamespace())) {
 			IModFileInfo imfi = ModList.get().getModFileById(id.getNamespace());
 			IModFile modFile = imfi.getFile();
