@@ -7,7 +7,7 @@ public class Constants {
 	
 	public static class Dependencies {
 		public static String GECKOLIB_MODID = "geckolib";
-		public static String AZURELIB_MODID = "";
+		public static String AZURELIB_MODID = "azurelib";
 	}
 
 }

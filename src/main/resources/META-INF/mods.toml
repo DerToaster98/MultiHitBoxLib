@@ -57,3 +57,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
     versionRange="[4.2,)"
     ordering="BEFORE"
     side="BOTH"
+[[dependencies.multihitboxlib]]
+    modId="azurelib"
+    mandatory=false
+    versionRange="[1.0.18,)"
+    ordering="BEFORE"
+    side="BOTH"

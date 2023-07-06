@@ -52,8 +52,10 @@ public class MHLibPlugin implements IMixinConfigPlugin {
 	private static final Map<String, Supplier<Boolean>> CONDITIONS = ImmutableMap.of(
 			// Geckolib
 			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoEntityRenderer", GECKOLIB_LOADED,
-			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoReplacedEntityRenderer", GECKOLIB_LOADED
+			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoReplacedEntityRenderer", GECKOLIB_LOADED,
 			// Azurelib
+			"de.dertoaster.multihitboxlib.mixin.azurelib.MixinGeoEntityRenderer", AZURELIB_LOADED,
+			"de.dertoaster.multihitboxlib.mixin.azurelib.MixinGeoReplacedEntityRenderer", AZURELIB_LOADED
 	);
 
 	@Override
