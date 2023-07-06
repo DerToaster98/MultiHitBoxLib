@@ -122,6 +122,9 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    // Azurelib
+    maven { url 'https://dl.cloudsmith.io/public/azuredoom-mods/azurelib/maven/' }
+	
     // GeckoLib
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
 
@@ -140,6 +143,8 @@ dependencies {
 
     // GeckoLib
     implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.20:4.2')
+    // AzureLib
+    implementation fg.deobf('mod.azure.azurelib:azurelib-forge-1.20.1:1.0.18')
 	// Mixin
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 	
