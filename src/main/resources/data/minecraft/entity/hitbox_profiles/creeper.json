@@ -9,6 +9,7 @@
 	},
 	"sync-with-model": true,
 	"part-update-steps": 3,
+	"synched-part-update-steps": 0,
 	"synched-bones": [
 		"head"
 	],

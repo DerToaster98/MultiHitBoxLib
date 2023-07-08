@@ -5,6 +5,7 @@ import java.util.Optional;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
+import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -36,6 +37,8 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public int hurtTime;
 	
 	private boolean enabled = true;
+	
+	private final LazyLoadField<Boolean> isSynched = new LazyLoadField<>(this::isSynched, 5000);
 
 	private Optional<Tuple<Float, Float>> currentSizeModifier = Optional.empty();
 
@@ -99,6 +102,21 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 			xRotO += 360F;
 	}
 	
+	private final boolean isSynched() {
+		if (this.getParent() instanceof IMultipartEntity<?> ime) {
+			if (!ime.getHitboxProfile().isPresent()) {
+				return false;
+			}
+			if (!ime.getHitboxProfile().get().syncToModel()) {
+				return false;
+			}
+			if (ime.getHitboxProfile().get().synchedBones().contains(this.getConfigName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public SPacketUpdateMultipart.PartDataHolder writeData() {
 		return new SPacketUpdateMultipart.PartDataHolder(
 				this.getX(),
@@ -117,7 +135,10 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public void readData(SPacketUpdateMultipart.PartDataHolder data) {
 		int updateSteps = 3;
 		if (this.getParent() instanceof IMultipartEntity<?> ime) {
-			updateSteps = ime.getHitboxProfile().isPresent() ? ime.getHitboxProfile().get().partUpdateStes() : updateSteps;
+			updateSteps = ime.getHitboxProfile().isPresent() ? ime.getHitboxProfile().get().partUpdateSteps() : updateSteps;
+			if (this.isSynched.get()) {
+				updateSteps = ime.getHitboxProfile().isPresent() ? ime.getHitboxProfile().get().synchedPartUpdateSteps() : updateSteps;
+			}
 		}
 		
 		this.setPositionAndRotationDirect(data.x(), data.y(), data.z(), data.yRot(), data.xRot(), Math.max(updateSteps, 0));
