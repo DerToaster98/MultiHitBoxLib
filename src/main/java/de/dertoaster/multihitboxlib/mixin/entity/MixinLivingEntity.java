@@ -28,7 +28,6 @@ import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -105,7 +104,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	
 	@Override
 	public void mhLibOnStartTrackingEvent(ServerPlayer sp) {
-		System.out.println("Adding tracker: " + sp.getUUID() != null ? sp.getUUID().toString() : "NONE");
+		// System.out.println("Adding tracker: " + sp.getUUID() != null ? sp.getUUID().toString() : "NONE");
 		if (!this.trackerQueue.contains(sp.getUUID())) {
 			this.trackerQueue.add(sp.getUUID());
 		}
@@ -116,7 +115,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	
 	@Override
 	public void mhLibOnStopTrackingEvent(ServerPlayer sp) {
-		System.out.println("Removing tracker: " + sp.getUUID() != null ? sp.getUUID().toString() : "NONE");
+		// System.out.println("Removing tracker: " + sp.getUUID() != null ? sp.getUUID().toString() : "NONE");
 		if (this.trackerQueue.contains(sp.getUUID())) {
 			this.trackerQueue.remove(sp.getUUID());
 		}
@@ -234,35 +233,35 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (!this.level().isClientSide()) {
 			// If you already have a master, let's check them...
 			// If there was no packet for quite some time => elect a new master
-			System.out.println("Checking master answer time...");
+			// System.out.println("Checking master answer time...");
 			if (this.getMasterUUID() != null && this._mhlibTicksSinceLastSync >= 10) {
-				System.out.println("Master found and too long answer time!");
+				// System.out.println("Master found and too long answer time!");
 				if (this.trackerQueue.contains(this.getMasterUUID())) {
 					this.trackerQueue.remove(this.getMasterUUID());
 				}
 				this.trackerQueue.add(this.getMasterUUID());
 				this.setMasterUUID(null);
-				System.out.println("Master was reset!");
+				// System.out.println("Master was reset!");
 			}
 			
 			// If you don't have a master anyway, elect a new one
 			if (this.getMasterUUID() == null) {
-				System.out.println("Setting new master...");
+				// System.out.println("Setting new master...");
 				if (!this.trackerQueue.isEmpty()) {
 					this.setMasterUUID(this.trackerQueue.poll());
 				}
 			}
 		}
 		else {
-			System.out.println("Beginning bone information collection...");
+			// System.out.println("Beginning bone information collection...");
 			if (this.boneInformationBuilder.isPresent()) {
 				// Send packet
-				System.out.println("Sending bone information...");
+				// System.out.println("Sending bone information...");
 				CPacketBoneInformation packet = this.boneInformationBuilder.get().build();
 				packet.send();
 				this.boneInformationBuilder = Optional.empty();
 			} else {
-				System.out.println("creating new packet");
+				// System.out.println("creating new packet");
 				CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(this);
 				this.boneInformationBuilder = Optional.of(builder);
 			}
@@ -272,18 +271,18 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Override
 	public void setMasterUUID(UUID id) {
 		if (this.level().isClientSide()) {
-			System.out.println("Clientside, not setting master!");
+			// System.out.println("Clientside, not setting master!");
 			this.masterUUID = id;
 			return;
 		}
 		this.masterUUID = id;
-		System.out.println("ID SET!");
-		if(id == null) {
+		// System.out.println("ID SET!");
+		/*if(id == null) {
 			System.out.println("ID IS NULL!!");
 		}
 		else {
 			System.out.println("Master set to: " + id != null ? id.toString() : "NONE");
-		}
+		}*/
 		SPacketSetMaster masterPacket = new SPacketSetMaster(this);
 		MHLibPackets.send(masterPacket, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this));
 	}
@@ -313,21 +312,6 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			return false;
 		}
 		
-		return true;
-	}
-	
-	@Override
-	public Component getCustomName() {
-		return Component.nullToEmpty(this.getMasterUUID() != null ? this.getMasterUUID().toString() : "NoMaster");
-	}
-	
-	@Override
-	public boolean hasCustomName() {
-		return true;
-	}
-	
-	@Override
-	public boolean isCustomNameVisible() {
 		return true;
 	}
 	
