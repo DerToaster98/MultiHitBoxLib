@@ -108,7 +108,11 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	public void readData(SPacketUpdateMultipart.PartDataHolder data) {
 		Vec3 vec = new Vec3(data.x(), data.y(), data.z());
-		this.setPositionAndRotationDirect(vec.x(), vec.y(), vec.z(), data.yRot(), data.xRot(), 3);
+		int updateSteps = 3;
+		if (this.getParent() instanceof IMultipartEntity<?> ime) {
+			updateSteps = ime.getHitboxProfile().isPresent() ? ime.getHitboxProfile().get().partUpdateStes() : updateSteps;
+		}
+		this.setPositionAndRotationDirect(vec.x(), vec.y(), vec.z(), data.yRot(), data.xRot(), Math.max(updateSteps, 3));
 		final float w = data.width();
 		final float h = data.height();
 		this.baseSize = (data.fixed() ? EntityDimensions.fixed(w, h) : EntityDimensions.scalable(w, h));
