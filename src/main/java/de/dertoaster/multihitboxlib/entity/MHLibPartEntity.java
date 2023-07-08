@@ -73,6 +73,14 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 			--this.newPosRotationIncrements;
 			this.setPos(d0, d2, d4);
 			this.setRot(this.getYRot(), this.getXRot());
+		} else if (this.newPosRotationIncrements == 0) {
+			this.setPos(this.interpTargetX, this.interpTargetY, this.interpTargetZ);
+			this.setYRot((float) this.interpTargetYaw);
+			this.setXRot((float) this.interpTargetPitch);
+			this.setRot(this.getYRot(), this.getXRot());
+		}
+		if (this.newPosRotationIncrements == 0) {
+			this.newPosRotationIncrements = -1;
 		}
 
 		while (this.getYRot() - yRotO < -180F)
@@ -107,12 +115,12 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	}
 
 	public void readData(SPacketUpdateMultipart.PartDataHolder data) {
-		Vec3 vec = new Vec3(data.x(), data.y(), data.z());
 		int updateSteps = 3;
 		if (this.getParent() instanceof IMultipartEntity<?> ime) {
 			updateSteps = ime.getHitboxProfile().isPresent() ? ime.getHitboxProfile().get().partUpdateStes() : updateSteps;
 		}
-		this.setPositionAndRotationDirect(vec.x(), vec.y(), vec.z(), data.yRot(), data.xRot(), Math.max(updateSteps, 3));
+		
+		this.setPositionAndRotationDirect(data.x(), data.y(), data.z(), data.yRot(), data.xRot(), Math.max(updateSteps, 0));
 		final float w = data.width();
 		final float h = data.height();
 		this.baseSize = (data.fixed() ? EntityDimensions.fixed(w, h) : EntityDimensions.scalable(w, h));
@@ -125,7 +133,7 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		this.setPos(getX(), getY(), getZ());
 		yRotO = this.getYRot();
 		xRotO = this.getXRot();
-		tickCount++;
+		this.tickCount++;
 	}
 
 	@Override
