@@ -32,7 +32,6 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 					if (ime.getHitboxProfile().get().synchedBones().contains(this.getBoneName(bone))) {
 						final Vec3 worldPos = this.getBoneWorldPosition(bone);
 						this.calcScales(bone);
-						// TODO: SEnds wonky position data => fix it!
 						ime.tryAddBoneInformation(this.getBoneName(bone), this.isBoneHidden(bone), worldPos, this.getScaleVector());
 						//System.out.println("RenderRecursively: " + worldPos.toString());
 						//ime.getPartByName(bone.getName()).get().setPos(worldPos);
@@ -54,6 +53,5 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 		}
 
 		this.setScales(1, 1, 1);
-		// Custom part rendering
 	}
 }
