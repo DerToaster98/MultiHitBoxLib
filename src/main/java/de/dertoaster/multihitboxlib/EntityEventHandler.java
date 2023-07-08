@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,11 +23,11 @@ public class EntityEventHandler {
 			if (ime.getHitboxProfile().isPresent()) {
 				HitboxProfile hp = ime.getHitboxProfile().get();
 				
-				if (hp.mainHitboxConfig().baseSize().equals(Vec3.ZERO)) {
+				if (hp.mainHitboxConfig().baseSize().equals(Vec2.ZERO)) {
 					return;
 				}
-				Vec3 customDims = hp.mainHitboxConfig().baseSize();
-				event.setNewSize(EntityDimensions.scalable((float)customDims.x, (float)customDims.y), true);
+				Vec2 customDims = hp.mainHitboxConfig().baseSize();
+				event.setNewSize(EntityDimensions.scalable(customDims.x, customDims.y), true);
 			}
 		}
 	}

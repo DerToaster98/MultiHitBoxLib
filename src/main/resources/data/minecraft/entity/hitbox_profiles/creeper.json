@@ -9,7 +9,7 @@
 	},
 	"sync-with-model": true,
 	"part-update-steps": 3,
-	"synched-part-update-steps": 0,
+	"synched-part-update-steps": 1,
 	"synched-bones": [
 		"head"
 	],
@@ -18,8 +18,7 @@
 		"canReceiveDamage": false,
 		"size": [
 			1.0,
-			2.0,
-			1.0
+			2.0
 		]
 	},
 	"parts": [
@@ -30,8 +29,7 @@
 			"damage-modifier": 0.5,
 			"size": [
 				0.75,
-				0.5,
-				0.75
+				0.5
 			],
 			"position": [
 				0,
@@ -46,8 +44,7 @@
 			"damage-modifier": 1.0,
 			"size": [
 				0.5,
-				0.75,
-				0.5
+				0.75
 			],
 			"position": [
 				0,
@@ -61,7 +58,6 @@
 			"can-receive-damage": true,
 			"damage-modifier": 2.0,
 			"size": [
-				0.6,
 				0.6,
 				0.6
 			],

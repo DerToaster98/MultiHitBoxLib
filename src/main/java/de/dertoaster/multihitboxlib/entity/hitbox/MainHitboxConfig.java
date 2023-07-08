@@ -3,13 +3,14 @@ package de.dertoaster.multihitboxlib.entity.hitbox;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.world.phys.Vec3;
+import de.dertoaster.multihitboxlib.util.UtilityCodecs;
+import net.minecraft.world.phys.Vec2;
 
 public record MainHitboxConfig(
 		boolean collidable,
 		boolean canReceiveDamage,
 		double damageModifier,
-		Vec3 baseSize
+		Vec2 baseSize
 		) {
 	
 	public static final Codec<MainHitboxConfig> CODEC = RecordCodecBuilder.create(instance -> {
@@ -17,7 +18,7 @@ public record MainHitboxConfig(
 				Codec.BOOL.fieldOf("collidable").forGetter(MainHitboxConfig::collidable),
 				Codec.BOOL.fieldOf("canReceiveDamage").forGetter(MainHitboxConfig::canReceiveDamage),
 				Codec.DOUBLE.optionalFieldOf("damageModifier", 1.0D).forGetter(MainHitboxConfig::damageModifier),
-				Vec3.CODEC.optionalFieldOf("size", Vec3.ZERO).forGetter(MainHitboxConfig::baseSize)
+				UtilityCodecs.VEC2_CODEC.optionalFieldOf("size", Vec2.ZERO).forGetter(MainHitboxConfig::baseSize)
 			).apply(instance, MainHitboxConfig::new);
 			
 	});

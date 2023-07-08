@@ -45,7 +45,7 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public MHLibPartEntity(T parent, final SubPartConfig properties) {
 		super(parent);
 		this.config = properties;
-		this.baseSize = EntityDimensions.scalable((float) this.config.baseSize().x, (float) this.config.baseSize().y);
+		this.baseSize = EntityDimensions.scalable(this.config.baseSize().x, this.config.baseSize().y);
 	}
 	
 	public SubPartConfig getConfig() {
