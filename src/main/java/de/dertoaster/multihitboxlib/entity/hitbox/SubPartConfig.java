@@ -13,7 +13,7 @@ public record SubPartConfig(
 		boolean canReceiveDamage,
 		float damageModifier,
 		Vec2 baseSize,
-		Vec3 baseRotation,
+		Vec3 baseRotation, //Only to be used for rendering stuff. Won't change the hitbox as that is still axis alinged
 		Vec3 basePosition,
 		Vec3 pivotOffset
 		) {

@@ -24,6 +24,10 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	private double scaleY = 1;
 	private double scaleZ = 1;
 	
+	private double rotX = 0;
+	private double rotY = 0;
+	private double rotZ = 0;
+	
 	private int currentTick = -1;
 	
 	@Override
@@ -82,6 +86,25 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 		this.scaleX = x;
 		this.scaleY = y;
 		this.scaleZ = z;
+	}
+
+	@Override
+	public void calcRotations(GeoBone bone) {
+		this.rotX += bone.getRotX();
+		this.rotY += bone.getRotY();
+		this.rotZ += bone.getRotZ();
+	}
+
+	@Override
+	public Vec3 getRotationVector() {
+		return new Vec3(this.rotX, this.rotY, this.rotZ);
+	}
+
+	@Override
+	public void setRotations(int x, int y, int z) {
+		this.rotX = x;
+		this.rotY = y;
+		this.rotZ = z;
 	}
 
 }

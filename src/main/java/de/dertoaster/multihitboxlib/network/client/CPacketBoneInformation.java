@@ -82,6 +82,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		private Optional<String> currentBoneName = Optional.empty();
 		private Optional<Vec3> currentBonePos = Optional.empty();
 		private Optional<Vec3> currentBoneScales = Optional.empty();
+		private Optional<Vec3> currentBoneRotations = Optional.empty();
 		private Optional<Boolean> currentBoneHidden = Optional.empty();
 
 		Builder(final int entityID) {
@@ -110,7 +111,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		public Builder position(final Vec3 worldPosition) {
 			this.checkState();
 
-			this.currentBonePos = Optional.of(worldPosition);
+			this.currentBonePos = Optional.ofNullable(worldPosition);
 
 			return this;
 		}
@@ -118,15 +119,23 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		public Builder scaling(final Vec3 currentScaling) {
 			this.checkState();
 
-			this.currentBoneScales = Optional.of(currentScaling);
+			this.currentBoneScales = Optional.ofNullable(currentScaling);
 
+			return this;
+		}
+		
+		public Builder rotation(Vec3 rotation) {
+			this.checkState();
+			
+			this.currentBoneRotations = Optional.ofNullable(rotation);
+			
 			return this;
 		}
 		
 		public Builder hidden(final boolean hidden) {
 			this.checkState();
 			
-			this.currentBoneHidden = Optional.of(hidden);
+			this.currentBoneHidden = Optional.ofNullable(hidden);
 			
 			return this;
 		}
@@ -138,7 +147,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		}
 
 		private void compileAndAddBone() {
-			BoneInformation bi = new BoneInformation(this.currentBoneName.get(), this.currentBoneHidden.get(), this.currentBonePos.get(), this.currentBoneScales.orElse(BoneInformation.DEFAULT_SCALING));
+			BoneInformation bi = new BoneInformation(this.currentBoneName.get(), this.currentBoneHidden.orElse(false), this.currentBonePos.orElse(Vec3.ZERO), this.currentBoneScales.orElse(BoneInformation.DEFAULT_SCALING), this.currentBoneRotations.orElse(Vec3.ZERO));
 			if (!this.boneInformation.add(bi)) {
 				// throw new IllegalStateException("Unable to add information for bone " + bi.name());
 			}
@@ -146,6 +155,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 			this.currentBoneName = Optional.empty();
 			this.currentBonePos = Optional.empty();
 			this.currentBoneScales = Optional.empty();
+			this.currentBoneRotations = Optional.empty();
 		}
 
 		public CPacketBoneInformation build() {

@@ -198,11 +198,19 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				
 				//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
 				
-				BoneInformation bi = this.syncDataMap.getOrDefault(syncedBone, new BoneInformation(syncedBone, false, part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, BoneInformation.DEFAULT_SCALING));
+				BoneInformation bi = this.syncDataMap.getOrDefault(syncedBone, new BoneInformation(
+						syncedBone, 
+						false, 
+						part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, 
+						BoneInformation.DEFAULT_SCALING,
+						part.getConfig() != null ? part.getConfig().baseRotation() : Vec3.ZERO
+				));
 				
 				//System.out.println("Sync data: " + bi.toString());
 				
 				part.setPos(bi.worldPos());
+				part.setXRot((float) (bi.rotation().x() + rotX));
+				part.setYRot((float) (bi.rotation().y() + rotY));
 				part.setHidden(bi.hidden());
 			}
 			this.syncDataMap.clear();
@@ -288,7 +296,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	}
 
 	@Override
-	public synchronized boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling) {
+	public synchronized boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling, Vec3 rotation) {
 		if (!this.level().isClientSide()) {
 			return false;
 		}
@@ -307,7 +315,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		CPacketBoneInformation.Builder builder = this.boneInformationBuilder.get();
 		try {
-			builder = builder.addInfo(boneName).hidden(hidden).position(position).scaling(scaling).done();
+			builder = builder.addInfo(boneName).hidden(hidden).position(position).scaling(scaling).rotation(rotation).done();
 		} catch(IllegalStateException ise) {
 			return false;
 		}
