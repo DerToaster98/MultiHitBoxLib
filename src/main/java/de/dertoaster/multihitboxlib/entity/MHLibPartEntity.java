@@ -209,7 +209,11 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 			return false;
 		}
 		
-		if(this.isInvulnerableTo(pSource)) {
+		if (this.isInvulnerableTo(pSource)) {
+			return false;
+		}
+		
+		if (!this.isPartEnabled()) {
 			return false;
 		}
 		
@@ -238,11 +242,15 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	@Override
 	public boolean isPickable() {
-		return this.config.collidable();
+		return this.config.collidable() && this.isPartEnabled();
 	}
 
 	public void setHidden(boolean hidden) {
 		this.enabled = !hidden;
+	}
+
+	public boolean isPartEnabled() {
+		return this.enabled;
 	}
 	
 }

@@ -41,7 +41,7 @@ public abstract class EntityRenderEventHandlerCommonLogic {
 		if (le.isMultipartEntity() &&  entitybeingRenderer instanceof IMultipartEntity<?> ime && le.getParts() != null && le.getParts().length > 0) {
 			for(PartEntity<?> part : le.getParts()) {
 				if(part instanceof MHLibPartEntity<?> mhlpe) {
-					if (mhlpe.hasCustomRenderer()) {
+					if (mhlpe.hasCustomRenderer() && mhlpe.isPartEnabled()) {
 						EntityRenderer<? extends MHLibPartEntity<? extends Entity>> renderer = MHLibClient.getRendererFor(mhlpe, ((AccessorEntityRenderer)entityRenderer).getEntityRenderDispatcher());
 						if (renderer == null) {
 							continue;
