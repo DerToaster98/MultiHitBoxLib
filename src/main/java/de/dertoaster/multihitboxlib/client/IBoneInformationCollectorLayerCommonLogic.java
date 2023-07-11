@@ -37,7 +37,7 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 						final Vec3 worldPos = this.getBoneWorldPosition(bone);
 						this.calcScales(bone);
 						this.calcRotations(bone);
-						ime.tryAddBoneInformation(this.getBoneName(bone), this.isBoneHidden(bone), worldPos, this.getScaleVector(), null);
+						ime.tryAddBoneInformation(this.getBoneName(bone), this.isBoneHidden(bone), worldPos, this.getScaleVector(), this.getRotationVector());
 						//System.out.println("RenderRecursively: " + worldPos.toString());
 						//ime.getPartByName(bone.getName()).get().setPos(worldPos);
 					}
