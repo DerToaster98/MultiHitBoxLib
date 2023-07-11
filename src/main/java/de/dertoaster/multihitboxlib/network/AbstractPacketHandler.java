@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -28,7 +27,9 @@ public abstract class AbstractPacketHandler<P extends Object> implements IMessag
 					world = sender.level();
 				}
 			}
-			if(context.get().getNetworkManager().getPacketListener() instanceof ClientPacketListener) {
+			//if(context.get().getNetworkManager().getPacketListener() instanceof ClientPacketListener) {
+			// Otherwise it MUST be the client
+			else {
 				sender = ClientOnlyMethods.getClientPlayer();
 				world = ClientOnlyMethods.getWorld();
 			}

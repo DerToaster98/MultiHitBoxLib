@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 import de.dertoaster.multihitboxlib.network.IMessageHandler;
 import de.dertoaster.multihitboxlib.network.server.datapacksync.AbstractSPacketSyncDatapackContent;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +31,9 @@ public abstract class AbstractCPacketHandlerSyncDatapackContent<C extends Object
 					world = sender.level();
 				}
 			}
-			if(context.get().getNetworkManager().getPacketListener() instanceof ClientPacketListener) {
+			//if(context.get().getNetworkManager().getPacketListener() instanceof ClientPacketListener) {
+			//Otherwise it must be client?
+			else {
 				sender = ClientOnlyMethods.getClientPlayer();
 				world = ClientOnlyMethods.getWorld();
 			}
