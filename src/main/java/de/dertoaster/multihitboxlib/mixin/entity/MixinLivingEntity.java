@@ -211,6 +211,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				part.setPos(bi.worldPos());
 				part.setXRot((float) (bi.rotation().x() + rotX));
 				part.setYRot((float) (bi.rotation().y() + rotY));
+				// Also sync scaling please?
 				part.setHidden(bi.hidden());
 			}
 			this.syncDataMap.clear();
@@ -302,7 +303,10 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 		UUID myMaster = this.getMasterUUID();
 		if (myMaster == null || !myMaster.equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
-			//return false;
+			return false;
+		}
+		if (this.HITBOX_PROFILE.isEmpty()) {
+			return false;
 		}
 		if (this.HITBOX_PROFILE.isPresent() && !this.HITBOX_PROFILE.get().syncToModel()) {
 			return false;
@@ -318,6 +322,18 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			builder = builder.addInfo(boneName).hidden(hidden).position(position).scaling(scaling).rotation(rotation).done();
 		} catch(IllegalStateException ise) {
 			return false;
+		}
+		
+		// Now, if we have the freedom ... directly apply the information...
+		if (this.HITBOX_PROFILE.get().trustClient()) {
+			Optional<MHLibPartEntity<LivingEntity>> optPart = this.getPartByName(boneName);
+			if (optPart.isPresent() && optPart.get().isSynched()) {
+				final double distance = Math.abs(optPart.get().position().distanceToSqr(position));
+				if (distance <= optPart.get().getConfig().maxDeviationFromServer()) {
+					// You may
+					optPart.get().setPositionAndRotationDirect(position.x(), position.y(), position.z(), (float)rotation.y(), (float)rotation.x(), this.HITBOX_PROFILE.get().synchedPartUpdateSteps());
+				}
+			}
 		}
 		
 		return true;

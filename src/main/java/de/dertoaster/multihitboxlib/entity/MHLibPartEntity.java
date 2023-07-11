@@ -102,7 +102,7 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 			xRotO += 360F;
 	}
 	
-	private final boolean isSynched() {
+	public final boolean isSynched() {
 		if (this.getParent() instanceof IMultipartEntity<?> ime) {
 			if (!ime.getHitboxProfile().isPresent()) {
 				return false;

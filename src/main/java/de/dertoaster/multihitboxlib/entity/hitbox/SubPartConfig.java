@@ -12,6 +12,7 @@ public record SubPartConfig(
 		boolean collidable,
 		boolean canReceiveDamage,
 		float damageModifier,
+		double maxDeviationFromServer,
 		Vec2 baseSize,
 		Vec3 baseRotation, //Only to be used for rendering stuff. Won't change the hitbox as that is still axis alinged
 		Vec3 basePosition,
@@ -24,6 +25,7 @@ public record SubPartConfig(
 				Codec.BOOL.fieldOf("collidable").forGetter(SubPartConfig::collidable),
 				Codec.BOOL.fieldOf("can-receive-damage").forGetter(SubPartConfig::canReceiveDamage),
 				Codec.FLOAT.optionalFieldOf("damage-modifier", 1.0F).forGetter(SubPartConfig::damageModifier),
+				Codec.DOUBLE.optionalFieldOf("max-deviation-from-server", 0.0D).forGetter(SubPartConfig::maxDeviationFromServer),
 				UtilityCodecs.VEC2_CODEC.fieldOf("size").forGetter(SubPartConfig::baseSize),
 				Vec3.CODEC.optionalFieldOf("rotation", Vec3.ZERO).forGetter(SubPartConfig::baseRotation),
 				Vec3.CODEC.fieldOf("position").forGetter(SubPartConfig::basePosition),

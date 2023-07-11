@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 public record HitboxProfile(
 		AssetEnforcementConfig assetConfig,
 		boolean syncToModel,
+		boolean trustClient,
 		int partUpdateSteps,
 		int synchedPartUpdateSteps,
 		List<String> synchedBones,
@@ -19,6 +20,7 @@ public record HitboxProfile(
 		return instance.group(
 				AssetEnforcementConfig.CODEC.fieldOf("synched-assets").forGetter(HitboxProfile::assetConfig),
 				Codec.BOOL.fieldOf("sync-with-model").forGetter(HitboxProfile::syncToModel),
+				Codec.BOOL.optionalFieldOf("trust-client", false).forGetter(HitboxProfile::trustClient),
 				Codec.INT.optionalFieldOf("part-update-steps", 3).forGetter(HitboxProfile::partUpdateSteps),
 				Codec.INT.optionalFieldOf("synched-part-update-steps", 1).forGetter(HitboxProfile::synchedPartUpdateSteps),
 				Codec.STRING.listOf().fieldOf("synched-bones").forGetter(HitboxProfile::synchedBones),

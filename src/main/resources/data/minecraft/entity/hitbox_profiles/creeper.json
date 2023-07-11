@@ -9,6 +9,7 @@
 	},
 	"sync-with-model": true,
 	"part-update-steps": 3,
+	"trust-client": true,
 	"synched-part-update-steps": 1,
 	"synched-bones": [
 		"head"
@@ -56,6 +57,7 @@
 			"name": "head",
 			"collidable": true,
 			"can-receive-damage": true,
+			"max-deviation-from-server": 9.0,
 			"damage-modifier": 2.0,
 			"size": [
 				0.6,
