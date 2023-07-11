@@ -207,11 +207,11 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				));
 				
 				//System.out.println("Sync data: " + bi.toString());
-				
+
+				part.setScaling(bi.scale());
 				part.setPos(bi.worldPos());
 				part.setXRot((float) (bi.rotation().x() + rotX));
 				part.setYRot((float) (bi.rotation().y() + rotY));
-				// Also sync scaling please?
 				part.setHidden(bi.hidden());
 			}
 			this.syncDataMap.clear();

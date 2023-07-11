@@ -252,5 +252,9 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public boolean isPartEnabled() {
 		return this.enabled;
 	}
+
+	public void setScaling(Vec3 scale) {
+		this.currentSizeModifier = Optional.ofNullable(new Tuple<Float, Float>((float)scale.x(), (float)scale.y()));
+	}
 	
 }
