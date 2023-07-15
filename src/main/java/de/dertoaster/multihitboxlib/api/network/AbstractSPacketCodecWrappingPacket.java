@@ -1,17 +1,8 @@
 package de.dertoaster.multihitboxlib.api.network;
 
-import java.io.IOException;
-import java.util.Base64;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 
-import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import net.minecraft.network.FriendlyByteBuf;
 
 public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMessage<P> {
@@ -28,10 +19,12 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 	
 	protected abstract Codec<T> codec();
 	protected abstract P createPacket(DataResult<T> dr);
+	protected abstract P createPacket(T data);
 	
 	@Override
 	public P fromBytes(FriendlyByteBuf buffer) {
-		if (buffer.readBoolean()) {
+		// Crashes the client for some odd reason
+		/*if (buffer.readBoolean()) {
 			byte[] bytes = buffer.readByteArray();
 			if (bytes.length > 0) {
 				try {
@@ -48,13 +41,14 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 				DataResult<T> dr = this.codec().parse(JsonOps.INSTANCE, je);
 				return this.createPacket(dr);
 			}
-		}
-		return null;
+		}*/
+		T data = buffer.readJsonWithCodec(this.codec());
+		return this.createPacket(data);
 	}
 
 	@Override
 	public void toBytes(P packet, FriendlyByteBuf buffer) {
-		DataResult<JsonElement> dr = packet.codec().encodeStart(JsonOps.COMPRESSED, packet.data);
+		/*DataResult<JsonElement> dr = packet.codec().encodeStart(JsonOps.COMPRESSED, packet.data);
 		JsonElement je = dr.getOrThrow(false, (s) -> {
 			
 		});
@@ -71,7 +65,8 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 			}
 		} else {
 			buffer.writeBoolean(false);
-		}
+		}*/
+		buffer.writeJsonWithCodec(this.codec(), packet.getData());
 	}
 	
 	public T getData() {

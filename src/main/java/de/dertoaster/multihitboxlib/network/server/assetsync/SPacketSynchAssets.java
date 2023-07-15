@@ -38,4 +38,9 @@ public class SPacketSynchAssets extends AbstractSPacketCodecWrappingPacket<Synch
 		return null;
 	}
 
+	@Override
+	protected SPacketSynchAssets createPacket(SynchDataContainer data) {
+		return new SPacketSynchAssets(data);
+	}
+
 }
