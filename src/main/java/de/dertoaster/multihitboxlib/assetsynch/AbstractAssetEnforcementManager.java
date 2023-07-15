@@ -134,6 +134,14 @@ public abstract class AbstractAssetEnforcementManager {
 		}, () -> () -> false);
 	}
 	
+	public static boolean handlePacketData(final SynchDataContainer payload) {
+		boolean result = payload != null && !payload.payload().isEmpty();
+		for (SynchDataManagerData entry : payload.payload()) {
+			result &= handleEntry(entry);
+		}
+		return result;
+	}
+	
 	public Optional<SynchEntryData> createSynchEntry(final ResourceLocation id) {
 		Optional<byte[]> optData = this.encodeData(id);
 		if (!optData.isPresent()) {

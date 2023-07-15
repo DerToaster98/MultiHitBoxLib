@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent.Context;
 
-public abstract class AbstractSPacketCodecWrappingPacketHandler<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMessageHandler<P> {
+public abstract class AbstractSPacketHandlerCodecWrappingPacket<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMessageHandler<P> {
 
 	public IMessageHandler<P> cast() {
 		return (IMessageHandler<P>)this;
