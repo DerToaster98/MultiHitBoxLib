@@ -1,35 +1,39 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
 
-public class TextureEnforcementManager extends AbstractAssetEnforcementManager<AbstractTexture> {
+public class TextureEnforcementManager extends AbstractAssetEnforcementManager<Object> {
 
 	@Override
-	protected void registerAsset(ResourceLocation id, AbstractTexture asset) {
+	protected void registerAsset(ResourceLocation id, Object asset) {
 		
 	}
 
 	@Override
-	protected Optional<byte[]> findAsset(ResourceLocation id) {
-		// TODO: Load from config folder instead, this is VERY unreliable
-		if (ModList.get() != null && ModList.get().isLoaded(id.getNamespace())) {
-			IModFileInfo imfi = ModList.get().getModFileById(id.getNamespace());
-			IModFile modFile = imfi.getFile();
-			Path resourcePath = modFile.findResource("assets", id.getNamespace(), "textures", id.getPath());
-			if (resourcePath == null) {
-				return Optional.empty();
-			}
-			return Optional.ofNullable(encodeFileToBase64(resourcePath));
+	protected Optional<byte[]> encodeData(ResourceLocation id) {
+		File location = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
+		if (!location.exists() || !location.isFile()) {
+			return Optional.empty();
 		}
+		return Optional.ofNullable(encodeFileToBase64(location.toPath()));
+	}
 
+	@Override
+	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
+		return true;
+	}
+
+	@Override
+	public String getSubDirectoryName() {
+		return "textures";
+	}
+
+	@Override
+	public Optional<Object> getAsset(ResourceLocation id) {
 		return Optional.empty();
 	}
 

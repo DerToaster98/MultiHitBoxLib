@@ -1,14 +1,12 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Optional;
 
+import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 
@@ -23,19 +21,27 @@ public class GlibModelEnforcementManager extends AbstractAssetEnforcementManager
 	}
 
 	@Override
-	protected Optional<byte[]> findAsset(ResourceLocation id) {
-		// TODO: Load from config folder instead, this is VERY unreliable
-		if (ModList.get() != null && ModList.get().isLoaded(id.getNamespace())) {
-			IModFileInfo imfi = ModList.get().getModFileById(id.getNamespace());
-			IModFile modFile = imfi.getFile();
-			Path resourcePath = modFile.findResource("assets", id.getNamespace(), "geo", id.getPath());
-			if (resourcePath == null) {
-				return Optional.empty();
-			}
-			return Optional.ofNullable(encodeFileToBase64(resourcePath));
+	protected Optional<byte[]> encodeData(ResourceLocation id) {
+		File location = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
+		if (!location.exists() || !location.isFile()) {
+			return Optional.empty();
 		}
+		return Optional.ofNullable(encodeFileToBase64(location.toPath()));
+	}
 
-		return Optional.empty();
+	@Override
+	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
+		return true;
+	}
+
+	@Override
+	public String getSubDirectoryName() {
+		return "models/" + Constants.Dependencies.GECKOLIB_MODID;
+	}
+
+	@Override
+	public Optional<BakedGeoModel> getAsset(ResourceLocation id) {
+		return Optional.ofNullable(GeckoLibCache.getBakedModels().get(id));
 	}
 
 }
