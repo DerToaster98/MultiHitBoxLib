@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record SynchEntryData(
 		ResourceLocation id,
+		// Warning: This is base64 data that gets compressed normally! Decompressing and decoding must be done yourself!
 		List<Byte> payload
 		) {
 	
