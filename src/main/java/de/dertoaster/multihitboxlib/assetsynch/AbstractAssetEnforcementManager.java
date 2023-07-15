@@ -126,8 +126,17 @@ public abstract class AbstractAssetEnforcementManager {
 			for (SynchEntryData data : entry.payload()) {
 				final byte[] payload = data.getPayLoadArray();
 				if (manager.writeFile(data.id(), payload)) {
-					// File saved, now load it, shall we?
-					return manager.receiveAndLoad(data.id(), payload);
+					try {
+						final byte[] decompressed = CompressionUtil.decompress(payload, true);
+						final byte[] decoded = Base64.getDecoder().decode(decompressed);
+						
+						// File saved, now load it, shall we?
+						return manager.receiveAndLoad(data.id(), decoded);
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (DataFormatException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			return false;
@@ -194,7 +203,7 @@ public abstract class AbstractAssetEnforcementManager {
 	public static boolean decodeBase64ToFile(String filePathWithNameAndExtension, byte[] base64) {
 		return decodeBase64ToFile(new File(filePathWithNameAndExtension), base64);
 	}
-
+	
 	public static boolean decodeBase64ToFile(File targetFile, byte[] compressedDearr) {
 		byte[] dearr = new byte[0];
 		try {
