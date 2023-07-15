@@ -12,7 +12,7 @@ public class GameEventHandler {
 
 	@SubscribeEvent
 	public static void onPlayerJoinServer(PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ServerPlayer sp) {
+		if (event.getEntity() instanceof ServerPlayer sp && sp != null) {
 			AssetEnforcement.sendSynchData(sp);
 		}
 	}
