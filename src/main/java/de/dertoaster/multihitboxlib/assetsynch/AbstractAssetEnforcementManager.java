@@ -15,9 +15,10 @@ import com.google.common.primitives.Bytes;
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
+import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 public abstract class AbstractAssetEnforcementManager {
 
@@ -60,7 +61,14 @@ public abstract class AbstractAssetEnforcementManager {
 	}
 
 	protected File getSidedDirectory() {
-		return DistExecutor.safeRunForDist(() -> () -> this.syncDirectory, () -> () -> this.directory);
+		if (FMLLoader.getDist().isDedicatedServer()) {
+			return this.directory;
+		} else {
+			if (ClientOnlyMethods.isCurrentPlayerOwnerIfIntegratedServer()) {
+				return this.directory;
+			}
+			return this.syncDirectory;
+		}
 	}
 
 	protected boolean writeFile(final ResourceLocation id, final byte[] data) {
