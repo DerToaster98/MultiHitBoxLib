@@ -23,7 +23,7 @@ public class ClientOnlyMethods {
 	public static boolean isCurrentPlayerOwnerIfIntegratedServer() {
 		Player p = getClientPlayer();
 		IntegratedServer integratedServer = Minecraft.getInstance().getSingleplayerServer();
-		return integratedServer != null && integratedServer.isSingleplayerOwner(p.getGameProfile());
+		return p != null && integratedServer != null && integratedServer.isSingleplayerOwner(p.getGameProfile());
 	}
 
 }
