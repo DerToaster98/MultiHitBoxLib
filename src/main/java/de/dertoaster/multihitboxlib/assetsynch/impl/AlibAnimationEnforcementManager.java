@@ -3,19 +3,18 @@ package de.dertoaster.multihitboxlib.assetsynch.impl;
 import java.io.File;
 import java.util.Optional;
 
+import com.google.gson.JsonObject;
+
 import de.dertoaster.multihitboxlib.Constants;
+import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
+import mod.azure.azurelib.cache.AzureLibCache;
+import mod.azure.azurelib.loading.object.BakedAnimations;
+import mod.azure.azurelib.util.JsonUtil;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 
 public class AlibAnimationEnforcementManager extends AbstractAssetEnforcementManager {
-
-	/*@Override
-	protected void registerAsset(ResourceLocation id, BakedAnimations asset) {
-		if (AzureLibCache.getBakedAnimations().containsKey(id))
-			MHLibMod.LOGGER.debug("Overriding geckolib animation with id <" + id.toString() + ">");
-		
-		AzureLibCache.getBakedAnimations().put(id, asset);
-	}*/
 
 	@Override
 	protected Optional<byte[]> encodeData(ResourceLocation id) {
@@ -28,7 +27,22 @@ public class AlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 
 	@Override
 	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
-		return true;
+		if (AzureLibCache.getBakedAnimations().containsKey(id))
+			MHLibMod.LOGGER.debug("Overriding azurelib animation with id <" + id.toString() + ">");
+		
+		Optional<BakedAnimations> optAnimations = this.createBakedAnimations(data);
+		
+		optAnimations.ifPresent(asset -> AzureLibCache.getBakedAnimations().put(id, asset));
+		return optAnimations.isPresent();
+	}
+
+	private Optional<BakedAnimations> createBakedAnimations(byte[] data) {
+		String stringData = new String(data);
+		JsonObject jo = GsonHelper.fromJson(JsonUtil.GEO_GSON, stringData, JsonObject.class);
+		if (jo != null) {
+			return Optional.of(JsonUtil.GEO_GSON.fromJson(jo, BakedAnimations.class));
+		}
+		return Optional.empty();
 	}
 
 	@Override
