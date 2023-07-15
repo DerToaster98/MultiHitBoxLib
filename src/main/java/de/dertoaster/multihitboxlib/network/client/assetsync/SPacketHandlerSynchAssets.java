@@ -3,7 +3,7 @@ package de.dertoaster.multihitboxlib.network.client.assetsync;
 import java.util.function.Supplier;
 
 import de.dertoaster.multihitboxlib.api.network.AbstractSPacketHandlerCodecWrappingPacket;
-import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
+import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +16,7 @@ public class SPacketHandlerSynchAssets extends AbstractSPacketHandlerCodecWrappi
 
 	@Override
 	protected void execHandlePacket(SPacketSynchAssets packet, Supplier<Context> context, Level world, Player sender) {
-		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> AbstractAssetEnforcementManager.handlePacketData(packet.getData()));
+		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> AssetEnforcement.handlePacketData(packet.getData()));
 	}
 
 }

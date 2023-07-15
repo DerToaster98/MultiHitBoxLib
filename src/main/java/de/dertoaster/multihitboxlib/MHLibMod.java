@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
+import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import net.minecraft.resources.ResourceLocation;
@@ -69,7 +69,7 @@ public class MHLibMod {
 		MHLibPackets.init();
 		
 		// Throws registration event and registers all asset enforcers
-		AbstractAssetEnforcementManager.init();
+		AssetEnforcement.init();
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call
