@@ -128,8 +128,6 @@ public abstract class AbstractAssetEnforcementManager {
 			final DiskSaveRunner runner = new DiskSaveRunner(manager, true);
 			for (SynchEntryData data : entry.payload()) {
 				final byte[] payload = data.getPayLoadArray();
-				// TODO: Move file-writing to a thread
-				// TODO: When receiving the packet: Delete the contents of the local synch folder, then write to disk!
 				if (runner.add(new Tuple<>(data.id(), payload))) {
 					try {
 						final byte[] decompressed = CompressionUtil.decompress(payload, true);
