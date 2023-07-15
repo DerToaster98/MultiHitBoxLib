@@ -28,6 +28,7 @@ import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.network.PacketDistributor;
@@ -131,7 +132,8 @@ public abstract class AbstractAssetEnforcementManager {
 						final byte[] decoded = Base64.getDecoder().decode(decompressed);
 						
 						// File saved, now load it, shall we?
-						return manager.receiveAndLoad(data.id(), decoded);
+						Boolean result = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> manager.receiveAndLoad(data.id(), decoded));
+						return result != null && result;
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (DataFormatException e) {
