@@ -3,7 +3,7 @@ package de.dertoaster.multihitboxlib.network.client;
 import java.util.function.Supplier;
 
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.network.AbstractPacketHandler;
+import de.dertoaster.multihitboxlib.api.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;

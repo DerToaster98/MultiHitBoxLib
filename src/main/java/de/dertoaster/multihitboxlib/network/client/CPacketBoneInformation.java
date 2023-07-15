@@ -6,8 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
-import de.dertoaster.multihitboxlib.network.AbstractPacket;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.FriendlyByteBuf;

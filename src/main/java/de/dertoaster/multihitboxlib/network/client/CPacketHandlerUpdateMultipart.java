@@ -3,8 +3,8 @@ package de.dertoaster.multihitboxlib.network.client;
 import java.util.function.Supplier;
 
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.api.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
-import de.dertoaster.multihitboxlib.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart.PartDataHolder;
 import net.minecraft.world.entity.Entity;

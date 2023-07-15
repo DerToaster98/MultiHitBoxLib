@@ -3,8 +3,8 @@ package de.dertoaster.multihitboxlib.network.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
-import de.dertoaster.multihitboxlib.network.AbstractPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;

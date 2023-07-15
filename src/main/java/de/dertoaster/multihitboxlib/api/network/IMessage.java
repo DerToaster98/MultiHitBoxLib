@@ -1,4 +1,4 @@
-package de.dertoaster.multihitboxlib.network;
+package de.dertoaster.multihitboxlib.api.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 

@@ -1,4 +1,4 @@
-package de.dertoaster.multihitboxlib.network.server.datapacksync;
+package de.dertoaster.multihitboxlib.api.network;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,6 @@ import java.util.Map;
 import com.mojang.serialization.Codec;
 
 import commoble.databuddy.data.CodecJsonDataManager;
-import de.dertoaster.multihitboxlib.network.IMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;

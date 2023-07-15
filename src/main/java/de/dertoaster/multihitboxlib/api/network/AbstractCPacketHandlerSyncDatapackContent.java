@@ -1,12 +1,10 @@
-package de.dertoaster.multihitboxlib.network.client.datapacksync;
+package de.dertoaster.multihitboxlib.api.network;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import de.dertoaster.multihitboxlib.network.IMessageHandler;
-import de.dertoaster.multihitboxlib.network.server.datapacksync.AbstractSPacketSyncDatapackContent;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.resources.ResourceLocation;

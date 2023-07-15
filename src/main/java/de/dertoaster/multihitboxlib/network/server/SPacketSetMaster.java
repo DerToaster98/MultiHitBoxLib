@@ -3,7 +3,7 @@ package de.dertoaster.multihitboxlib.network.server;
 import java.util.UUID;
 
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.network.AbstractPacket;
+import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 

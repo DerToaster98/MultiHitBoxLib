@@ -4,7 +4,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.network.AbstractPacketHandler;
+import de.dertoaster.multihitboxlib.api.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

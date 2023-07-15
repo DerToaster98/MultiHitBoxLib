@@ -5,6 +5,7 @@ import java.util.Map;
 import com.mojang.serialization.Codec;
 
 import commoble.databuddy.data.CodecJsonDataManager;
+import de.dertoaster.multihitboxlib.api.network.AbstractSPacketSyncDatapackContent;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import net.minecraft.resources.ResourceLocation;

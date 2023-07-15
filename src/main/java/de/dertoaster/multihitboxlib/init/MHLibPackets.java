@@ -3,8 +3,8 @@ package de.dertoaster.multihitboxlib.init;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.Constants;
-import de.dertoaster.multihitboxlib.network.IMessage;
-import de.dertoaster.multihitboxlib.network.IMessageHandler;
+import de.dertoaster.multihitboxlib.api.network.IMessage;
+import de.dertoaster.multihitboxlib.api.network.IMessageHandler;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.network.client.CPacketHandlerSetMaster;
 import de.dertoaster.multihitboxlib.network.client.CPacketHandlerUpdateMultipart;

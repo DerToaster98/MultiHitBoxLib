@@ -1,6 +1,5 @@
 package de.dertoaster.multihitboxlib.assetsynch;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,14 +10,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 import com.google.common.primitives.Bytes;
 
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.event.server.AssetEnforcementManagerRegistrationEvent;
+import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataManagerData;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
+import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.DistExecutor;
@@ -75,20 +75,19 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 		return true;
 	}
 	
-	public static boolean handleEntry(final SynchEntryData entry) {
+	public static boolean handleEntry(final SynchDataManagerData entry) {
 		return DistExecutor.safeRunForDist(() -> () -> {
-			if (!entry.validate()) {
-				return false;
-			}
 			AbstractAssetEnforcementManager<?> manager = REGISTERED_MANAGERS.get(entry.manager());
 			if (manager == null) {
 				//TODO: Log
 				return false;
 			}
-			final byte[] payload = entry.getPayLoadArray();
-			if (manager.writeFile(entry.id(), payload)) {
-				// File saved, now load it, shall we?
-				return manager.receiveAndLoad(entry.id(), payload);
+			for (SynchEntryData data : entry.payload()) {
+				final byte[] payload = data.getPayLoadArray();
+				if (manager.writeFile(data.id(), payload)) {
+					// File saved, now load it, shall we?
+					return manager.receiveAndLoad(data.id(), payload);
+				}
 			}
 			return false;
 		}, () -> () -> false);
@@ -100,7 +99,7 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 			return Optional.empty();
 		}
 		byte[] data = optData.get();
-		return Optional.of(new SynchEntryData(this.getId(), id, Bytes.asList(data)));
+		return Optional.of(new SynchEntryData(id, Bytes.asList(data)));
 	}
 
 	public final ResourceLocation getId() {
@@ -140,7 +139,7 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 		try {
 			byte[] fileContent = Files.readAllBytes(path);
 			byte[] uncompressedResult = Base64.getEncoder().encode(fileContent);
-			return compress(uncompressedResult, Deflater.BEST_COMPRESSION, true);
+			return CompressionUtil.compress(uncompressedResult, Deflater.BEST_COMPRESSION, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -151,11 +150,10 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 		return decodeBase64ToFile(new File(filePathWithNameAndExtension), base64);
 	}
 
-	public static boolean decodeBase64ToFile(File targetFile, byte[] base64) {
-		byte[] compressedDearr = Base64.getDecoder().decode(base64);
+	public static boolean decodeBase64ToFile(File targetFile, byte[] compressedDearr) {
 		byte[] dearr = new byte[0];
 		try {
-			dearr = decompress(compressedDearr, true);
+			dearr = CompressionUtil.decompress(compressedDearr, true);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return false;
@@ -163,74 +161,14 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 			e1.printStackTrace();
 			return false;
 		}
+		byte[] base64 = Base64.getDecoder().decode(dearr);
 		try (FileOutputStream fos = new FileOutputStream(targetFile)) {
-			fos.write(dearr);
+			fos.write(base64);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	// Source: http://www.java2s.com/example/java-book/compressing-byte-arrays.html
-	public static byte[] compress(byte[] input, int compressionLevel, boolean GZIPFormat) throws IOException {
-
-		// Create a Deflater object to compress data
-		Deflater compressor = new Deflater(compressionLevel, GZIPFormat);
-
-		// Set the input for the compressor
-		compressor.setInput(input);
-
-		// Call the finish() method to indicate that we have
-		// no more input for the compressor object
-		compressor.finish();
-
-		// Compress the data
-		ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		byte[] readBuffer = new byte[1024];
-		int readCount = 0;
-
-		while (!compressor.finished()) {
-			readCount = compressor.deflate(readBuffer);
-			if (readCount > 0) {
-				// Write compressed data to the output stream
-				bao.write(readBuffer, 0, readCount);
-			}
-		}
-
-		// End the compressor
-		compressor.end();
-
-		// Return the written bytes from output stream
-		return bao.toByteArray();
-	}
-
-	// Source: http://www.java2s.com/example/java-book/compressing-byte-arrays.html
-	public static byte[] decompress(byte[] input, boolean GZIPFormat) throws IOException, DataFormatException {
-		// Create an Inflater object to compress the data
-		Inflater decompressor = new Inflater(GZIPFormat);
-
-		// Set the input for the decompressor
-		decompressor.setInput(input);
-
-		// Decompress data
-		ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		byte[] readBuffer = new byte[1024];
-		int readCount = 0;
-
-		while (!decompressor.finished()) {
-			readCount = decompressor.inflate(readBuffer);
-			if (readCount > 0) {
-				// Write the data to the output stream
-				bao.write(readBuffer, 0, readCount);
-			}
-		}
-
-		// End the decompressor
-		decompressor.end();
-
-		// Return the written bytes from the output stream
-		return bao.toByteArray();
 	}
 
 }
