@@ -29,9 +29,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.PacketDistributor;
 
 public class AssetEnforcement {
@@ -118,7 +117,7 @@ public class AssetEnforcement {
 	}
 	
 	public static boolean handleEntry(final SynchDataManagerData entry) {
-		return DistExecutor.safeRunForDist(() -> () -> {
+		if (FMLEnvironment.dist.isClient()) {
 			final AbstractAssetEnforcementManager manager = REGISTERED_MANAGERS.get(entry.manager());
 			if (manager == null) {
 				//TODO: Log
@@ -134,8 +133,7 @@ public class AssetEnforcement {
 						final byte[] decoded = Base64.getDecoder().decode(decompressed);
 						
 						// File saved, now load it, shall we?
-						Boolean resultTmp = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> manager.receiveAndLoad(data.id(), decoded));
-						result &= resultTmp != null && resultTmp;
+						result &= manager.receiveAndLoad(data.id(), decoded);
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (DataFormatException e) {
@@ -149,7 +147,8 @@ public class AssetEnforcement {
 			diskAccessThread.start();
 			
 			return result;
-		}, () -> () -> false);
+		}
+		return false;
 	}
 	
 	public static boolean handlePacketData(final SynchDataContainer payload) {
