@@ -3,6 +3,7 @@ package de.dertoaster.multihitboxlib.assetsynch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,6 +61,15 @@ public class AssetEnforcement {
 		} catch (NullPointerException npe) {
 			MHLibMod.LOGGER.error("Asset enforcement manager for id <" + key.toString() + "> could NOT be registered!");
 		}
+	}
+	
+	public static void sendSynchData(final ServerPlayer connection) {
+		final Set<ResourceLocation> assetsToSynch = new HashSet<>();
+		
+		// TODO: Collect everything that needs to be synched ONCE, then cache that away=> use lazyloadfield?
+		// After that, create the packet and send it down to the client
+		
+		sendSynchData(connection, assetsToSynch);
 	}
 	
 	public static void sendSynchData(final ServerPlayer connection, final Set<ResourceLocation> assetsToSynch) {
