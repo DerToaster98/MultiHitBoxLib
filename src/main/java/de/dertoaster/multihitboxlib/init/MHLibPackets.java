@@ -1,5 +1,6 @@
 package de.dertoaster.multihitboxlib.init;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.Constants;
@@ -61,23 +62,25 @@ public class MHLibPackets {
 
 	protected static <MSG> void register(Class<? extends IMessage<MSG>> clsMessage, Class<? extends IMessageHandler<MSG>> clsHandler, final Optional<NetworkDirection> networkDirection) {
 		IMessage<MSG> message = null;
-		try {
-			message = clsMessage.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
 		IMessageHandler<MSG> handler = null;
 		try {
-			handler = clsHandler.newInstance();
+			message = clsMessage.getConstructor(new Class[] {}).newInstance();
+			handler = clsHandler.getConstructor(new Class[] {}).newInstance();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
 		}
-		assert (handler != null && message != null);
-		register(message, handler, networkDirection);
+		if (handler != null && message != null)
+			register(message, handler, networkDirection);
 	}
 	
 	protected static <MSG> void register(IMessage<MSG> message, IMessageHandler<MSG> handler) {
