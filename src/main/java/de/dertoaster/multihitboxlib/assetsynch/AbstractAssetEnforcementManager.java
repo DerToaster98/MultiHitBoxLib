@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -90,8 +89,7 @@ public abstract class AbstractAssetEnforcementManager {
 	public static byte[] encodeFileToBase64(Path path) {
 		try {
 			byte[] fileContent = Files.readAllBytes(path);
-			byte[] uncompressedResult = Base64.getEncoder().encode(fileContent);
-			return CompressionUtil.compress(uncompressedResult, Deflater.BEST_COMPRESSION, true);
+			return CompressionUtil.compress(fileContent, Deflater.BEST_COMPRESSION, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -116,9 +114,8 @@ public abstract class AbstractAssetEnforcementManager {
 			e1.printStackTrace();
 			return false;
 		}
-		byte[] base64 = Base64.getDecoder().decode(dearr);
 		try (FileOutputStream fos = new FileOutputStream(targetFile)) {
-			fos.write(base64);
+			fos.write(dearr);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

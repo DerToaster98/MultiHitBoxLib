@@ -2,7 +2,6 @@ package de.dertoaster.multihitboxlib.assetsynch;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -130,10 +129,9 @@ public class AssetEnforcement {
 				if (runner.add(new Tuple<>(data.id(), payload))) {
 					try {
 						final byte[] decompressed = CompressionUtil.decompress(payload, true);
-						final byte[] decoded = Base64.getDecoder().decode(decompressed);
 						
 						// File saved, now load it, shall we?
-						result &= manager.receiveAndLoad(data.id(), decoded);
+						result &= manager.receiveAndLoad(data.id(), decompressed);
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (DataFormatException e) {
