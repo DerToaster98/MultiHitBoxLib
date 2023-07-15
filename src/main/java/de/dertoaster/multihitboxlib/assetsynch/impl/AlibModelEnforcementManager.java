@@ -4,21 +4,18 @@ import java.io.File;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.Constants;
-import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
-import mod.azure.azurelib.cache.AzureLibCache;
-import mod.azure.azurelib.cache.object.BakedGeoModel;
 import net.minecraft.resources.ResourceLocation;
 
-public class AlibModelEnforcementManager extends AbstractAssetEnforcementManager<BakedGeoModel> {
+public class AlibModelEnforcementManager extends AbstractAssetEnforcementManager {
 
-	@Override
+	/*@Override
 	protected void registerAsset(ResourceLocation id, BakedGeoModel asset) {
 		if (AzureLibCache.getBakedModels().containsKey(id))
 			MHLibMod.LOGGER.debug("Overriding geckolib model with id <" + id.toString() + ">");
 
 		AzureLibCache.getBakedModels().put(id, asset);
-	}
+	}*/
 
 	@Override
 	protected Optional<byte[]> encodeData(ResourceLocation id) {
@@ -37,11 +34,6 @@ public class AlibModelEnforcementManager extends AbstractAssetEnforcementManager
 	@Override
 	public String getSubDirectoryName() {
 		return "models/" + Constants.Dependencies.AZURELIB_MODID;
-	}
-
-	@Override
-	public Optional<BakedGeoModel> getAsset(ResourceLocation id) {
-		return Optional.ofNullable(AzureLibCache.getBakedModels().get(id));
 	}
 
 }

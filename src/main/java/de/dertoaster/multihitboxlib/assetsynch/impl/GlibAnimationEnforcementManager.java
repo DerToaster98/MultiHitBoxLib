@@ -4,21 +4,18 @@ import java.io.File;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.Constants;
-import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.cache.GeckoLibCache;
-import software.bernie.geckolib.loading.object.BakedAnimations;
 
-public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementManager<BakedAnimations> {
+public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementManager {
 
-	@Override
+	/*@Override
 	protected void registerAsset(ResourceLocation id, BakedAnimations asset) {
 		if (GeckoLibCache.getBakedAnimations().containsKey(id))
 			MHLibMod.LOGGER.debug("Overriding geckolib animation with id <" + id.toString() + ">");
 		
 		GeckoLibCache.getBakedAnimations().put(id, asset);
-	}
+	}*/
 
 	@Override
 	protected Optional<byte[]> encodeData(ResourceLocation id) {
@@ -37,11 +34,6 @@ public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 	@Override
 	public String getSubDirectoryName() {
 		return "animations/" + Constants.Dependencies.GECKOLIB_MODID;
-	}
-
-	@Override
-	public Optional<BakedAnimations> getAsset(ResourceLocation id) {
-		return Optional.ofNullable(GeckoLibCache.getBakedAnimations().get(id));
 	}
 
 }

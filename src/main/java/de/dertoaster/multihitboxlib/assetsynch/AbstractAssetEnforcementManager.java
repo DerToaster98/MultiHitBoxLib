@@ -24,9 +24,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-public abstract class AbstractAssetEnforcementManager<T extends Object> {
+public abstract class AbstractAssetEnforcementManager {
 
-	private static final Map<ResourceLocation, AbstractAssetEnforcementManager<?>> REGISTERED_MANAGERS = new Object2ObjectArrayMap<>();
+	private static final Map<ResourceLocation, AbstractAssetEnforcementManager> REGISTERED_MANAGERS = new Object2ObjectArrayMap<>();
 	
 	private final File directory = new File(Constants.MHLIB_ASSET_DIR, this.getSubDirectoryName());
 	private final File syncDirectory = new File(Constants.MHLIB_SYNC_DIR, this.getSubDirectoryName());
@@ -34,7 +34,7 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 	private ResourceLocation id = null; 
 
 	public static void init() {
-		final Map<ResourceLocation, AbstractAssetEnforcementManager<?>> map = new Object2ObjectArrayMap<>();
+		final Map<ResourceLocation, AbstractAssetEnforcementManager> map = new Object2ObjectArrayMap<>();
 		AssetEnforcementManagerRegistrationEvent event = new AssetEnforcementManagerRegistrationEvent(map);
 		Bus.MOD.bus().get().post(event);
 		if (map != null) {
@@ -49,7 +49,7 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 		}
 	}
 
-	protected static void registerEnforcementManager(ResourceLocation key, AbstractAssetEnforcementManager<?> value) throws IOException {
+	protected static void registerEnforcementManager(ResourceLocation key, AbstractAssetEnforcementManager value) throws IOException {
 		if (key == null) {
 			MHLibMod.LOGGER.error("Can not register asset enforcer with null key!");
 			return;
@@ -77,7 +77,7 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 	
 	public static boolean handleEntry(final SynchDataManagerData entry) {
 		return DistExecutor.safeRunForDist(() -> () -> {
-			AbstractAssetEnforcementManager<?> manager = REGISTERED_MANAGERS.get(entry.manager());
+			AbstractAssetEnforcementManager manager = REGISTERED_MANAGERS.get(entry.manager());
 			if (manager == null) {
 				//TODO: Log
 				return false;
@@ -106,15 +106,11 @@ public abstract class AbstractAssetEnforcementManager<T extends Object> {
 		return this.id;
 	}
 
-	protected abstract void registerAsset(ResourceLocation id, T asset);
-
 	protected abstract Optional<byte[]> encodeData(final ResourceLocation id);
 	
 	protected abstract boolean receiveAndLoad(final ResourceLocation id, final byte[] data);
 	
 	public abstract String getSubDirectoryName();
-	
-	public abstract Optional<T> getAsset(final ResourceLocation id);
 	
 	protected File getSidedDirectory() {
 		return DistExecutor.safeRunForDist(() -> () -> this.syncDirectory, () -> () -> this.directory);

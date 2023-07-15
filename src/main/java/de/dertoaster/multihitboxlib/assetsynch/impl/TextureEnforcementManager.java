@@ -6,12 +6,7 @@ import java.util.Optional;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.resources.ResourceLocation;
 
-public class TextureEnforcementManager extends AbstractAssetEnforcementManager<Object> {
-
-	@Override
-	protected void registerAsset(ResourceLocation id, Object asset) {
-		
-	}
+public class TextureEnforcementManager extends AbstractAssetEnforcementManager {
 
 	@Override
 	protected Optional<byte[]> encodeData(ResourceLocation id) {
@@ -30,11 +25,6 @@ public class TextureEnforcementManager extends AbstractAssetEnforcementManager<O
 	@Override
 	public String getSubDirectoryName() {
 		return "textures";
-	}
-
-	@Override
-	public Optional<Object> getAsset(ResourceLocation id) {
-		return Optional.empty();
 	}
 
 }
