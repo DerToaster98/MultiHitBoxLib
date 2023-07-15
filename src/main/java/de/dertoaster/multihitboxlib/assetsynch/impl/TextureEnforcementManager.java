@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
+import de.dertoaster.multihitboxlib.assetsynch.client.TextureClientLogic;
 import net.minecraft.resources.ResourceLocation;
 
 public class TextureEnforcementManager extends AbstractAssetEnforcementManager {
@@ -19,7 +20,8 @@ public class TextureEnforcementManager extends AbstractAssetEnforcementManager {
 
 	@Override
 	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
-		return true;
+		// Here goes nothing...
+		return TextureClientLogic.receiveAndLoad(this, id, data);
 	}
 
 	@Override
