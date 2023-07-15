@@ -10,7 +10,8 @@ public class GameEventHandler {
 
 	@SubscribeEvent
 	public static void onPlayerJoinServer(PlayerLoggedInEvent event) {
-		
+		// TODO: Collect everything that needs to be synched ONCE, then cache that away=> use lazyloadfield?
+		// After that, create the packet and send it down to the client
 	}
 	
 }
