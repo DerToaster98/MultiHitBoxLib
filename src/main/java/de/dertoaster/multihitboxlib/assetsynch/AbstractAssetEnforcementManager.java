@@ -28,6 +28,7 @@ import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -119,16 +120,17 @@ public abstract class AbstractAssetEnforcementManager {
 	
 	public static boolean handleEntry(final SynchDataManagerData entry) {
 		return DistExecutor.safeRunForDist(() -> () -> {
-			AbstractAssetEnforcementManager manager = REGISTERED_MANAGERS.get(entry.manager());
+			final AbstractAssetEnforcementManager manager = REGISTERED_MANAGERS.get(entry.manager());
 			if (manager == null) {
 				//TODO: Log
 				return false;
 			}
+			final DiskSaveRunner runner = new DiskSaveRunner(manager, true);
 			for (SynchEntryData data : entry.payload()) {
 				final byte[] payload = data.getPayLoadArray();
 				// TODO: Move file-writing to a thread
 				// TODO: When receiving the packet: Delete the contents of the local synch folder, then write to disk!
-				if (manager.writeFile(data.id(), payload)) {
+				if (runner.add(new Tuple<>(data.id(), payload))) {
 					try {
 						final byte[] decompressed = CompressionUtil.decompress(payload, true);
 						final byte[] decoded = Base64.getDecoder().decode(decompressed);
@@ -143,6 +145,11 @@ public abstract class AbstractAssetEnforcementManager {
 					}
 				}
 			}
+			
+			Thread diskAccessThread = new Thread(runner);
+			diskAccessThread.setDaemon(true);
+			diskAccessThread.start();
+			
 			return false;
 		}, () -> () -> false);
 	}
