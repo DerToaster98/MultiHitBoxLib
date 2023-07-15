@@ -79,14 +79,14 @@ public abstract class AbstractAssetEnforcementManager {
 				return false;
 			}
 		}
-		if (!decodeBase64ToFile(destination, data)) {
+		if (!decodeAndWriteToFile(destination, data)) {
 			//TODO: Log and throw exception
 			return false;
 		}
 		return true;
 	}
 	
-	public static byte[] encodeFileToBase64(Path path) {
+	public static byte[] encodeToBytes(Path path) {
 		try {
 			byte[] fileContent = Files.readAllBytes(path);
 			return CompressionUtil.compress(fileContent, Deflater.BEST_COMPRESSION, true);
@@ -96,11 +96,11 @@ public abstract class AbstractAssetEnforcementManager {
 		}
 	}
 
-	public static boolean decodeBase64ToFile(String filePathWithNameAndExtension, byte[] base64) {
-		return decodeBase64ToFile(new File(filePathWithNameAndExtension), base64);
+	public static boolean decodeAndWriteToFile(String filePathWithNameAndExtension, byte[] base64) {
+		return decodeAndWriteToFile(new File(filePathWithNameAndExtension), base64);
 	}
 	
-	public static boolean decodeBase64ToFile(File targetFile, byte[] compressedDearr) {
+	public static boolean decodeAndWriteToFile(File targetFile, byte[] compressedDearr) {
 		if (!targetFile.getParentFile().mkdirs()) {
 			return false;
 		}

@@ -22,7 +22,7 @@ public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 		if (!location.exists() || !location.isFile()) {
 			return Optional.empty();
 		}
-		return Optional.ofNullable(encodeFileToBase64(location.toPath()));
+		return Optional.ofNullable(encodeToBytes(location.toPath()));
 	}
 
 	@Override
