@@ -6,8 +6,11 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 import de.dertoaster.multihitboxlib.MHLibMod;
@@ -15,9 +18,13 @@ import de.dertoaster.multihitboxlib.api.event.server.AssetEnforcementManagerRegi
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataManagerData;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
+import de.dertoaster.multihitboxlib.entity.hitbox.AssetEnforcementConfig;
+import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
+import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
+import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,6 +37,7 @@ import net.minecraftforge.network.PacketDistributor;
 public class AssetEnforcement {
 	
 	private static final Map<ResourceLocation, AbstractAssetEnforcementManager> REGISTERED_MANAGERS = new Object2ObjectArrayMap<>();
+	public static final LazyLoadField<Set<ResourceLocation>> ASSETS_TO_SYNCH = new LazyLoadField<>(AssetEnforcement::collectAssetsToSynch, 600000);
 	
 	public static void init() {
 		final Map<ResourceLocation, AbstractAssetEnforcementManager> map = new Object2ObjectArrayMap<>();
@@ -64,10 +72,9 @@ public class AssetEnforcement {
 	}
 	
 	public static void sendSynchData(final ServerPlayer connection) {
-		final Set<ResourceLocation> assetsToSynch = new HashSet<>();
-		
-		// TODO: Collect everything that needs to be synched ONCE, then cache that away=> use lazyloadfield?
+		// Collect everything that needs to be synched ONCE, then cache that away=> use lazyloadfield?
 		// After that, create the packet and send it down to the client
+		final Set<ResourceLocation> assetsToSynch = ASSETS_TO_SYNCH.get();
 		
 		sendSynchData(connection, assetsToSynch);
 	}
@@ -145,6 +152,27 @@ public class AssetEnforcement {
 		for (SynchDataManagerData entry : payload.payload()) {
 			result &= handleEntry(entry);
 		}
+		return result;
+	}
+	
+	private static final Predicate<ResourceLocation> RS_CHECK_PREDICATE = rs -> !rs.toString().isBlank() && !rs.getNamespace().isBlank() && !rs.getPath().isBlank();
+	
+	public static Set<ResourceLocation> collectAssetsToSynch() {
+		Set<ResourceLocation> result = new HashSet<>();
+		
+		for (HitboxProfile hp : MHLibDatapackLoaders.HITBOX_PROFILES.getData().values()) {
+			if (hp == null) {
+				continue;
+			}
+			AssetEnforcementConfig aec = hp.assetConfig();
+			if (aec == null) {
+				continue;
+			}
+			result.addAll(aec.animations().stream().filter(Objects::nonNull).filter(RS_CHECK_PREDICATE).collect(Collectors.toList()));
+			result.addAll(aec.models().stream().filter(Objects::nonNull).filter(RS_CHECK_PREDICATE).collect(Collectors.toList()));
+			result.addAll(aec.textures().stream().filter(Objects::nonNull).filter(RS_CHECK_PREDICATE).collect(Collectors.toList()));
+		}
+		
 		return result;
 	}
 
