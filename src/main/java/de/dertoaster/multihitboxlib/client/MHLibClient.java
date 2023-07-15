@@ -15,6 +15,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = Constants.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -52,7 +53,7 @@ public class MHLibClient {
 		// Fire part renderer event and collect
 		final Map<Class<? extends MHLibPartEntity<?>>, Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>>> map = new HashMap<>();
 		PartRendererRegistrationEvent registrationEvent = new PartRendererRegistrationEvent(map);
-		MinecraftForge.EVENT_BUS.post(registrationEvent);
+		Bus.MOD.bus().get().post(registrationEvent);
 		if (map != null) {
 			map.entrySet().forEach(entry -> registerEntityPartRenderer(entry.getKey(), entry.getValue()));
 		}
