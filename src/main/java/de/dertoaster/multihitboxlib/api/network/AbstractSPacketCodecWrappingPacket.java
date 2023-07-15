@@ -36,12 +36,12 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 					e.printStackTrace();
 					return null;
 				}
-				bytes = Base64.getDecoder().decode(bytes);
 				JsonElement je = JsonParser.parseString(new String(bytes));
 				DataResult<T> dr = this.codec().parse(JsonOps.INSTANCE, je);
 				return this.createPacket(dr);
 			}
-		}*/
+		}
+		return this.createPacket((T)null);*/
 		T data = buffer.readJsonWithCodec(this.codec());
 		return this.createPacket(data);
 	}
@@ -54,7 +54,6 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 		});
 		if (je != null) {
 			byte[] bytes = je.toString().getBytes();
-			bytes = Base64.getEncoder().encode(bytes);
 			try {
 				bytes = CompressionUtil.compress(bytes, Deflater.BEST_COMPRESSION, true);
 				buffer.writeBoolean(true);
