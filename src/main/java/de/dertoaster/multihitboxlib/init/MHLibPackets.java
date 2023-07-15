@@ -8,10 +8,12 @@ import de.dertoaster.multihitboxlib.api.network.IMessageHandler;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.network.client.SPacketHandlerSetMaster;
 import de.dertoaster.multihitboxlib.network.client.SPacketHandlerUpdateMultipart;
+import de.dertoaster.multihitboxlib.network.client.assetsync.SPacketHandlerSynchAssets;
 import de.dertoaster.multihitboxlib.network.client.datapacksync.SPacketHandlerSyncHitboxProfile;
 import de.dertoaster.multihitboxlib.network.server.CPacketHandlerBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
+import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.network.server.datapacksync.SPacketSyncHitboxProfile;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
@@ -32,6 +34,9 @@ public class MHLibPackets {
 		registerServerToClient(SPacketSyncHitboxProfile.class, SPacketHandlerSyncHitboxProfile.class);
 		registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
 		registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
+		
+		// Asset Synch
+		registerServerToClient(SPacketSynchAssets.class, SPacketHandlerSynchAssets.class);
 	}
 	
 	public static <T extends Object> void send(T packet, PacketTarget target) {
