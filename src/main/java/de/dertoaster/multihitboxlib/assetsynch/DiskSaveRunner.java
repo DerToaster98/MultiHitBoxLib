@@ -9,8 +9,7 @@ import org.apache.commons.io.FileUtils;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class DiskSaveRunner extends HashSet<Tuple<ResourceLocation, byte[]>> implements Runnable, Set<Tuple<ResourceLocation, byte[]>> {
 	
@@ -27,7 +26,7 @@ public class DiskSaveRunner extends HashSet<Tuple<ResourceLocation, byte[]>> imp
 	@Override
 	public void run() {
 		if (this.deleteDirectory) {
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> {
+			if (FMLEnvironment.dist.isClient()) {
 				File dir = this.manager.getSidedDirectory();
 				if (dir != null && dir.exists()) {
 					try {
@@ -37,7 +36,7 @@ public class DiskSaveRunner extends HashSet<Tuple<ResourceLocation, byte[]>> imp
 						e.printStackTrace();
 					}
 				}
-			});
+			}
 		}
 		
 		for(Tuple<ResourceLocation, byte[]> tuple : this) {
