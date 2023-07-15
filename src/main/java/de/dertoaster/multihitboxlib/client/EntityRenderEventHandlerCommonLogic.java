@@ -16,19 +16,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
 
 public abstract class EntityRenderEventHandlerCommonLogic {
 	
 	public static void registerRelevantEventListeners(final IEventBus bus) {
-		if (ModList.get() == null) {
-			throw new NullPointerException("Modlist is null!");
-		}
-		if (ModList.get().isLoaded(Constants.Dependencies.GECKOLIB_MODID)) {
+		if (Constants.Dependencies.isModLoaded(Constants.Dependencies.GECKOLIB_MODID)) {
 			bus.addListener(GeckolibEntityRenderEventHandler::onPostRenderEntity);
 			bus.addListener(GeckolibEntityRenderEventHandler::onPostRenderReplacedEntity);
 		}
-		if (ModList.get().isLoaded(Constants.Dependencies.AZURELIB_MODID)) {
+		if (Constants.Dependencies.isModLoaded(Constants.Dependencies.AZURELIB_MODID)) {
 			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderEntity);
 			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderReplacedEntity);
 		}
