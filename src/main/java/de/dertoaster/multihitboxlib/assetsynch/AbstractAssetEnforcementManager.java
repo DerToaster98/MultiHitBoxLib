@@ -15,10 +15,10 @@ import com.google.common.primitives.Bytes;
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
-import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 
 public abstract class AbstractAssetEnforcementManager {
 
@@ -64,7 +64,8 @@ public abstract class AbstractAssetEnforcementManager {
 		if (FMLLoader.getDist().isDedicatedServer()) {
 			return this.directory;
 		} else {
-			if (ClientOnlyMethods.isCurrentPlayerOwnerIfIntegratedServer()) {
+			// Check for logical server
+			if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER) {
 				return this.directory;
 			}
 			return this.syncDirectory;
@@ -102,6 +103,9 @@ public abstract class AbstractAssetEnforcementManager {
 	}
 	
 	public static boolean decodeBase64ToFile(File targetFile, byte[] compressedDearr) {
+		if (!targetFile.getParentFile().mkdirs()) {
+			return false;
+		}
 		byte[] dearr = new byte[0];
 		try {
 			dearr = CompressionUtil.decompress(compressedDearr, true);
