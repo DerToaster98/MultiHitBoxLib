@@ -203,6 +203,7 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		return this.config.collidable();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public boolean hurt(DamageSource pSource, float pAmount) {
 		if (!this.config.canReceiveDamage()) {

@@ -30,6 +30,7 @@ public abstract class EntityRenderEventHandlerCommonLogic {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected static void performCommonLogic(PoseStack poseStack, EntityRenderer<?> entityRenderer, MultiBufferSource bufferSource, float partialTick, int packedLight, Entity entitybeingRenderer) {
 		if (!(entitybeingRenderer instanceof LivingEntity le)) {
 			return;

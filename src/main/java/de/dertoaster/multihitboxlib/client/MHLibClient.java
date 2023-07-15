@@ -28,6 +28,7 @@ public class MHLibClient {
 		ENTITY_PART_RENDERER_PRODUCERS.put(partClass, rendererFactory);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <R extends EntityRenderer<? extends MHLibPartEntity<?>>, P extends MHLibPartEntity<?>> EntityRenderer<? extends MHLibPartEntity<?>> getRendererFor(MHLibPartEntity<?> cpe, EntityRenderDispatcher entityRenderDispatcher) {
 		return ENTITY_PART_RENDERERS.computeIfAbsent((Class<? extends MHLibPartEntity<?>>) cpe.getClass(), partClass -> {
 			Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>> constructor = null;
