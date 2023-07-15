@@ -141,6 +141,7 @@ public class AssetEnforcement {
 			}
 			
 			Thread diskAccessThread = new Thread(runner);
+			diskAccessThread.setName("MHLib - Asset-Sync writer thread");
 			diskAccessThread.setDaemon(true);
 			diskAccessThread.start();
 			
