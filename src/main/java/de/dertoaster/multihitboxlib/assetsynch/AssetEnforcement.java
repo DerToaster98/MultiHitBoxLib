@@ -84,6 +84,11 @@ public class AssetEnforcement {
 	}
 	
 	public static void sendSynchData(final ServerPlayer connection, final Set<ResourceLocation> assetsToSynch, boolean separatePackets) {
+		if (assetsToSynch.isEmpty()) {
+			// No need to do anything
+			return;
+		}
+		
 		List<SynchDataManagerData> managerData = new ArrayList<>();
 		for (Map.Entry<ResourceLocation, AbstractAssetEnforcementManager> entry : REGISTERED_MANAGERS.entrySet()) {
 			if (entry.getKey() == null || entry.getValue() == null) {
