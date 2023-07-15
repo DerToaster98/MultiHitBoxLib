@@ -126,6 +126,7 @@ public abstract class AbstractAssetEnforcementManager {
 				return false;
 			}
 			final DiskSaveRunner runner = new DiskSaveRunner(manager, true);
+			boolean result = true;
 			for (SynchEntryData data : entry.payload()) {
 				final byte[] payload = data.getPayLoadArray();
 				if (runner.add(new Tuple<>(data.id(), payload))) {
@@ -134,8 +135,8 @@ public abstract class AbstractAssetEnforcementManager {
 						final byte[] decoded = Base64.getDecoder().decode(decompressed);
 						
 						// File saved, now load it, shall we?
-						Boolean result = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> manager.receiveAndLoad(data.id(), decoded));
-						return result != null && result;
+						Boolean resultTmp = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> manager.receiveAndLoad(data.id(), decoded));
+						result &= resultTmp != null && resultTmp;
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (DataFormatException e) {
@@ -148,7 +149,7 @@ public abstract class AbstractAssetEnforcementManager {
 			diskAccessThread.setDaemon(true);
 			diskAccessThread.start();
 			
-			return false;
+			return result;
 		}, () -> () -> false);
 	}
 	
