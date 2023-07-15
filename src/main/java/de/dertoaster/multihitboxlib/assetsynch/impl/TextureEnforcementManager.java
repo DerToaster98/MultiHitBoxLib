@@ -1,6 +1,7 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
@@ -21,7 +22,12 @@ public class TextureEnforcementManager extends AbstractAssetEnforcementManager {
 	@Override
 	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
 		// Here goes nothing...
-		return TextureClientLogic.receiveAndLoad(this, id, data);
+		try {
+			return TextureClientLogic.receiveAndLoad(this, id, data);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
