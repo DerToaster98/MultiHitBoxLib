@@ -5,9 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 
@@ -16,13 +19,18 @@ import com.google.common.primitives.Bytes;
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.event.server.AssetEnforcementManagerRegistrationEvent;
+import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataManagerData;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
+import de.dertoaster.multihitboxlib.init.MHLibPackets;
+import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.network.PacketDistributor;
 
 public abstract class AbstractAssetEnforcementManager {
 
@@ -73,6 +81,39 @@ public abstract class AbstractAssetEnforcementManager {
 			return false;
 		}
 		return true;
+	}
+	
+	public static void sendSynchData(final ServerPlayer connection, final Set<ResourceLocation> assetsToSynch) {
+		sendSynchData(connection, assetsToSynch, false);
+	}
+	
+	public static void sendSynchData(final ServerPlayer connection, final Set<ResourceLocation> assetsToSynch, boolean separatePackets) {
+		List<SynchDataManagerData> managerData = new ArrayList<>();
+		for (Map.Entry<ResourceLocation, AbstractAssetEnforcementManager> entry : REGISTERED_MANAGERS.entrySet()) {
+			if (entry.getKey() == null || entry.getValue() == null) {
+				continue;
+			}
+			List<SynchEntryData> content = new ArrayList<>();
+			for (ResourceLocation id : assetsToSynch) {
+				Optional<SynchEntryData> optSynchData = entry.getValue().createSynchEntry(id);
+				optSynchData.ifPresent(content::add);
+			}
+			if (!content.isEmpty()) {
+				managerData.add(new SynchDataManagerData(entry.getKey(), content));
+				if (separatePackets) {
+					sendPacket(connection, new SynchDataContainer(managerData));
+					managerData.clear();
+				}
+			}
+		}
+		if (!managerData.isEmpty()) {
+			sendPacket(connection, new SynchDataContainer(managerData));
+		}
+	}
+	
+	private static void sendPacket(final ServerPlayer connection, final SynchDataContainer payload) {
+		SPacketSynchAssets packet = new SPacketSynchAssets(payload);
+		MHLibPackets.send(packet, PacketDistributor.PLAYER.with(() -> connection));
 	}
 	
 	public static boolean handleEntry(final SynchDataManagerData entry) {
