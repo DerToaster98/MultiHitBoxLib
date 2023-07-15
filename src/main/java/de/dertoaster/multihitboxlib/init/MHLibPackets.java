@@ -6,10 +6,10 @@ import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.api.network.IMessage;
 import de.dertoaster.multihitboxlib.api.network.IMessageHandler;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
-import de.dertoaster.multihitboxlib.network.client.CPacketHandlerSetMaster;
-import de.dertoaster.multihitboxlib.network.client.CPacketHandlerUpdateMultipart;
-import de.dertoaster.multihitboxlib.network.client.datapacksync.CPacketHandlerSyncHitboxProfile;
-import de.dertoaster.multihitboxlib.network.server.SPacketHandlerBoneInformation;
+import de.dertoaster.multihitboxlib.network.client.SPacketHandlerSetMaster;
+import de.dertoaster.multihitboxlib.network.client.SPacketHandlerUpdateMultipart;
+import de.dertoaster.multihitboxlib.network.client.datapacksync.SPacketHandlerSyncHitboxProfile;
+import de.dertoaster.multihitboxlib.network.server.CPacketHandlerBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.server.datapacksync.SPacketSyncHitboxProfile;
@@ -27,11 +27,11 @@ public class MHLibPackets {
 	private static int messageID = 0;
 
 	public static void init() {
-		registerClientToServer(CPacketBoneInformation.class, SPacketHandlerBoneInformation.class);
+		registerClientToServer(CPacketBoneInformation.class, CPacketHandlerBoneInformation.class);
 		
-		registerServerToClient(SPacketSyncHitboxProfile.class, CPacketHandlerSyncHitboxProfile.class);
-		registerServerToClient(SPacketSetMaster.class, CPacketHandlerSetMaster.class);
-		registerServerToClient(SPacketUpdateMultipart.class, CPacketHandlerUpdateMultipart.class);
+		registerServerToClient(SPacketSyncHitboxProfile.class, SPacketHandlerSyncHitboxProfile.class);
+		registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
+		registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
 	}
 	
 	public static <T extends Object> void send(T packet, PacketTarget target) {

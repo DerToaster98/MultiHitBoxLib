@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.NetworkEvent.Context;
 
-public class CPacketHandlerUpdateMultipart extends AbstractPacketHandler<SPacketUpdateMultipart> {
+public class SPacketHandlerUpdateMultipart extends AbstractPacketHandler<SPacketUpdateMultipart> {
 
 	@Override
 	protected void execHandlePacket(SPacketUpdateMultipart packet, Supplier<Context> context, Level world, Player player) {

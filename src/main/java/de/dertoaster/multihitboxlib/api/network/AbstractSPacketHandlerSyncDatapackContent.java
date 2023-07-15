@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 
-public abstract class AbstractCPacketHandlerSyncDatapackContent<C extends Object, P extends AbstractSPacketSyncDatapackContent<C, ?>> implements IMessageHandler<P> {
+public abstract class AbstractSPacketHandlerSyncDatapackContent<C extends Object, P extends AbstractSPacketSyncDatapackContent<C, ?>> implements IMessageHandler<P> {
 
 	public IMessageHandler<P> cast() {
 		return (IMessageHandler<P>)this;

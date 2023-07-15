@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent.Context;
 
-public class CPacketHandlerSetMaster extends AbstractPacketHandler<SPacketSetMaster> {
+public class SPacketHandlerSetMaster extends AbstractPacketHandler<SPacketSetMaster> {
 
 	@Override
 	protected void execHandlePacket(SPacketSetMaster packet, Supplier<Context> context, Level world, Player player) {
