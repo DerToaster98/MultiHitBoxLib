@@ -5,21 +5,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.event.server.AssetEnforcementManagerRegistrationEvent;
+import de.dertoaster.multihitboxlib.api.event.server.SynchAssetFinderRegistrationEvent;
+import de.dertoaster.multihitboxlib.assetsynch.assetfinders.AbstractAssetFinder;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataManagerData;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
-import de.dertoaster.multihitboxlib.entity.hitbox.AssetEnforcementConfig;
-import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
-import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
@@ -35,9 +31,39 @@ import net.minecraftforge.network.PacketDistributor;
 public class AssetEnforcement {
 	
 	private static final Map<ResourceLocation, AbstractAssetEnforcementManager> REGISTERED_MANAGERS = new Object2ObjectArrayMap<>();
+	private static final Map<ResourceLocation, AbstractAssetFinder> REGISTERED_SYNCH_ASSET_FINDER = new Object2ObjectArrayMap<>();
+	
 	public static final LazyLoadField<Set<ResourceLocation>> ASSETS_TO_SYNCH = new LazyLoadField<>(AssetEnforcement::collectAssetsToSynch, 600000);
 	
 	public static void init() {
+		initializeManagers();
+		initializeAssetFinders();
+	}
+	
+	private static void initializeAssetFinders() {
+		final Map<ResourceLocation, AbstractAssetFinder> map = new Object2ObjectArrayMap<>();
+		SynchAssetFinderRegistrationEvent event = new SynchAssetFinderRegistrationEvent(map);
+		Bus.MOD.bus().get().post(event);
+		if (map != null) {
+			map.entrySet().forEach(entry -> {
+				registerAssetFinder(entry.getKey(), entry.getValue());
+			});
+		}
+	}
+
+	protected static void registerAssetFinder(ResourceLocation key, AbstractAssetFinder value) {
+		if (key == null) {
+			MHLibMod.LOGGER.error("Can not register asset finder with null key!");
+			return;
+		}
+		try {
+			REGISTERED_SYNCH_ASSET_FINDER.put(key, value);
+		} catch (NullPointerException npe) {
+			MHLibMod.LOGGER.error("Asset finder for id <" + key.toString() + "> could NOT be registered!");
+		}
+	}
+
+	private static void initializeManagers() {
 		final Map<ResourceLocation, AbstractAssetEnforcementManager> map = new Object2ObjectArrayMap<>();
 		AssetEnforcementManagerRegistrationEvent event = new AssetEnforcementManagerRegistrationEvent(map);
 		Bus.MOD.bus().get().post(event);
@@ -158,22 +184,16 @@ public class AssetEnforcement {
 		return result;
 	}
 	
-	private static final Predicate<ResourceLocation> RS_CHECK_PREDICATE = rs -> !rs.toString().isBlank() && !rs.getNamespace().isBlank() && !rs.getPath().isBlank();
-	
 	public static Set<ResourceLocation> collectAssetsToSynch() {
 		Set<ResourceLocation> result = new HashSet<>();
 		
-		for (HitboxProfile hp : MHLibDatapackLoaders.HITBOX_PROFILES.getData().values()) {
-			if (hp == null) {
+		for(AbstractAssetFinder finder : REGISTERED_SYNCH_ASSET_FINDER.values()) {
+			Set<ResourceLocation> supplied = finder.get();
+			if (supplied == null || supplied.isEmpty()) {
+				MHLibMod.LOGGER.warn("Asset finder with id <" + finder.getId() + "> returned null or an empty set! Skipping...");
 				continue;
 			}
-			AssetEnforcementConfig aec = hp.assetConfig();
-			if (aec == null) {
-				continue;
-			}
-			result.addAll(aec.animations().stream().filter(Objects::nonNull).filter(RS_CHECK_PREDICATE).collect(Collectors.toList()));
-			result.addAll(aec.models().stream().filter(Objects::nonNull).filter(RS_CHECK_PREDICATE).collect(Collectors.toList()));
-			result.addAll(aec.textures().stream().filter(Objects::nonNull).filter(RS_CHECK_PREDICATE).collect(Collectors.toList()));
+			result.addAll(supplied);
 		}
 		
 		return result;
