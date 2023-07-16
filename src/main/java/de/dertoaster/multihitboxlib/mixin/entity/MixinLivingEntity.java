@@ -20,10 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import de.dertoaster.multihitboxlib.api.IModifiableMultipartEntity;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
-import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
-import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
+import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation.Builder;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
@@ -41,9 +40,6 @@ import net.minecraftforge.network.PacketDistributor;
 public abstract class MixinLivingEntity extends Entity implements IMultipartEntity<LivingEntity> {
 
 	@Unique
-	private Optional<HitboxProfile> HITBOX_PROFILE;
-
-	@Unique
 	protected Map<String, MHLibPartEntity<LivingEntity>> partMap = new HashMap<>();
 	@Unique
 	protected Map<String, BoneInformation> syncDataMap = new HashMap<>();
@@ -59,6 +55,16 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Unique
 	private int _mhlibTicksSinceLastSync = 0;
 	
+	@Override
+	public int getTicksSinceLastSync() {
+		return this._mhlibTicksSinceLastSync;
+	}
+
+	@Override
+	public Queue<UUID> getTrackerQueue() {
+		return this.trackerQueue;
+	}
+	
 	@Unique
 	@Nullable
 	private UUID masterUUID = null;
@@ -73,18 +79,18 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			)
 	private void mixinConstructor(CallbackInfo ci) {
 		// Load base profile
-		this.HITBOX_PROFILE = MHLibDatapackLoaders.getHitboxProfile(this.getType());
+		// this.HITBOX_PROFILE = MHLibDatapackLoaders.getHitboxProfile(this.getType());
 		
-		if(!this.HITBOX_PROFILE.isPresent()) {
+		if(!this.getHitboxProfile().isPresent()) {
 			return;
 		}
 		
 		// Initialize map and array
-		int partCount = this.HITBOX_PROFILE.isPresent() ? this.HITBOX_PROFILE.get().partConfigs().size() : 0;
+		int partCount = this.getHitboxProfile().isPresent() ? this.getHitboxProfile().get().partConfigs().size() : 0;
 		this.partMap = new Object2ObjectArrayMap<>(partCount);
 		this.partArray = new PartEntity<?>[partCount];
 		
-		if(this.HITBOX_PROFILE.isPresent()) {
+		if(this.getHitboxProfile().isPresent()) {
 			// At last, create the parts themselves
 			final BiConsumer<String, MHLibPartEntity<LivingEntity>> storageFunction = (str, part) -> {
 				int id = 0;
@@ -94,7 +100,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				this.partArray[id] = part;
 				this.partMap.put(str, part);
 			};
-			this.createSubPartsFromProfile(this.HITBOX_PROFILE.get(), (LivingEntity)((Object)this), storageFunction);
+			this.createSubPartsFromProfile(this.getHitboxProfile().get(), (LivingEntity)((Object)this), storageFunction);
 		}
 
 		if (this.isMultipartEntity() && this.getParts() != null) {
@@ -178,9 +184,9 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		final double entityScale = this.mhlibGetEntitySizeScale((LivingEntity)(Object)this);
 		
 		// Now, handle synched parts
-		if (this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel()) {
+		if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel()) {
 			// Evaluate model data
-			for (String syncedBone : this.HITBOX_PROFILE.get().synchedBones()) {
+			for (String syncedBone : this.getHitboxProfile().get().synchedBones()) {
 				//System.out.println("Synching bone: " + syncedBone);
 				Optional<MHLibPartEntity<LivingEntity>> optPart = this.getPartByName(syncedBone);
 				if (optPart.isEmpty()) {
@@ -230,53 +236,13 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		this.tickParts((LivingEntity)(Object)this, this.partMap.values());
 		
-		if (this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel()) {
-			this.handleGlibSynching();
+		if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel()) {
+			this.alignSynchedSubParts(this);
 		}
 		
 		this._mhlibTicksSinceLastSync++;
 	}
 	
-	@Unique
-	protected void handleGlibSynching() {
-		if (!this.level().isClientSide()) {
-			// If you already have a master, let's check them...
-			// If there was no packet for quite some time => elect a new master
-			// System.out.println("Checking master answer time...");
-			if (this.getMasterUUID() != null && this._mhlibTicksSinceLastSync >= 10) {
-				// System.out.println("Master found and too long answer time!");
-				if (this.trackerQueue.contains(this.getMasterUUID())) {
-					this.trackerQueue.remove(this.getMasterUUID());
-				}
-				this.trackerQueue.add(this.getMasterUUID());
-				this.setMasterUUID(null);
-				// System.out.println("Master was reset!");
-			}
-			
-			// If you don't have a master anyway, elect a new one
-			if (this.getMasterUUID() == null) {
-				// System.out.println("Setting new master...");
-				if (!this.trackerQueue.isEmpty()) {
-					this.setMasterUUID(this.trackerQueue.poll());
-				}
-			}
-		}
-		else {
-			// System.out.println("Beginning bone information collection...");
-			if (this.boneInformationBuilder.isPresent()) {
-				// Send packet
-				// System.out.println("Sending bone information...");
-				CPacketBoneInformation packet = this.boneInformationBuilder.get().build();
-				packet.send();
-				this.boneInformationBuilder = Optional.empty();
-			} else {
-				// System.out.println("creating new packet");
-				CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(this);
-				this.boneInformationBuilder = Optional.of(builder);
-			}
-		}
-	}
-
 	@Override
 	public void setMasterUUID(UUID id) {
 		if (this.level().isClientSide()) {
@@ -305,10 +271,10 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (myMaster == null || !myMaster.equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
 			return false;
 		}
-		if (this.HITBOX_PROFILE.isEmpty()) {
+		if (this.getHitboxProfile().isEmpty()) {
 			return false;
 		}
-		if (this.HITBOX_PROFILE.isPresent() && !this.HITBOX_PROFILE.get().syncToModel()) {
+		if (this.getHitboxProfile().isPresent() && !this.getHitboxProfile().get().syncToModel()) {
 			return false;
 		}
 		if (this.boneInformationBuilder.isEmpty()) {
@@ -325,13 +291,13 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 		
 		// Now, if we have the freedom ... directly apply the information...
-		if (this.HITBOX_PROFILE.get().trustClient()) {
+		if (this.getHitboxProfile().get().trustClient()) {
 			Optional<MHLibPartEntity<LivingEntity>> optPart = this.getPartByName(boneName);
 			if (optPart.isPresent() && optPart.get().isSynched()) {
 				final double distance = Math.abs(optPart.get().position().distanceToSqr(position));
 				if (distance <= optPart.get().getConfig().maxDeviationFromServer()) {
 					// You may
-					optPart.get().setPositionAndRotationDirect(position.x(), position.y(), position.z(), (float)rotation.y(), (float)rotation.x(), this.HITBOX_PROFILE.get().synchedPartUpdateSteps());
+					optPart.get().setPositionAndRotationDirect(position.x(), position.y(), position.z(), (float)rotation.y(), (float)rotation.x(), this.getHitboxProfile().get().synchedPartUpdateSteps());
 				}
 			}
 		}
@@ -381,7 +347,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		if (this instanceof IModifiableMultipartEntity<?> imme) {
 			return imme.syncWithModel();
 		}
-		return this.HITBOX_PROFILE.isPresent() && this.HITBOX_PROFILE.get().syncToModel();
+		return this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel();
 	}
 
 	// Before the constructor gets called => intercept the entityType and modify it's "size" argument to use the mainHitboxSize
@@ -434,23 +400,30 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		return this.getYRot();
 	}
 	
-	@Override
-	public Optional<HitboxProfile> getHitboxProfile() {
-		if (this.HITBOX_PROFILE == null) {
-			return MHLibDatapackLoaders.getHitboxProfile(this.getType());
-		}
-		return this.HITBOX_PROFILE;
-	}
-	
 	@Inject(
 			method = "isPickable()Z",
 			at = @At("RETURN"),
 			cancellable = true
 	)
 	private void mixinIsPickable(CallbackInfoReturnable<Boolean> cir) {
-		if(this.HITBOX_PROFILE != null && this.HITBOX_PROFILE.isPresent()) {
-			cir.setReturnValue(cir.getReturnValue() && this.HITBOX_PROFILE.get().mainHitboxConfig().canReceiveDamage());
+		if(this.getHitboxProfile() != null && this.getHitboxProfile().isPresent()) {
+			cir.setReturnValue(cir.getReturnValue() && this.getHitboxProfile().get().mainHitboxConfig().canReceiveDamage());
 		}
 	}
 
+	@Override
+	public Optional<Builder> getBoneInfoBuilder() {
+		return this.boneInformationBuilder;
+	}
+	
+	@Override
+	public void clearBoneInfoBuilder() {
+		this.boneInformationBuilder = Optional.empty();
+	}
+	
+	@Override
+	public void setBoneInfoBuilderContent(Builder builder) {
+		this.boneInformationBuilder = Optional.ofNullable(builder);
+	}
+	
 }

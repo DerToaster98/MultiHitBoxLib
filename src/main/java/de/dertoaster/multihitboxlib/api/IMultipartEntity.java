@@ -3,6 +3,7 @@ package de.dertoaster.multihitboxlib.api;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -11,12 +12,15 @@ import javax.annotation.Nullable;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
+import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
+import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 
@@ -58,6 +62,13 @@ public interface IMultipartEntity<T extends Entity> {
 	}
 	
 	public Optional<MHLibPartEntity<T>> getPartByName(final String name);  
+	
+	public Queue<UUID> getTrackerQueue();
+	public int getTicksSinceLastSync();
+	
+	public Optional<CPacketBoneInformation.Builder> getBoneInfoBuilder();
+	public void clearBoneInfoBuilder();
+	public void setBoneInfoBuilderContent(CPacketBoneInformation.Builder builder);
 
 	public default void alignSubParts(T entity, final Collection<MHLibPartEntity<T>> parts) {
 		final double curX = entity.getX();
@@ -82,6 +93,45 @@ public interface IMultipartEntity<T extends Entity> {
 			partOffset = partOffset.scale(entityScale);
 			
 			part.setPos(partOffset.add(curX, curY, curZ));
+		}
+	}
+	
+	public default <E extends Entity & IMultipartEntity<?>> void alignSynchedSubParts(E entity) {
+		if (!entity.level().isClientSide()) {
+			// If you already have a master, let's check them...
+			// If there was no packet for quite some time => elect a new master
+			// System.out.println("Checking master answer time...");
+			if (this.getMasterUUID() != null && this.getTicksSinceLastSync() >= 10) {
+				// System.out.println("Master found and too long answer time!");
+				if (this.getTrackerQueue().contains(this.getMasterUUID())) {
+					this.getTrackerQueue().remove(this.getMasterUUID());
+				}
+				this.getTrackerQueue().add(this.getMasterUUID());
+				this.setMasterUUID(null);
+				// System.out.println("Master was reset!");
+			}
+			
+			// If you don't have a master anyway, elect a new one
+			if (this.getMasterUUID() == null) {
+				// System.out.println("Setting new master...");
+				if (!this.getTrackerQueue().isEmpty()) {
+					this.setMasterUUID(this.getTrackerQueue().poll());
+				}
+			}
+		}
+		else {
+			// System.out.println("Beginning bone information collection...");
+			if (this.getBoneInfoBuilder().isPresent()) {
+				// Send packet
+				// System.out.println("Sending bone information...");
+				CPacketBoneInformation packet = this.getBoneInfoBuilder().get().build();
+				packet.send();
+				this.clearBoneInfoBuilder();
+			} else {
+				// System.out.println("creating new packet");
+				CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(entity);
+				this.setBoneInfoBuilderContent(builder);
+			}
 		}
 	}
 	
@@ -112,7 +162,13 @@ public interface IMultipartEntity<T extends Entity> {
 		return 0;
 	}
 	
-	public Optional<HitboxProfile> getHitboxProfile();
+	public default Optional<HitboxProfile> getHitboxProfile() {
+		if (this instanceof Entity ent) {
+			EntityType<?> type = ent.getType();
+			return MHLibDatapackLoaders.getHitboxProfile(type);
+		}
+		return Optional.empty();
+	}
 	
 	public boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling, Vec3 rotation);
 	
