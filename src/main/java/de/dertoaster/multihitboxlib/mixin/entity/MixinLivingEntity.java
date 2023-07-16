@@ -221,6 +221,8 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 				part.setHidden(bi.hidden());
 			}
 			this.syncDataMap.clear();
+			
+			this.alignSynchedSubParts(this);
 		}
 	}
 	
@@ -235,10 +237,6 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		}
 		
 		this.tickParts((LivingEntity)(Object)this, this.partMap.values());
-		
-		if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel()) {
-			this.alignSynchedSubParts(this);
-		}
 		
 		this._mhlibTicksSinceLastSync++;
 	}
