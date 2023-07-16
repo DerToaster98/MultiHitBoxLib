@@ -81,4 +81,8 @@ public class MHLibMod {
 		return new ResourceLocation(Constants.MODID, "asset_manager/" + string);
 	}
 
+	public static ResourceLocation prefixAssetFinder(String string) {
+		return new ResourceLocation(Constants.MODID, "asset_finder/" + string);
+	}
+
 }

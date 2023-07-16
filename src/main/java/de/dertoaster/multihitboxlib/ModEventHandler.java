@@ -1,6 +1,8 @@
 package de.dertoaster.multihitboxlib;
 
 import de.dertoaster.multihitboxlib.api.event.server.AssetEnforcementManagerRegistrationEvent;
+import de.dertoaster.multihitboxlib.api.event.server.SynchAssetFinderRegistrationEvent;
+import de.dertoaster.multihitboxlib.assetsynch.assetfinders.HitboxProfileAssetFinder;
 import de.dertoaster.multihitboxlib.assetsynch.impl.AlibAnimationEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.impl.AlibModelEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.impl.GlibAnimationEnforcementManager;
@@ -37,6 +39,11 @@ public class ModEventHandler {
 				
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public static void onAssetFinderRegistration(SynchAssetFinderRegistrationEvent event) {
+		if (!event.tryAdd(MHLibMod.prefixAssetFinder("hitbox_profile"), new HitboxProfileAssetFinder()));
 	}
 	
 }
