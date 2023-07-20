@@ -21,6 +21,7 @@ public class Constants {
 	});
 	public static final File MHLIB_SYNC_DIR = new File(MHLIB_CONFIG_DIR.get(), "_sync");
 	public static final File MHLIB_ASSET_DIR = new File(MHLIB_CONFIG_DIR.get(), "assetsynch");
+	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = MODID + ".disable_examples";
 	
 	public static class Dependencies {
 		public static String GECKOLIB_MODID = "geckolib";
