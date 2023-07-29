@@ -12,68 +12,46 @@
 	"trust-client": true,
 	"synched-part-update-steps": 1,
 	"synched-bones": [
-		"neck",
-		"Eibow_Left",
-		"Eibow_Right",
-		"kneeleft",
-		"kneeright",
-		"Tail1",
-		"Tail2",
-		"Tail_3"
+		"hbLeftLeg",
+		"hbLeftKnee"
 	],
 	"main-hitbox": {
-		"collidable": true,
+		"collidable": false,
 		"canReceiveDamage": false,
 		"size": [
-			1.0,
-			2.0
+			7,
+			5.5
 		]
 	},
 	"parts": [
 		{
-			"name": "feet",
+			"name": "hbLeftKnee",
 			"collidable": true,
 			"can-receive-damage": true,
 			"damage-modifier": 0.5,
 			"size": [
-				0.75,
-				0.5
+				1,
+				2
 			],
 			"position": [
+				-1,
 				0,
-				0,
-				0
+				1.5
 			]
 		},
 		{
-			"name": "body",
+			"name": "hbLeftLeg",
 			"collidable": true,
 			"can-receive-damage": true,
-			"damage-modifier": 1.0,
+			"damage-modifier": 0.5,
 			"size": [
-				0.5,
-				0.75
+				1.25,
+				2
 			],
 			"position": [
-				0,
-				0.5,
-				0
-			]
-		},
-		{
-			"name": "head",
-			"collidable": true,
-			"can-receive-damage": true,
-			"max-deviation-from-server": 9.0,
-			"damage-modifier": 2.0,
-			"size": [
-				0.6,
-				0.6
-			],
-			"position": [
-				0,
-				1.2,
-				0
+				-1,
+				2.1,
+				1.25
 			]
 		}
 	]
