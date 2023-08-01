@@ -18,7 +18,7 @@ public class AlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 
 	@Override
 	protected Optional<byte[]> encodeData(ResourceLocation id) {
-		File location = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
+		File location = this.getFileForId(id);
 		if (!location.exists() || !location.isFile()) {
 			return Optional.empty();
 		}
@@ -26,7 +26,7 @@ public class AlibAnimationEnforcementManager extends AbstractAssetEnforcementMan
 	}
 
 	@Override
-	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
+	protected boolean receiveAndLoadInternally(ResourceLocation id, byte[] data) {
 		if (AzureLibCache.getBakedAnimations().containsKey(id))
 			MHLibMod.LOGGER.debug("Overriding azurelib animation with id <" + id.toString() + ">");
 		

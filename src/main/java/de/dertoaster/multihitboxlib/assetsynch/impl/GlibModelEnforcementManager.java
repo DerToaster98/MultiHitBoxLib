@@ -22,7 +22,7 @@ public class GlibModelEnforcementManager extends AbstractAssetEnforcementManager
 
 	@Override
 	protected Optional<byte[]> encodeData(ResourceLocation id) {
-		File location = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
+		File location = this.getFileForId(id);
 		if (!location.exists() || !location.isFile()) {
 			return Optional.empty();
 		}
@@ -30,7 +30,7 @@ public class GlibModelEnforcementManager extends AbstractAssetEnforcementManager
 	}
 
 	@Override
-	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
+	protected boolean receiveAndLoadInternally(ResourceLocation id, byte[] data) {
 		if (GeckoLibCache.getBakedModels().containsKey(id))
 			MHLibMod.LOGGER.debug("Overriding geckolib model with id <" + id.toString() + ">");
 		

@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 
@@ -24,16 +26,29 @@ public abstract class AbstractAssetEnforcementManager {
 	private final File directory = new File(Constants.MHLIB_ASSET_DIR, this.getSubDirectoryName());
 	private final File syncDirectory = new File(Constants.MHLIB_SYNC_DIR, this.getSubDirectoryName());
 	
+	private final Set<ResourceLocation> CURRENTLY_ENFORCED_ASSETS = new HashSet<>();
+	
 	private ResourceLocation id = null; 
 	
 	protected abstract Optional<byte[]> encodeData(final ResourceLocation id);
-	protected abstract boolean receiveAndLoad(final ResourceLocation id, final byte[] data);
+	protected abstract boolean receiveAndLoadInternally(final ResourceLocation id, final byte[] data);
 	public abstract String getSubDirectoryName();
+	
+	protected final boolean receiveAndLoad(final ResourceLocation id, final byte[] data) {
+		if (!this.CURRENTLY_ENFORCED_ASSETS.add(id)) {
+			MHLibMod.LOGGER.warn("Asset with id <{}> is already loaded for enforcement manager <{}>!", id, this.getId());
+		}
+		return this.receiveAndLoadInternally(id, data);
+	}
 	
 	void setId(final ResourceLocation id) {
 		if (this.id == null) {
 			this.id = id;
 		}
+	}
+	
+	final void clearEnforcedAssetList() {
+		this.CURRENTLY_ENFORCED_ASSETS.clear();
 	}
 
 	protected boolean initDirectories() {
@@ -70,9 +85,47 @@ public abstract class AbstractAssetEnforcementManager {
 			return this.syncDirectory;
 		}
 	}
+	
+	public void reloadAll() {
+		for (ResourceLocation id : this.CURRENTLY_ENFORCED_ASSETS) {
+			File dataFile = this.getFileForId(id);
+			if (dataFile == null) {
+				continue;
+			}
+			if (!dataFile.exists()) {
+				// TODO: Log
+				continue;
+			}
+			if (!dataFile.isFile()) {
+				// TODO: Log
+				continue;
+			}
+			
+			try {
+				final byte[] bytes = Files.readAllBytes(dataFile.toPath());
+				
+				// now, load it
+				if (!this.receiveAndLoadInternally(id, bytes)) {
+					// TODO: Log
+				}
+			} catch (IOException e) {
+				// TODO: Log
+				e.printStackTrace();
+				continue;
+			}
+		}
+	}
+	
+	protected File getFileForId(final ResourceLocation id) {
+		if (id == null) {
+			return this.getSidedDirectory();
+		}
+		final File destination = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
+		return destination;
+	}
 
 	protected boolean writeFile(final ResourceLocation id, final byte[] data) {
-		final File destination = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
+		final File destination = this.getFileForId(id);
 		if (destination.exists() || destination.isDirectory()) {
 			if (!destination.delete()) {
 				//TODO: Throw exception and log
