@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.zip.DataFormatException;
 
 import de.dertoaster.multihitboxlib.MHLibMod;
@@ -23,7 +25,10 @@ import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.PacketDistributor;
@@ -197,6 +202,19 @@ public class AssetEnforcement {
 		}
 		
 		return result;
+	}
+	
+	public static final CompletableFuture<Void> onReload(PreparationBarrier stage, ResourceManager resourceManager,
+			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
+			Executor gameExecutor
+	) {
+		CompletableFuture<?>[] cfs = new CompletableFuture[REGISTERED_MANAGERS.values().size()];
+		int i = 0;
+		for (AbstractAssetEnforcementManager manager : REGISTERED_MANAGERS.values()) {
+			cfs[i] = CompletableFuture.runAsync(() -> manager.reloadAll());
+			i++;
+		}
+		return CompletableFuture.allOf(cfs);
 	}
 
 }
