@@ -41,7 +41,7 @@ public abstract class AbstractAssetEnforcementManager {
 		return this.receiveAndLoadInternally(id, data);
 	}
 	
-	void setId(final ResourceLocation id) {
+	final void setId(final ResourceLocation id) {
 		if (this.id == null) {
 			this.id = id;
 		}
