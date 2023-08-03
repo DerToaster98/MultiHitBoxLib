@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.primitives.Bytes;
 
 import de.dertoaster.multihitboxlib.Constants;
@@ -23,8 +25,8 @@ import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 
 public abstract class AbstractAssetEnforcementManager {
 
-	private final File directory = new File(Constants.MHLIB_ASSET_DIR, this.getSubDirectoryName());
-	private final File syncDirectory = new File(Constants.MHLIB_SYNC_DIR, this.getSubDirectoryName());
+	private final File directory = this.createServerDirectory();
+	private final File syncDirectory = this.createSynchDirectory();
 	
 	private final Set<ResourceLocation> CURRENTLY_ENFORCED_ASSETS = new HashSet<>();
 	
@@ -50,6 +52,12 @@ public abstract class AbstractAssetEnforcementManager {
 	final void clearEnforcedAssetList() {
 		this.CURRENTLY_ENFORCED_ASSETS.clear();
 	}
+	
+	@Nonnull
+	protected abstract File createServerDirectory();
+	
+	@Nonnull
+	protected abstract File createSynchDirectory();
 
 	protected boolean initDirectories() {
 		try {
