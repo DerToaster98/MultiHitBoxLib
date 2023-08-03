@@ -77,7 +77,7 @@ public class MHLibClient {
 		}
 
 		if (!(mc.getResourceManager() instanceof ReloadableResourceManager resourceManager))
-			throw new RuntimeException("GeckoLib was initialized too early!");
+			throw new RuntimeException("MHLib was initialized too early!");
 
 		PreparableReloadListener prl = AssetEnforcement::onReload;
 		

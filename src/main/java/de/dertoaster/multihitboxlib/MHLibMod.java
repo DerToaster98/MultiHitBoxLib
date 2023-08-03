@@ -32,6 +32,7 @@ public class MHLibMod {
 
 	public MHLibMod() {
 		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> MHLibClient::registerReloadListener);
+		
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		// Register the commonSetup method for modloading

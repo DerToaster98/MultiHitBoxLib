@@ -28,6 +28,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -35,7 +36,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class AssetEnforcement {
 	
-	private static final Map<ResourceLocation, AbstractAssetEnforcementManager> REGISTERED_MANAGERS = new Object2ObjectArrayMap<>();
+	private static volatile Map<ResourceLocation, AbstractAssetEnforcementManager> REGISTERED_MANAGERS = new Object2ObjectArrayMap<>();
 	private static final Map<ResourceLocation, AbstractAssetFinder> REGISTERED_SYNCH_ASSET_FINDER = new Object2ObjectArrayMap<>();
 	
 	public static final LazyLoadField<Set<ResourceLocation>> ASSETS_TO_SYNCH = new LazyLoadField<>(AssetEnforcement::collectAssetsToSynch, 600000);
@@ -186,6 +187,7 @@ public class AssetEnforcement {
 		for (SynchDataManagerData entry : payload.payload()) {
 			result &= handleEntry(entry);
 		}
+		
 		return result;
 	}
 	
@@ -208,13 +210,9 @@ public class AssetEnforcement {
 			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
 			Executor gameExecutor
 	) {
-		CompletableFuture<?>[] cfs = new CompletableFuture[REGISTERED_MANAGERS.values().size()];
-		int i = 0;
-		for (AbstractAssetEnforcementManager manager : REGISTERED_MANAGERS.values()) {
-			cfs[i] = CompletableFuture.runAsync(() -> manager.reloadAll());
-			i++;
-		}
-		return CompletableFuture.allOf(cfs);
+		return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
+			REGISTERED_MANAGERS.values().forEach(m -> m.reloadAll());
+		});
 	}
 
 }
