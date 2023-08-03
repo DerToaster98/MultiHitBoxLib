@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 
 import com.google.common.primitives.Bytes;
 
-import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
