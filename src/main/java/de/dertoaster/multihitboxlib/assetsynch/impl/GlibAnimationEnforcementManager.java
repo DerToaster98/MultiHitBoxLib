@@ -1,32 +1,21 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
-import java.io.File;
 import java.util.Optional;
 
 import com.google.gson.JsonObject;
 
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
-import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.JsonUtil;
 
-public class GlibAnimationEnforcementManager extends AbstractAssetEnforcementManager {
+public class GlibAnimationEnforcementManager extends MHLibEnforcementManager {
 
 	@Override
-	protected Optional<byte[]> encodeData(ResourceLocation id) {
-		File location = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
-		if (!location.exists() || !location.isFile()) {
-			return Optional.empty();
-		}
-		return Optional.ofNullable(encodeFileToBase64(location.toPath()));
-	}
-
-	@Override
-	protected boolean receiveAndLoad(ResourceLocation id, byte[] data) {
+	protected boolean receiveAndLoadInternally(ResourceLocation id, byte[] data) {
 		if (GeckoLibCache.getBakedAnimations().containsKey(id))
 			MHLibMod.LOGGER.debug("Overriding geckolib animation with id <" + id.toString() + ">");
 		

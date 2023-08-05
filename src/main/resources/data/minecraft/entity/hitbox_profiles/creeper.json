@@ -5,12 +5,14 @@
 		"animations": [
 		],
 		"textures": [
+			"geckolib:textures/entity/creeper.png"
 		]
 	},
 	"sync-with-model": true,
 	"part-update-steps": 3,
 	"trust-client": true,
 	"synched-part-update-steps": 1,
+	"_comment": "The hitbox will synch to the specified bone's pivot point. At best create a modified model with empty bones for the hitboxes and let that be enforced",
 	"synched-bones": [
 		"head"
 	],

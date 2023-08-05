@@ -8,16 +8,22 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
+import de.dertoaster.multihitboxlib.client.MHLibClient;
+import de.dertoaster.multihitboxlib.example.init.MHLibExampleEntities;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import software.bernie.example.GeckoLibMod;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Constants.MODID)
@@ -25,6 +31,8 @@ public class MHLibMod {
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public MHLibMod() {
+		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> MHLibClient::registerReloadListener);
+		
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		// Register the commonSetup method for modloading
@@ -37,6 +45,10 @@ public class MHLibMod {
 		initializeConfigDirectories();
 		
 		MHLibDatapackLoaders.init();
+		
+		if (shouldRegisterExamples()) {
+			MHLibExampleEntities.registerEntityTypes();
+		}
 	}
 
 	private static void initializeConfigDirectories() {
@@ -78,7 +90,27 @@ public class MHLibMod {
 	}
 
 	public static ResourceLocation prefixAssesEnforcementManager(String string) {
-		return new ResourceLocation(Constants.MODID, "asset_manager/" + string);
+		return prefix("asset_manager/" + string);
+	}
+
+	public static ResourceLocation prefixAssetFinder(String string) {
+		return prefix("asset_finder/" + string);
+	}
+
+	public static ResourceLocation prefix(String path) {
+		return new ResourceLocation(Constants.MODID, path);
+	}
+	
+	/**
+	 * By default, GeckoLib will register and activate several example entities,
+	 * items, and blocks when in dev.<br>
+	 * These examples are <u>not</u> present when in a production environment
+	 * (normal players).<br>
+	 * This can be disabled by setting the
+	 * {@link GeckoLibMod#DISABLE_EXAMPLES_PROPERTY_KEY} to false in your run args
+	 */
+	public static boolean shouldRegisterExamples() {
+		return !FMLEnvironment.production && !Boolean.getBoolean(Constants.DISABLE_EXAMPLES_PROPERTY_KEY);
 	}
 
 }

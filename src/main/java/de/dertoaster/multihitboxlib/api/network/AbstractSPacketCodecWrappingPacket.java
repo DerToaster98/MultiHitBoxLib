@@ -1,8 +1,16 @@
 package de.dertoaster.multihitboxlib.api.network;
 
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 
+import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import net.minecraft.network.FriendlyByteBuf;
 
 public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMessage<P> {
@@ -24,7 +32,7 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 	@Override
 	public P fromBytes(FriendlyByteBuf buffer) {
 		// Crashes the client for some odd reason
-		/*if (buffer.readBoolean()) {
+		if (buffer.readBoolean()) {
 			byte[] bytes = buffer.readByteArray();
 			if (bytes.length > 0) {
 				try {
@@ -36,25 +44,24 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 					e.printStackTrace();
 					return null;
 				}
-				bytes = Base64.getDecoder().decode(bytes);
 				JsonElement je = JsonParser.parseString(new String(bytes));
-				DataResult<T> dr = this.codec().parse(JsonOps.INSTANCE, je);
+				DataResult<T> dr = this.codec().parse(JsonOps.COMPRESSED, je);
 				return this.createPacket(dr);
 			}
-		}*/
-		T data = buffer.readJsonWithCodec(this.codec());
-		return this.createPacket(data);
+		}
+		return this.createPacket((T)null);
+		//T data = buffer.readJsonWithCodec(this.codec());
+		//return this.createPacket(data);
 	}
 
 	@Override
 	public void toBytes(P packet, FriendlyByteBuf buffer) {
-		/*DataResult<JsonElement> dr = packet.codec().encodeStart(JsonOps.COMPRESSED, packet.data);
+		DataResult<JsonElement> dr = packet.codec().encodeStart(JsonOps.COMPRESSED, packet.data);
 		JsonElement je = dr.getOrThrow(false, (s) -> {
 			
 		});
 		if (je != null) {
 			byte[] bytes = je.toString().getBytes();
-			bytes = Base64.getEncoder().encode(bytes);
 			try {
 				bytes = CompressionUtil.compress(bytes, Deflater.BEST_COMPRESSION, true);
 				buffer.writeBoolean(true);
@@ -65,8 +72,8 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 			}
 		} else {
 			buffer.writeBoolean(false);
-		}*/
-		buffer.writeJsonWithCodec(this.codec(), packet.getData());
+		}
+		//buffer.writeJsonWithCodec(this.codec(), packet.getData());
 	}
 	
 	public T getData() {

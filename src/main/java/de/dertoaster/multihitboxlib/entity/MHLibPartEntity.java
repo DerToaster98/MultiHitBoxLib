@@ -52,7 +52,6 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		return this.config;
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements) {
 		interpTargetX = x;
 		interpTargetY = y;
