@@ -23,6 +23,7 @@ import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
@@ -44,6 +45,12 @@ public class AssetEnforcement {
 	public static void init() {
 		initializeManagers();
 		initializeAssetFinders();
+	}
+	
+	public static Set<AbstractAssetEnforcementManager> getRegisteredManagers() {
+		Set<AbstractAssetEnforcementManager> result = new HashSet<>();
+		REGISTERED_MANAGERS.values().forEach(result::add);
+		return result;
 	}
 	
 	private static void initializeAssetFinders() {
@@ -188,6 +195,8 @@ public class AssetEnforcement {
 			result &= handleEntry(entry);
 		}
 		
+		Minecraft.getInstance().reloadResourcePacks();
+		
 		return result;
 	}
 	
@@ -206,13 +215,4 @@ public class AssetEnforcement {
 		return result;
 	}
 	
-	public static final CompletableFuture<Void> onReload(PreparationBarrier stage, ResourceManager resourceManager,
-			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
-			Executor gameExecutor
-	) {
-		return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
-			REGISTERED_MANAGERS.values().forEach(m -> m.reloadAll());
-		});
-	}
-
 }
