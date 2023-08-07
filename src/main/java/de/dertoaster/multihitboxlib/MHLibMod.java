@@ -8,17 +8,13 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
-import de.dertoaster.multihitboxlib.client.MHLibClient;
-import de.dertoaster.multihitboxlib.example.init.MHLibExampleEntities;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -31,8 +27,6 @@ public class MHLibMod {
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public MHLibMod() {
-		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> MHLibClient::registerReloadListener);
-		
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		// Register the commonSetup method for modloading
@@ -47,7 +41,7 @@ public class MHLibMod {
 		MHLibDatapackLoaders.init();
 		
 		if (shouldRegisterExamples()) {
-			MHLibExampleEntities.registerEntityTypes();
+			//MHLibExampleEntities.registerEntityTypes();
 		}
 	}
 
