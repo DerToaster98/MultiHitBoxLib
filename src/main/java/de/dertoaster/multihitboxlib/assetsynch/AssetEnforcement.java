@@ -195,6 +195,7 @@ public class AssetEnforcement {
 			result &= handleEntry(entry);
 		}
 		
+		// TODO: Really necessary?
 		Minecraft.getInstance().reloadResourcePacks();
 		
 		return result;
