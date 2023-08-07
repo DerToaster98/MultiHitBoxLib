@@ -17,6 +17,10 @@ public class LazyLoadField<T extends Object> implements Supplier<T> {
 		this(function);
 		this.lifetime = lifetime;
 	}
+	
+	public void reset() {
+		this.value = null;
+	}
 
 	@Override
 	public T get() {
