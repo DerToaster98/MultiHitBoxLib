@@ -3,6 +3,7 @@ package de.dertoaster.multihitboxlib.assetsynch;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -18,20 +19,37 @@ import com.google.common.primitives.Bytes;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
+import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.BuiltInMetadata;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 
-public abstract class AbstractAssetEnforcementManager {
+public abstract class AbstractAssetEnforcementManager implements PackResources {
 
 	private final File directory = this.createServerDirectory();
 	private final File syncDirectory = this.createSynchDirectory();
 	
+	private final BuiltInMetadata builtInMetadata = this.createBuiltInMetaData();
+	private final LazyLoadField<Set<String>> namespaces = new LazyLoadField<>(this::extractNamespaces);
+	
 	private final Set<ResourceLocation> CURRENTLY_ENFORCED_ASSETS = new HashSet<>();
+	private final Set<String> extractNamespaces() {
+		Set<String> result = new HashSet<>();
+		this.CURRENTLY_ENFORCED_ASSETS.forEach(rs -> {
+			result.add(rs.getNamespace());
+		});
+		return result;
+	}
 	
 	private ResourceLocation id = null; 
 	
 	protected abstract Optional<byte[]> encodeData(final ResourceLocation id);
+	
 	protected abstract boolean receiveAndLoadInternally(final ResourceLocation id, final byte[] data);
 	public abstract String getSubDirectoryName();
 	
@@ -94,6 +112,7 @@ public abstract class AbstractAssetEnforcementManager {
 	}
 	
 	public void reloadAll() {
+		this.namespaces.reset();
 		for (ResourceLocation id : this.CURRENTLY_ENFORCED_ASSETS) {
 			File dataFile = this.getFileForId(id);
 			if (dataFile == null) {
@@ -181,6 +200,79 @@ public abstract class AbstractAssetEnforcementManager {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	@Override
+	public IoSupplier<InputStream> getRootResource(String... pElements) {
+		return null;
+	}
+	
+	@Override
+	public IoSupplier<InputStream> getResource(PackType pPackType, ResourceLocation pLocation) {
+		if (pPackType.equals(PackType.SERVER_DATA)) {
+			return null;
+		}
+		File file = this.getFileForId(pLocation);
+		if (file == null || !file.exists()) {
+			return null;
+		}
+		return IoSupplier.create(file.toPath());
+	}
+	
+	@Override
+	public void listResources(PackType pPackType, String pNamespace, String pPath, ResourceOutput pResourceOutput) {
+		if (pPackType.equals(PackType.SERVER_DATA)) {
+			return;
+		}
+		if (!this.getNamespaces(pPackType).contains(pNamespace)) {
+			return;
+		}
+		this.CURRENTLY_ENFORCED_ASSETS.forEach(rs -> {
+			if (rs.getNamespace().equalsIgnoreCase(pNamespace) && rs.getPath().startsWith(pPath)) {
+				pResourceOutput.accept(rs, this.getResource(pPackType, rs));
+			}
+		});
+	}
+	
+	@Override
+	public Set<String> getNamespaces(PackType pType) {
+		if (pType.equals(PackType.SERVER_DATA)) {
+			return Set.of();
+		}
+		return this.namespaces.get();
+	}
+	
+	@Override
+	public <T> T getMetadataSection(MetadataSectionSerializer<T> pDeserializer) {
+		return this.builtInMetadata.get(pDeserializer);
+	}
+	
+	@Override
+	public String packId() {
+		return this.getId().toString();
+	}
+	
+	@Override
+	public boolean isBuiltin() {
+		return true;
+	}
+	
+	@Override
+	public void close() {
+		
+	}
+	
+	@Override
+	public boolean isHidden() {
+		return true;
+	}
+	
+	private BuiltInMetadata createBuiltInMetaData() {
+		return BuiltInMetadata.of();
+	}
+
+	public PackType packType() {
+		return PackType.CLIENT_RESOURCES;
 	}
 
 }
