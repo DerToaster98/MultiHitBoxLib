@@ -149,14 +149,21 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 		final File destination = new File(this.getSidedDirectory(), id.getNamespace() + "/" + id.getPath());
 		return destination;
 	}
-
-	protected boolean writeFile(final ResourceLocation id, final byte[] data) {
-		final File destination = this.getFileForId(id);
+	
+	protected static boolean ensureFileFor(File destination, ResourceLocation id) {
 		if (destination.exists() || destination.isDirectory()) {
 			if (!destination.delete()) {
 				//TODO: Throw exception and log
 				return false;
 			}
+		}
+		return true;
+	}
+
+	protected boolean writeFile(final ResourceLocation id, final byte[] data) {
+		final File destination = this.getFileForId(id);
+		if (!ensureFileFor(destination, id)) {
+			return false;
 		}
 		if (!decodeAndWriteToFile(destination, data)) {
 			//TODO: Log and throw exception
@@ -180,9 +187,6 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 	}
 	
 	public static boolean decodeAndWriteToFile(File targetFile, byte[] compressedDearr) {
-		if (!targetFile.getParentFile().mkdirs()) {
-			return false;
-		}
 		byte[] dearr = new byte[0];
 		try {
 			dearr = CompressionUtil.decompress(compressedDearr, true);
@@ -193,8 +197,16 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 			e1.printStackTrace();
 			return false;
 		}
+		return writeToFile(targetFile, dearr);
+	}
+	
+	public static boolean writeToFile(File targetFile, byte[] bytes) {
+		if (!targetFile.getParentFile().mkdirs()) {
+			return false;
+		}
+		
 		try (FileOutputStream fos = new FileOutputStream(targetFile)) {
-			fos.write(dearr);
+			fos.write(bytes);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
