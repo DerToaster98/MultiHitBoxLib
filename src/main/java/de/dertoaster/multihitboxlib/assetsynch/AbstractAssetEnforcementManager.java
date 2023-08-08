@@ -201,8 +201,10 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 	}
 	
 	public static boolean writeToFile(File targetFile, byte[] bytes) {
-		if (!targetFile.getParentFile().mkdirs()) {
-			return false;
+		if (!targetFile.getParentFile().exists() || !targetFile.getParentFile().isDirectory()) {
+			if (!targetFile.getParentFile().mkdirs()) {
+				return false;
+			}
 		}
 		
 		try (FileOutputStream fos = new FileOutputStream(targetFile)) {
