@@ -2,6 +2,7 @@ package de.dertoaster.multihitboxlib;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 
@@ -51,6 +52,9 @@ public class MHLibMod {
 			checkAndCreateFolder(mainDir);
 			checkAndCreateFolder(Constants.MHLIB_ASSET_DIR);
 			checkAndCreateFolder(Constants.MHLIB_SYNC_DIR);
+			
+			// Hide the synch dir
+			Files.setAttribute(Constants.MHLIB_SYNC_DIR.toPath(), "dos:hidden", true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			// TODO: Log
