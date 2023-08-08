@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.zip.DataFormatException;
 
 import de.dertoaster.multihitboxlib.MHLibMod;
@@ -23,14 +21,9 @@ import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.Unit;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.PacketDistributor;
@@ -194,9 +187,6 @@ public class AssetEnforcement {
 		for (SynchDataManagerData entry : payload.payload()) {
 			result &= handleEntry(entry);
 		}
-		
-		// TODO: Really necessary?
-		Minecraft.getInstance().reloadResourcePacks();
 		
 		return result;
 	}
