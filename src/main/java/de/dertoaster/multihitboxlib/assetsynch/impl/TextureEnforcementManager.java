@@ -22,36 +22,36 @@ public class TextureEnforcementManager extends MHLibEnforcementManager {
 	public static class Pair implements Serializable {
 		private static final long serialVersionUID = -7300641348899040116L;
 		
-		private final byte[] a;
-		private final byte[] b;
+		private final byte[] textureBytes;
+		private final byte[] metaBytes;
 		
-		public Pair(byte[] a, byte[] b) {
-			this.a = a;
-			this.b = b;
+		public Pair(byte[] textBytes, byte[] metaBytes) {
+			this.textureBytes = textBytes;
+			if(metaBytes == null) {
+				this.metaBytes = new byte[] {};
+			} else {
+				this.metaBytes = metaBytes;
+			}
 		}
 		
 		public byte[] getA() {
-			return a;
+			return textureBytes;
 		}
 		
 		public byte[] getB() {
-			return b;
+			return metaBytes;
 		}
 		
 		public byte[] serialize() {
-			int length = this.a.length;
-			if (this.b != null) {
-				length += this.b.length;
+			int length = this.textureBytes.length;
+			if (this.metaBytes != null) {
+				length += this.metaBytes.length;
 			}
 			ByteBuf bb = Unpooled.buffer(length);
-			boolean hasMeta = this.b != null && this.b.length > 0;
-			bb.writeInt(this.a.length);
-			bb.writeBytes(this.a);
-			bb.writeBoolean(hasMeta);
-			if (hasMeta) {
-				bb.writeInt(this.b.length);
-				bb.writeBytes(this.b);
-			}
+			bb.writeInt(this.textureBytes.length);
+			bb.writeBytes(this.textureBytes);
+			bb.writeInt(this.metaBytes.length);
+			bb.writeBytes(this.metaBytes);
 			
 			return bb.array();
 		}
@@ -59,18 +59,13 @@ public class TextureEnforcementManager extends MHLibEnforcementManager {
 		public static Pair deserialize(final byte[] bytes) {
 			ByteBuf bb = Unpooled.copiedBuffer(bytes);
 			int length = bb.readInt();
-			// TODO: Throws error
 			byte[] a = new byte[length];
 			bb.readBytes(a);
-			if (bb.readBoolean()) {
-				length = bb.readInt();
-				byte[] b = new byte[length];
-				bb.readBytes(b);
-				
-				return new Pair(a, b);
-			} else {
-				return new Pair(a, new byte[] {});
-			}
+			length = bb.readInt();
+			byte[] b = new byte[length];
+			bb.readBytes(b);
+			
+			return new Pair(a, b);
 		}
 	}
 	
@@ -94,7 +89,14 @@ public class TextureEnforcementManager extends MHLibEnforcementManager {
 		File metaFile = this.getFileForId(id.withSuffix(".mcmeta"));
 		byte[] result;
 		if (metaFile.exists() && metaFile.isFile()) {
-			Pair entry = new Pair(texture, encodeToBytes(metaFile.toPath()));
+			byte[] metaBytes = null;
+			try {
+				metaBytes = Files.readAllBytes(metaFile.toPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+				metaBytes = new byte[] {};
+			}
+			Pair entry = new Pair(texture, metaBytes);
 			result = entry.serialize();
 			
 		} else {
@@ -156,7 +158,6 @@ public class TextureEnforcementManager extends MHLibEnforcementManager {
 				if (pair.getB() != null && pair.getB().length > 0) {
 					ResourceLocation metaId = id.withSuffix(".mcmeta");
 					target = this.getFileForId(metaId);
-					// TODO: Fix, doesn't create the right content in the file...
 					return ensureFileFor(target, metaId) && writeToFile(target, pair.getB());
 				} else {
 					return true;
