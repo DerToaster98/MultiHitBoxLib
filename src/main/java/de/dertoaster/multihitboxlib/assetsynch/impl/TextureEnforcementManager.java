@@ -156,6 +156,7 @@ public class TextureEnforcementManager extends MHLibEnforcementManager {
 				if (pair.getB() != null && pair.getB().length > 0) {
 					ResourceLocation metaId = id.withSuffix(".mcmeta");
 					target = this.getFileForId(metaId);
+					// TODO: Fix, doesn't create the right content in the file...
 					return ensureFileFor(target, metaId) && writeToFile(target, pair.getB());
 				} else {
 					return true;
