@@ -17,7 +17,6 @@ public abstract class AbstractSPacketSyncDatapackContent<C extends Object, T ext
 	public final Map<ResourceLocation, C> data;
 	protected final Codec<C> CODEC = this.getCodec();
 	
-	protected abstract Codec<Map<ResourceLocation, C>> createMapper();
 	protected abstract Codec<C> getCodec();
 	protected abstract T createFromPacket(Map<ResourceLocation, C> data);
 	public abstract BiConsumer<ResourceLocation, C> consumer();
@@ -42,6 +41,10 @@ public abstract class AbstractSPacketSyncDatapackContent<C extends Object, T ext
 	@Override
 	public void toBytes(T packet, FriendlyByteBuf buffer) {
 		buffer.writeNbt((CompoundTag) (packet.MAPPER.encodeStart(NbtOps.INSTANCE, packet.data).result().orElse(new CompoundTag())));
+	}
+	
+	protected Codec<Map<ResourceLocation, C>> createMapper() {
+		return Codec.unboundedMap(ResourceLocation.CODEC, this.getCodec());
 	}
 
 	
