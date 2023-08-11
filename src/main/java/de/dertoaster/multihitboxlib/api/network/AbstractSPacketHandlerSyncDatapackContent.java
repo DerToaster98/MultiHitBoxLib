@@ -51,7 +51,7 @@ public abstract class AbstractSPacketHandlerSyncDatapackContent<C extends Object
 	 */
 	protected void execHandlePacket(P packet, Supplier<NetworkEvent.Context> context, @Nullable Level world, @Nullable Player player) {
 		for (Map.Entry<ResourceLocation, C> entry : packet.getData().entrySet()) {
-			packet.getDatapackmanager().getData().putIfAbsent(entry.getKey(), entry.getValue());
+			packet.consumer().accept(entry.getKey(), entry.getValue());
 		}
 	}
 

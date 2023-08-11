@@ -2,10 +2,10 @@ package de.dertoaster.multihitboxlib.api.network;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import com.mojang.serialization.Codec;
 
-import commoble.databuddy.data.CodecJsonDataManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,7 +20,7 @@ public abstract class AbstractSPacketSyncDatapackContent<C extends Object, T ext
 	protected abstract Codec<Map<ResourceLocation, C>> createMapper();
 	protected abstract Codec<C> getCodec();
 	protected abstract T createFromPacket(Map<ResourceLocation, C> data);
-	public abstract CodecJsonDataManager<C> getDatapackmanager();
+	public abstract BiConsumer<ResourceLocation, C> consumer();
 
 	public AbstractSPacketSyncDatapackContent() {
 		this.data = null;
