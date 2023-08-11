@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractNInOneEntriesEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.client.TextureClientLogic;
 import net.minecraft.resources.ResourceLocation;
@@ -70,6 +73,18 @@ public class TextureEnforcementManager extends AbstractNInOneEntriesEnforcementM
 		}
 		File target = this.getFileForId(idToUse);
 		return ensureFileFor(target, idToUse) && writeToFile(target, data);
+	}
+
+	@Nonnull
+	@Override
+	protected File createServerDirectory() {
+		return new File(Constants.MHLIB_ASSET_DIR, this.getSubDirectoryName());
+	}
+
+	@Nonnull
+	@Override
+	protected File createSynchDirectory() {
+		return new File(Constants.MHLIB_SYNC_DIR, this.getSubDirectoryName());
 	}
 
 }

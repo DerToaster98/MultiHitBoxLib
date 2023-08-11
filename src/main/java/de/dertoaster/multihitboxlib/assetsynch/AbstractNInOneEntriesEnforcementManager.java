@@ -8,14 +8,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.Deflater;
 
-import de.dertoaster.multihitboxlib.assetsynch.impl.MHLibEnforcementManager;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 
-public abstract class AbstractNInOneEntriesEnforcementManager extends MHLibEnforcementManager {
+public abstract class AbstractNInOneEntriesEnforcementManager extends AbstractAssetEnforcementManager {
 	
 	private volatile Map<ResourceLocation, ByteEntryContainer> DESERIALIZED_PAIRS = new Object2ObjectArrayMap<>();
 	
