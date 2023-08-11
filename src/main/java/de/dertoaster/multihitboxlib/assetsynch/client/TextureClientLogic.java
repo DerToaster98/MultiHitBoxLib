@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import com.mojang.blaze3d.platform.NativeImage;
 
-import de.dertoaster.multihitboxlib.assetsynch.impl.AbstractNInOneEntriesEnforcementManager;
+import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class TextureClientLogic {
 	
-	public static boolean receiveAndLoad(final AbstractNInOneEntriesEnforcementManager manager, final ResourceLocation id, final byte[] data) throws IOException {
+	public static boolean receiveAndLoad(final AbstractAssetEnforcementManager manager, final ResourceLocation id, final byte[] data) throws IOException {
 		NativeImage ni = null;
 		try {
 			ni = NativeImage.read(data);
