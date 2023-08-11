@@ -108,7 +108,7 @@ public class MHLibMod {
 	 * {@link GeckoLibMod#DISABLE_EXAMPLES_PROPERTY_KEY} to false in your run args
 	 */
 	public static boolean shouldRegisterExamples() {
-		return !FMLEnvironment.production && !Boolean.getBoolean(Constants.DISABLE_EXAMPLES_PROPERTY_KEY);
+		return false && !FMLEnvironment.production && !Boolean.getBoolean(Constants.DISABLE_EXAMPLES_PROPERTY_KEY);
 	}
 
 }
