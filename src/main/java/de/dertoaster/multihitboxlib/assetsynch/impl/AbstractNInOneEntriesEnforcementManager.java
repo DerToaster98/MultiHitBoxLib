@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.Deflater;
 
-import javax.annotation.Nullable;
-
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -20,41 +18,25 @@ public abstract class AbstractNInOneEntriesEnforcementManager extends MHLibEnfor
 	
 	private volatile Map<ResourceLocation, ByteEntryContainer> DESERIALIZED_PAIRS = new Object2ObjectArrayMap<>();
 	
-	public static class ByteEntryContainer implements Serializable {
+	public static class ByteEntryContainer extends ArrayList<byte[]> implements Serializable {
 		private static final long serialVersionUID = -7300641348899040116L;
 		
-		private final List<byte[]> entries;
-		
-		public ByteEntryContainer(byte[]... entries) {
-			this(List.of(entries));
+		public ByteEntryContainer() {
+			super(1);
 		}
 		
-		public ByteEntryContainer(List<byte[]> entries) {
-			this.entries = entries;
-		}
-		
-		public int getSize() {
-			return this.entries != null ? this.entries.size() : 0;
-		}
-		
-		@Nullable
-		public byte[] getFirst() {
-			return this.getAt(0);
-		}
-		
-		@Nullable
-		public byte[] getAt(int i) {
-			return this.entries.size() > i ? this.entries.get(i) : null;
+		public ByteEntryContainer(int slots) {
+			super(slots);
 		}
 		
 		public byte[] serialize() {
 			int length = 0;
-			for (byte[] entry : this.entries) {
+			for (byte[] entry : this) {
 				length += entry.length;
 			}
 			ByteBuf bb = Unpooled.buffer(length);
-			bb.writeInt(this.entries.size());
-			this.entries.forEach(entry -> {
+			bb.writeInt(this.size());
+			this.forEach(entry -> {
 				bb.writeInt(entry.length);
 				bb.writeBytes(entry);
 			});
@@ -65,13 +47,13 @@ public abstract class AbstractNInOneEntriesEnforcementManager extends MHLibEnfor
 		public static ByteEntryContainer deserialize(final byte[] bytes) {
 			ByteBuf bb = Unpooled.copiedBuffer(bytes);
 			int length = bb.readInt();
-			List<byte[]> list = new ArrayList<>(length);
+			ByteEntryContainer result = new ByteEntryContainer(length);
 			for (int i = 0; i < length; i++) {
 				byte[] entry = new byte[bb.readInt()];
 				bb.readBytes(entry);
-				list.add(entry);
+				result.add(entry);
 			}
-			return new ByteEntryContainer(list);
+			return result;
 		}
 	}
 	
@@ -80,10 +62,11 @@ public abstract class AbstractNInOneEntriesEnforcementManager extends MHLibEnfor
 	@Override
 	protected Optional<byte[]> encodeData(ResourceLocation id) {
 		List<byte[]> relevantEntries = this.getRawByteEntriesFor(id);
+		ByteEntryContainer container = new ByteEntryContainer();
 		if (relevantEntries.isEmpty()) {
 			return Optional.empty();
 		}
-		ByteEntryContainer container = new ByteEntryContainer(relevantEntries);
+		container.addAll(relevantEntries);
 		byte[] result = container.serialize();
 		byte[] payload = null;
 		try {
@@ -101,12 +84,12 @@ public abstract class AbstractNInOneEntriesEnforcementManager extends MHLibEnfor
 	protected boolean receiveAndLoadInternally(ResourceLocation id, byte[] data) {
 		ByteEntryContainer container = ByteEntryContainer.deserialize(data);
 		DESERIALIZED_PAIRS.put(id, container);
-		if (container == null || container.getSize() <= 0) {
+		if (container == null || container.size() <= 0) {
 			return false;
 		}
 		boolean result = true;
-		for (int i = 0; i < container.getSize(); i++) {
-			result &= this.loadEntry(id, container.getAt(i), i);
+		for (int i = 0; i < container.size(); i++) {
+			result &= this.loadEntry(id, container.get(i), i);
 		}
 		return result;
 	}
@@ -123,8 +106,8 @@ public abstract class AbstractNInOneEntriesEnforcementManager extends MHLibEnfor
 			return false;
 		}
 		boolean result = true;
-		for (int i = 0; i < container.getSize(); i++) {
-			result &= this.writeEntryToFile(id, container.getAt(i), i);
+		for (int i = 0; i < container.size(); i++) {
+			result &= this.writeEntryToFile(id, container.get(i), i);
 		}
 		
 		return result;
