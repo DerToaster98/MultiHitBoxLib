@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -47,6 +48,8 @@ public class DiskSaveRunner extends HashSet<Tuple<ResourceLocation, byte[]>> imp
 				//TODO: Log
 			}
 		}
+		
+		Minecraft.getInstance().reloadResourcePacks();
 	}
 
 }

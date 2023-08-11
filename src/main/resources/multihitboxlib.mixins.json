@@ -11,7 +11,8 @@
 		"geckolib.MixinGeoReplacedEntityRenderer"
 	],
 	"client": [
-		"accessor.AccessorEntityRenderer"
+		"accessor.AccessorEntityRenderer",
+		"minecraft.MixinMinecraft"
 	],
 	"minVersion": "0.8"
 }

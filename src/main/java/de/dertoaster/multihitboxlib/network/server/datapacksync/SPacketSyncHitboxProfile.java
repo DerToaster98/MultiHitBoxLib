@@ -1,10 +1,10 @@
 package de.dertoaster.multihitboxlib.network.server.datapacksync;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import com.mojang.serialization.Codec;
 
-import commoble.databuddy.data.CodecJsonDataManager;
 import de.dertoaster.multihitboxlib.api.network.AbstractSPacketSyncDatapackContent;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
@@ -34,11 +34,6 @@ public class SPacketSyncHitboxProfile extends AbstractSPacketSyncDatapackContent
 	}
 
 	@Override
-	public CodecJsonDataManager<HitboxProfile> getDatapackmanager() {
-		return MHLibDatapackLoaders.HITBOX_PROFILES;
-	}
-
-	@Override
 	public Class<SPacketSyncHitboxProfile> getPacketClass() {
 		return SPacketSyncHitboxProfile.class;
 	}
@@ -46,6 +41,11 @@ public class SPacketSyncHitboxProfile extends AbstractSPacketSyncDatapackContent
 	@Override
 	protected SPacketSyncHitboxProfile createFromPacket(Map<ResourceLocation, HitboxProfile> data) {
 		return new SPacketSyncHitboxProfile(data);
+	}
+
+	@Override
+	public BiConsumer<ResourceLocation, HitboxProfile> consumer() {
+		return MHLibDatapackLoaders.HITBOX_PROFILES.getData()::putIfAbsent;
 	}
 
 }

@@ -7,19 +7,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import de.dertoaster.multihitboxlib.Constants;
-import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.event.client.PartRendererRegistrationEvent;
-import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -66,22 +60,4 @@ public class MHLibClient {
 		}
 	}
 	
-	synchronized public static void registerReloadListener() {
-		Minecraft mc = Minecraft.getInstance();
-
-		if (mc == null) {
-			if (!ModLoader.isDataGenRunning())
-				MHLibMod.LOGGER.warn("Minecraft.getInstance() was null, could not register reload listeners");
-
-			return;
-		}
-
-		if (!(mc.getResourceManager() instanceof ReloadableResourceManager resourceManager))
-			throw new RuntimeException("MHLib was initialized too early!");
-
-		PreparableReloadListener prl = AssetEnforcement::onReload;
-		
-		resourceManager.registerReloadListenerIfNotPresent(prl);
-	}
-
 }
