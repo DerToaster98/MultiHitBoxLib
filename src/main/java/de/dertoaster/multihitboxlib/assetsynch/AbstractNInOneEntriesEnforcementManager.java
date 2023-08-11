@@ -1,4 +1,4 @@
-package de.dertoaster.multihitboxlib.assetsynch.impl;
+package de.dertoaster.multihitboxlib.assetsynch;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.Deflater;
 
+import de.dertoaster.multihitboxlib.assetsynch.impl.MHLibEnforcementManager;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

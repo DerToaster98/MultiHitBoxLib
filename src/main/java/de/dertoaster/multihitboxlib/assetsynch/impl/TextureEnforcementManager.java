@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dertoaster.multihitboxlib.assetsynch.AbstractNInOneEntriesEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.client.TextureClientLogic;
 import net.minecraft.resources.ResourceLocation;
 
