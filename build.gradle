@@ -123,7 +123,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     // Azurelib
-    maven { url 'https://dl.cloudsmith.io/public/azuredoom-mods/azurelib/maven/' }
+    maven { url 'https://libs.azuredoom.com:4443/mods' }
 	
     // GeckoLib
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
