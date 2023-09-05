@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "multihitbox",
+	"version": "${version}",
+	"name": "Multihitbox Library",
+	"description": "Library for advanced multihitbox mobs. Can sync hitboxes to Geckolib/AzureLib bones",
+	"authors": [
+		"DerToaster", "AzureDoomC"
+	],
+	"contact": {
+		"homepage": "https://legacy.curseforge.com/minecraft/mc-mods/multihitboxlib",
+		"sources": "https://github.com/DerToaster98/MultiHitBoxLib"
+	},
+	"license": "All rights reserved",
+	"icon": "logo.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"de.dertoaster.multihitboxlib.MHLibMod"
+		]
+	},
+	"mixins": [
+		"multihitbox.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.22",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
