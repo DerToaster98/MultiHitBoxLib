@@ -12,13 +12,13 @@ base {
 
 repositories {
     // Azurelib
-    maven { url 'https://libs.azuredoom.com:4443/mods' }
+    maven { url "https://libs.azuredoom.com:4443/mods" }
 	
     // GeckoLib
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
+    maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven" }
 
     // CurseForge
-    maven { url 'https://www.cursemaven.com' }
+    maven { url "https://www.cursemaven.com"}
 	
 	// java repo to get databuddy from
 	maven { url "https://cubicinterpolation.net/maven/" }
