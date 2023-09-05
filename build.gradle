@@ -34,8 +34,6 @@ dependencies {
 	// GeckoLib
 	modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolibVersion}"
 	// Databuddy
-	implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
-	shade fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
 	modCompileOnly "commoble.databuddy:${databuddy_branch}:${databuddy_version}"
 	include "commoble.databuddy:${databuddy_branch}:${databuddy_version}"
 }
