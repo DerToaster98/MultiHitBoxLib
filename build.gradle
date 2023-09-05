@@ -22,6 +22,9 @@ repositories {
 	
 	// java repo to get databuddy from
 	maven { url "https://cubicinterpolation.net/maven/" }
+	
+	// modmenu
+	maven { url "https://maven.terraformersmc.com/releases" } 
 }
 
 dependencies {
@@ -31,6 +34,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}"
 	// AzureLib
 	modImplementation "mod.azure.azurelib:azurelib-fabric-${project.azurelibVersion}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenuVersion}"
 	// GeckoLib
 	modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolibVersion}"
 	// Databuddy
