@@ -106,9 +106,9 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 			return this.directory;
 		} else {
 			// Check for logical server
-			if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER) {
-				return this.directory;
-			}
+//			if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER) {
+//				return this.directory;
+//			}
 			return this.syncDirectory;
 		}
 	}
