@@ -21,11 +21,12 @@ import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.PacketDistributor;
 
 public class AssetEnforcement {
@@ -148,7 +149,7 @@ public class AssetEnforcement {
 	}
 	
 	public static boolean handleEntry(final SynchDataManagerData entry) {
-		if (FMLEnvironment.dist.isClient()) {
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			final AbstractAssetEnforcementManager manager = REGISTERED_MANAGERS.get(entry.manager());
 			if (manager == null) {
 				//TODO: Log

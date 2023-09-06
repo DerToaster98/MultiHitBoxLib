@@ -7,10 +7,11 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class DiskSaveRunner extends HashSet<Tuple<ResourceLocation, byte[]>> implements Runnable, Set<Tuple<ResourceLocation, byte[]>> {
 	
@@ -27,7 +28,7 @@ public class DiskSaveRunner extends HashSet<Tuple<ResourceLocation, byte[]>> imp
 	@Override
 	public void run() {
 		if (this.deleteDirectory) {
-			if (FMLEnvironment.dist.isClient()) {
+			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 				File dir = this.manager.getSidedDirectory();
 				if (dir != null && dir.exists()) {
 					try {

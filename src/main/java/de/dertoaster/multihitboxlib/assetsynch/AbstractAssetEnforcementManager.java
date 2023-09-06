@@ -20,6 +20,8 @@ import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.BuiltInMetadata;
 import net.minecraft.server.packs.PackResources;
@@ -100,7 +102,7 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 	}
 
 	protected File getSidedDirectory() {
-		if (FMLLoader.getDist().isDedicatedServer()) {
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
 			return this.directory;
 		} else {
 			// Check for logical server

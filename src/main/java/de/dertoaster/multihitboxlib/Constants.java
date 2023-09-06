@@ -5,9 +5,7 @@ import java.nio.file.Path;
 import java.util.function.Supplier;
 
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.fabricmc.loader.api.FabricLoader;
 
 public class Constants {
 	
@@ -15,7 +13,7 @@ public class Constants {
 	public static final String NETWORK_VERSION = "1.0.0";
 	
 	public static final LazyLoadField<File> MHLIB_CONFIG_DIR = new LazyLoadField<>(() -> {
-		final Path configDir = FMLPaths.CONFIGDIR.get();
+		final Path configDir = FabricLoader.getInstance().getConfigDir();
 		final File result = new File(configDir.toFile(), "mhlib");
 		return result;
 	});
@@ -43,19 +41,7 @@ public class Constants {
 		}
 		
 		public static final boolean isModLoaded(final String modid) {
-			ModList ml = ModList.get();
-			if (ml == null) {
-				// try the loading modlist
-				LoadingModList lml = LoadingModList.get();
-				if (lml == null) {
-					// Odd
-					throw new RuntimeException("unable to lookup any modlist!"); 
-				} else {
-					// Janky, but gets the job done
-					return lml.getModFileById(modid) != null;
-				}
-			}
-			return ml.isLoaded(modid);
+			return FabricLoader.getInstance().isModLoaded(modid);
 		}
 		
 		public static final Supplier<Boolean> GECKOLIB_LOADED = new ModLoadedPredicate(Constants.Dependencies.GECKOLIB_MODID);
