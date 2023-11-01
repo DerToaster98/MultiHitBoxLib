@@ -1,240 +1,213 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven {url='https://repo.spongepowered.org/repository/maven-public'}
-        mavenCentral()
-        // Parchment
-        maven { url = 'https://maven.parchmentmc.org' }
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-		// Mixin
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
-        // Parchment
-        // classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
-		classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
-
 plugins {
-    // this version works on gradle 7.x
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'net.minecraftforge.gradle' version "${forgegradle_version}"
+    id 'org.spongepowered.mixin' version "${mixingradle_version}"
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'org.parchmentmc.librarian.forgegradle' version "${parchmentmc_version}"
+    id 'com.github.johnrengelman.shadow' version "${shadow_version}"
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'java'
+version = mod_version
+group = mod_group
 
-version = "$mcVersion-$modVersion"
-group = 'de.dertoaster.multihitboxlib'
-archivesBaseName = "$modName"
-
-// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+base {
+    archivesName = modid
+}
 
 configurations {
-	shade
+    shade
 }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.20.1'
+    mappings channel: mappings_channel, version: mappings_version
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
+    copyIdeResources = true
 
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
     runs {
-        client {
-			taskName 'runClient MHLib 1.20.1'
+        configureEach {
             workingDirectory project.file('run')
-			arg "-mixin.config=multihitboxlib.mixins.json"
 
-            // Recommended logging data for a userdev environment
-            // The markers can be added/remove as needed separated by commas.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
-			
-			property 'mixin.debug', 'true'
-
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'multihitboxlib'
+            arg "-mixin.config=${modid}.mixins.json"
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
+            jvmArgs "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"
             mods {
-                multihitboxlib {
+                "${modid}" {
                     source sourceSets.main
                 }
             }
+        }
+
+        client {
+            taskName 'runClient MHLib 1.20.1'
+
+            property 'forge.enabledGameTestNamespaces', modid
         }
 
         server {
-			taskName 'runServer MHLib 1.20.1'
-            workingDirectory project.file('run')
-			arg "-mixin.config=multihitboxlib.mixins.json"
+            taskName 'runServer MHLib 1.20.1'
 
-            property 'forge.logging.markers', 'REGISTRIES'
-			
-			property 'mixin.debug', 'true'
+            property 'forge.enabledGameTestNamespaces', modid
+        }
+        gameTestServer {
+            taskName 'runTestServer MHLib 1.20.1'
 
-            property 'forge.logging.console.level', 'debug'
-
-            property 'forge.enabledGameTestNamespaces', 'multihitboxlib'
-
-            mods {
-                multihitboxlib {
-                    source sourceSets.main
-                }
-            }
+            property 'forge.enabledGameTestNamespaces', modid
         }
 
         data {
-			taskName 'runData MHLib 1.20.1'
-            workingDirectory project.file('run')
+            workingDirectory project.file('run-data')
 
-            property 'forge.logging.markers', 'REGISTRIES'
+            taskName 'runData MHLib 1.20.1'
 
-            property 'forge.logging.console.level', 'debug'
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'multihitboxlib', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                multihitboxlib {
-                    source sourceSets.main
-                }
-            }
+            args '--mod', modid, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
         }
     }
 }
 
-// Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    // Azurelib
-    maven { url 'https://libs.azuredoom.com:4443/mods' }
-	
-    // GeckoLib
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
+    maven {
+        name = "CurseMaven Maven"
+        url = "https://www.cursemaven.com"
+    }
 
-    // CurseForge
-    maven { url 'https://www.cursemaven.com' }
+    maven {
+        name = "AzureDoom Maven"
+        url = "https://libs.azuredoom.com:4443/mods"
+    }
 	
-	// java repo to get databuddy from
-	maven { url "https://cubicinterpolation.net/maven/" }
+    maven {
+        name = "Geckolib Maven"
+        url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven"
+    }
+
+	maven {
+        name = "CubicInterpolation Maven"
+        url = "https://cubicinterpolation.net/maven/"
+    }
+
+    maven {
+        name = "BlameJared maven"
+        url = "https://maven.blamejared.com/"
+    }
+
+    maven {
+        name = "RyanLiptak Maven"
+        url = "https://maven.ryanliptak.com/"
+    }
 }
 
 dependencies {
-    // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft "net.minecraftforge:forge:${mcVersion}-${forgeVersion}"
+    // Base
+    minecraft("net.minecraftforge:forge:${mc_version}-${forge_version}")
+    annotationProcessor("org.spongepowered:mixin:${mixin_version}:processor")
 
-    // GeckoLib
+    // Dependencies (Embedded)
+    implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+
+    shade fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+
+    // Dependencies (Optional)
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
-    // AzureLib
+
     implementation fg.deobf("mod.azure.azurelib:azurelib-forge-${azurelib_version}")
-	// Mixin
-    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-	
-	// Databuddy
-	implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
-	shade fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+
+    implementation fg.deobf("curse.maven:just-enough-effect-descriptions-jeed-532286:${jeed_version}")
+
+    implementation fg.deobf("curse.maven:catalogue-459701:${catalogue_version}")
+    implementation fg.deobf("curse.maven:gamemenumodoption-353051:${gmmo_version}")
+
+    implementation fg.deobf("curse.maven:jade-324717:${jade_version}")
+
+    compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
+    runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}")
 }
 
 shadowJar {
-	classifier = ''
+	archiveClassifier = ''
 	configurations = [project.configurations.shade]
-	relocate 'commoble.databuddy', "${project.group}.shadow.commoble.databuddy"
+	relocate 'commoble.databuddy', "${mod_group}.shadow.commoble.databuddy"
 }
 
 reobf {
     shadowJar { }
 }
 
-mixin {
-    add sourceSets.main, "multihitboxlib.refmap.json"
-}
-
-// Generate a fixed tsrg file after generating the default tsrg file
 createMcpToSrg {
     outputs.upToDateWhen {false}
+
     doLast {
         fixFG5TsrgForMixinAP(output.get().asFile, file("${buildDir}/fixMcpToSrg/output.tsrg"))
     }
 }
 
-// Tell mixin to use the fixed TSRG file
 mixin {
+    add sourceSets.main, "${modid}.refmap.json"
+    config "${modid}.mixins.json"
+
     reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
-	
-	debug.verbose = true
-	debug.export = true
-	debug = true
-}
 
-// Function that actually fixes the TSRG file
-static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
-    // Make directory if needed
-    outFile.parentFile.mkdirs()
-
-    try (Scanner scanner = new Scanner(inFile); PrintWriter out = new PrintWriter(outFile)) {
-        boolean firstLine = true
-        while (scanner.hasNextLine()) {
-            String next = scanner.nextLine()
-
-            // Skip first 'tsrg left right' header line
-            if (firstLine) {
-                firstLine = false
-                continue
-            }
-
-            // Skip 'static' indicators
-            if (next.trim() == "static") {
-                continue
-            }
-
-            // Export line otherwise
-            out.println(next)
-        }
-    }
+    debug.verbose = true
+    debug.export = true
+    debug = true
 }
 
 tasks.build.dependsOn reobfShadowJar
-jar.finalizedBy('reobfShadowJar')
 
-// Example for how to get properties into the manifest for reading at runtime.
-jar {
-    manifest {
-        attributes([
-            "Specification-Title": "$modName",
-            "Specification-Vendor": "DerToaster",
-            "Specification-Version": "$modVersion", // We are version 1 of ourselves
-            "Implementation-Title": "$modName",
-            "Implementation-Version": "$modVersion",
-            "Implementation-Vendor" :"DerToaster",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-			"MixinConfigs": "multihitboxlib.mixins.json"
-        ])
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            mc_version: mc_version, mc_version_range: mc_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version: loader_version, mod_loader: mod_loader,
+            modid: modid, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_credits: mod_credits, mod_description: mod_description, mod_issueTrackerURL: mod_issueTrackerURL,
+            geckolib_version_range: geckolib_version_range, azurelib_version_range: azurelib_version_range,
+            jei_version_range: jei_version_range, jeed_version_range: jeed_version_range,
+            catalogue_version_range: catalogue_version_range, gmmo_version_range: gmmo_version_range,
+            jade_version_range: jade_version_range, appleskin_version_range: appleskin_version_range
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
     }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-// Example configuration to allow publishing using the maven-publish plugin
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar')
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-// publish.dependsOn('reobfJar')
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_name,
+                'Specification-Vendor'    : mod_credits,
+                'Specification-Version'   : mod_version,
+                'Implementation-Title'    : mod_name,
+                'Implementation-Version'  : mod_version,
+                'Implementation-Vendor'   : mod_credits,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'		  	  : "${modid}.mixins.json"
+        ])
+    }
+    finalizedBy('reobfJar')
+    finalizedBy('reobfShadowJar')
+}
 
 publishing {
     publications {
@@ -250,5 +223,31 @@ publishing {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.encoding = 'UTF-8'
+}
+
+// Function that actually fixes the TSRG file
+static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
+    // Make directory if needed
+    outFile.parentFile.mkdirs()
+
+    try (Scanner scanner = new Scanner(inFile); PrintWriter out = new PrintWriter(outFile)) {
+        boolean firstLine = true
+
+        while (scanner.hasNextLine()) {
+            String next = scanner.nextLine()
+
+            // Skip first 'tsrg left right' header line
+            if (firstLine) {
+                firstLine = false
+                continue
+            }
+
+            // Skip 'static' indicators
+            if (next.trim() == "static") continue
+
+            // Export line otherwise
+            out.println(next)
+        }
+    }
 }

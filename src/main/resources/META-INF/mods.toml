@@ -1,39 +1,87 @@
-modLoader="javafml"
-loaderVersion="[47,)"
-license="All rights reserved"
-issueTrackerURL="https://github.com/DerToaster98/MultiHitBoxLib/issues"
+modLoader="${mod_loader}"
+loaderVersion="${loader_version}"
+license="${mod_license}"
+issueTrackerURL="${mod_issueTrackerURL}"
 
 [[mods]]
-modId="multihitboxlib"
-version="${file.jarVersion}"
-displayName="Multihitbox Library"
+modId="${modid}"
+version="${mod_version}"
+displayName="${mod_name}"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/multihitboxlib"
 logoFile="logo.png"
-credits="DerToaster"
-description='''
-Library for advanced multihitbox mobs. Can sync hitboxes to Geckolib/AzureLib bones
-'''
-[[dependencies.multihitboxlib]]
+credits="${mod_credits}"
+description='''${mod_description}'''
+
+# Base
+[[dependencies."${modid}"]]
     modId="forge"
     mandatory=true
-    versionRange="[47,)"
+    versionRange="${forge_version_range}"
     ordering="NONE"
     side="BOTH"
-[[dependencies.multihitboxlib]]
+
+[[dependencies."${modid}"]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20.1,1.20.2)"
+    versionRange="${mc_version_range}"
     ordering="NONE"
     side="BOTH"
-[[dependencies.multihitboxlib]]
+
+# Dependencies (Optional)
+#   COMMON
+[[dependencies."${modid}"]]
     modId="geckolib"
     mandatory=false
-    versionRange="[4.2,)"
+    versionRange="${geckolib_version_range}"
     ordering="BEFORE"
     side="BOTH"
-[[dependencies.multihitboxlib]]
+
+[[dependencies."${modid}"]]
     modId="azurelib"
     mandatory=false
-    versionRange="[1.0.18,)"
+    versionRange="${azurelib_version_range}"
     ordering="BEFORE"
     side="BOTH"
+
+[[dependencies."${modid}"]]
+    modId="jei"
+    mandatory=false
+    versionRange="${jei_version_range}"
+    ordering="BEFORE"
+    side="BOTH"
+
+[[dependencies."${modid}"]]
+    modId="jeed"
+    mandatory=false
+    versionRange="${jeed_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies."${modid}"]]
+    modId="jade"
+    mandatory=false
+    versionRange="${jade_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+#   CLIENT
+[[dependencies."${modid}"]]
+    modId="appleskin"
+    mandatory=false
+    versionRange="${appleskin_version_range}"
+    ordering="NONE"
+    side="CLIENT"
+
+[[dependencies."${modid}"]]
+    modId="catalogue"
+    mandatory=false
+    versionRange="${catalogue_version_range}"
+    ordering="NONE"
+    side="CLIENT"
+
+[[dependencies."${modid}"]]
+    modId="gamemenumodoption"
+    mandatory=false
+    versionRange="${gmmo_version_range}"
+    ordering="NONE"
+    side="CLIENT"

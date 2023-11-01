@@ -1,6 +1,22 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven { url = 'https://maven.minecraftforge.net/' }
+
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name = 'Parchment MC'
+            url = 'https://maven.parchmentmc.org'
+        }
+        maven {
+            name = 'Spongepowered Mixin'
+            url = 'https://repo.spongepowered.org/maven'
+        }
     }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
 }
