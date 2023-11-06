@@ -163,6 +163,12 @@ public interface IMultipartEntity<T extends Entity> {
 	}
 	
 	public default Optional<HitboxProfile> getHitboxProfile() {
+		if (this instanceof ICustomHitboxProfileSupplier ichps) {
+			Optional<HitboxProfile> resTmp = ichps.getHitboxProfile();
+			if (resTmp != null) {
+				return resTmp;
+			}
+		}
 		if (this instanceof Entity ent) {
 			EntityType<?> type = ent.getType();
 			return MHLibDatapackLoaders.getHitboxProfile(type);
