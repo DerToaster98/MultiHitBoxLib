@@ -245,6 +245,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	public void setMasterUUID(UUID id) {
 		if (this.level().isClientSide()) {
 			// System.out.println("Clientside, not setting master!");
+			// TODO: Why are we just setting it here anywa?!
 			this.masterUUID = id;
 			return;
 		}
