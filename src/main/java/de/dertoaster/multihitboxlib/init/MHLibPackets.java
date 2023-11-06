@@ -4,15 +4,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.Constants;
+import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.network.IMessage;
 import de.dertoaster.multihitboxlib.api.network.IMessageHandler;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
+import de.dertoaster.multihitboxlib.network.client.SPacketHandlerFunctionalAnimProgress;
 import de.dertoaster.multihitboxlib.network.client.SPacketHandlerSetMaster;
 import de.dertoaster.multihitboxlib.network.client.SPacketHandlerUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.client.assetsync.CPacketRequestSynch;
 import de.dertoaster.multihitboxlib.network.client.assetsync.SPacketHandlerSynchAssets;
 import de.dertoaster.multihitboxlib.network.client.datapacksync.SPacketHandlerSyncHitboxProfile;
 import de.dertoaster.multihitboxlib.network.server.CPacketHandlerBoneInformation;
+import de.dertoaster.multihitboxlib.network.server.SPacketFunctionalAnimProgress;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.server.assetsync.CPacketHandlerRequestSynch;
@@ -25,11 +28,9 @@ import net.minecraftforge.network.PacketDistributor.PacketTarget;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class MHLibPackets {
-
-	public static final SimpleChannel MHLIB_NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MODID, "main"), () -> Constants.NETWORK_VERSION, Constants.NETWORK_VERSION::equals, Constants.NETWORK_VERSION::equals);
-
+	public static final SimpleChannel MHLIB_NETWORK = NetworkRegistry.newSimpleChannel(MHLibMod.prefix("main"), () -> Constants.NETWORK_VERSION, Constants.NETWORK_VERSION::equals, Constants.NETWORK_VERSION::equals);
 	// Start the IDs at 1 so any unregistered messages (ID 0) throw a more obvious exception when received
-	private static int messageID = 0;
+	private static int MESSAGE_ID = 0;
 
 	public static void init() {
 		registerClientToServer(CPacketBoneInformation.class, CPacketHandlerBoneInformation.class);
@@ -37,6 +38,7 @@ public class MHLibPackets {
 		registerServerToClient(SPacketSyncHitboxProfile.class, SPacketHandlerSyncHitboxProfile.class);
 		registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
 		registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
+		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
 		
 		// Asset Synch
 		registerClientToServer(CPacketRequestSynch.class, CPacketHandlerRequestSynch.class);
@@ -82,8 +84,7 @@ public class MHLibPackets {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
-		if (handler != null && message != null)
-			register(message, handler, networkDirection);
+		if (handler != null && message != null) register(message, handler, networkDirection);
 	}
 	
 	protected static <MSG> void register(IMessage<MSG> message, IMessageHandler<MSG> handler) {
@@ -91,7 +92,6 @@ public class MHLibPackets {
 	}
 
 	protected static <MSG> void register(IMessage<MSG> message, IMessageHandler<MSG> handler, final Optional<NetworkDirection> networkDirection) {
-		MHLIB_NETWORK.registerMessage(messageID++, message.getPacketClass(), message::toBytes, message::fromBytes, handler::handlePacket, networkDirection);
+		MHLIB_NETWORK.registerMessage(MESSAGE_ID++, message.getPacketClass(), message::toBytes, message::fromBytes, handler::handlePacket, networkDirection);
 	}
-
 }

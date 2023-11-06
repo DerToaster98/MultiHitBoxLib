@@ -13,5 +13,4 @@ public abstract class AbstractPacket<T extends Object> implements IMessage<T> {
 	
 	@Override
 	public abstract void toBytes(T packet, FriendlyByteBuf buffer);
-
 }

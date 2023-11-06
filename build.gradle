@@ -8,7 +8,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version "${shadow_version}"
 }
 
-version = mod_version
+version = "${mc_version}-${mod_version}"
 group = mod_group
 
 base {

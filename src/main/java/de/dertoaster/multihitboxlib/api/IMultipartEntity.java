@@ -191,5 +191,4 @@ public interface IMultipartEntity<T extends Entity> {
 			throw new IllegalStateException("This interface may only be implemented on entities!");
 		}
 	}
-	
 }

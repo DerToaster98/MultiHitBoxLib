@@ -23,7 +23,7 @@ public abstract class AbstractPacketHandler<P extends Object> implements IMessag
 			Level world = null;
 			if(context.get().getNetworkManager().getPacketListener() instanceof ServerPacketListener) {
 				sender = context.get().getSender();
-				if(sender != null) {
+				if (sender != null) {
 					world = sender.level();
 				}
 			}

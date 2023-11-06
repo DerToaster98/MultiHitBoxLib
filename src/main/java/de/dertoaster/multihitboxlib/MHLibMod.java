@@ -3,6 +3,7 @@ package de.dertoaster.multihitboxlib;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 
@@ -96,7 +97,7 @@ public class MHLibMod {
 	}
 
 	public static ResourceLocation prefix(String path) {
-		return new ResourceLocation(Constants.MODID, path);
+		return new ResourceLocation(Constants.MODID, path.toLowerCase(Locale.ROOT));
 	}
 	
 	/**
