@@ -1,5 +1,7 @@
 package de.dertoaster.multihitboxlib.api.glibplus;
 
+import software.bernie.geckolib.core.animation.Animation;
+
 public interface IRawAnimation {
 
     /**
@@ -36,6 +38,13 @@ public interface IRawAnimation {
     IExtendedGeoAnimatableEntity getAnimatableOwner();
 
     /**
+     * Gets the loop type of this animation instance.
+     *
+     * @return The loop type of this animation instance.
+     */
+    Animation.LoopType getLoopType();
+
+    /**
      * Plays this animation instance (leniently if {@code forceAnim} is {@code false}). Leniently-played animations will
      * wait for any animation(s) currently playing in the owner {@link WrappedAnimationController} of this animation instance
      * to stop.
@@ -46,10 +55,10 @@ public interface IRawAnimation {
 
     /**
      * Stops this animation instance (leniently of {@code lenientStop} is {@code true}). Leniently-stopped animations will
-     * attempt to stop <i>after</i> this animation instance is done. Only applies to non-looping and non-paused animations,
-     * otherwise it will normally/forcefully stop this animation instance.
+     * attempt to stop <i>after</i> this animation instance is done (regardless of loop type). Otherwise, it will normally/forcefully
+     * stop this animation instance.
      *
-     * @param lenientStop
+     * @param lenientStop Whether this animation should leniently stop if its loop type is {@link software.bernie.geckolib.core.animation.Animation.LoopType#PLAY_ONCE}.
      */
     void stopAnimation(boolean lenientStop);
 }

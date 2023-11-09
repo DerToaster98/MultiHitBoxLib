@@ -5,6 +5,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'org.parchmentmc.librarian.forgegradle' version "${parchmentmc_version}"
+    id 'com.github.johnrengelman.shadow' version "${shadow_version}"
 }
 
 version = "${mc_version}-${mod_version}"
@@ -12,6 +13,10 @@ group = mod_group
 
 base {
     archivesName = modid
+}
+
+configurations {
+    shade
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -112,7 +117,7 @@ dependencies {
     // Dependencies (Embedded)
     implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
 
-	jarJar(group: 'commoble.databuddy', name: "${databuddy_branch}", version: "[${databuddy_version},)")
+    shade fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
 
     // Dependencies (Optional)
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
@@ -135,7 +140,15 @@ dependencies {
     runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}")
 }
 
-jarJar.enable()
+shadowJar {
+	archiveClassifier = ''
+	configurations = [project.configurations.shade]
+	relocate 'commoble.databuddy', "${mod_group}.shadow.commoble.databuddy"
+}
+
+reobf {
+    shadowJar { }
+}
 
 createMcpToSrg {
     outputs.upToDateWhen {false}
@@ -155,6 +168,8 @@ mixin {
     debug.export = true
     debug = true
 }
+
+tasks.build.dependsOn reobfShadowJar
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
@@ -190,7 +205,10 @@ tasks.named('jar', Jar).configure {
                 'MixinConfigs'		  	  : "${modid}.mixins.json"
         ])
     }
+    finalizedBy('reobfJar')
 }
+
+jar.finalizedBy(reobfShadowJar)
 
 publishing {
     publications {
