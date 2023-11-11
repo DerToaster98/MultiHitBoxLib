@@ -5,7 +5,6 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'org.parchmentmc.librarian.forgegradle' version "${parchmentmc_version}"
-    id 'com.github.johnrengelman.shadow' version "${shadow_version}"
 }
 
 version = "${mc_version}-${mod_version}"
@@ -15,11 +14,13 @@ base {
     archivesName = modid
 }
 
-configurations {
-    shade
-}
-
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+jarJar.enable()
+
+tasks.named('jarJar').configure {
+	archiveClassifier = ''
+}
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
@@ -117,7 +118,7 @@ dependencies {
     // Dependencies (Embedded)
     implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
 
-    shade fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+    jarJar(group: 'commoble.databuddy', name: "${databuddy_branch}", version: "[${databuddy_version},)")
 
     // Dependencies (Optional)
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
@@ -140,16 +141,6 @@ dependencies {
     runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}")
 }
 
-shadowJar {
-	archiveClassifier = ''
-	configurations = [project.configurations.shade]
-	relocate 'commoble.databuddy', "${mod_group}.shadow.commoble.databuddy"
-}
-
-reobf {
-    shadowJar { }
-}
-
 createMcpToSrg {
     outputs.upToDateWhen {false}
 
@@ -168,8 +159,6 @@ mixin {
     debug.export = true
     debug = true
 }
-
-tasks.build.dependsOn reobfShadowJar
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
@@ -193,6 +182,7 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
+	archiveClassifier = 'slim'
     manifest {
         attributes([
                 'Specification-Title'     : mod_name,
@@ -205,10 +195,7 @@ tasks.named('jar', Jar).configure {
                 'MixinConfigs'		  	  : "${modid}.mixins.json"
         ])
     }
-    finalizedBy('reobfJar')
 }
-
-jar.finalizedBy(reobfShadowJar)
 
 publishing {
     publications {
@@ -251,4 +238,9 @@ static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
             out.println(next)
         }
     }
+}
+
+// Delete slim jar
+build.doLast {
+	delete "${project.projectDir}/build/libs/${modid}-${mc_version}-${mod_version}-slim.jar"
 }
