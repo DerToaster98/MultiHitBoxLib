@@ -14,4 +14,4 @@ Complete re-uploads (of the source code and builds) on other sites is not permit
 
 # Contact
 - Discord: dertoaster
-- E-Mail (preferred): [dertoaster@cq-repoured.net](mailto:dertoaster@cq-repoured.net?subject=[MHLib] contact request)
+- E-Mail (preferred): [dertoaster@cq-repoured.net](mailto:dertoaster@cq-repoured.net?subject=[MHLib]%20contact%20request)
