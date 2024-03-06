@@ -11,3 +11,7 @@ In addition to that, jarinjaring, shadowing or directly including the source cod
 Forks (as in direct forks using github's fork function) of the library are allowed, as long as the GNU license is being met (=> the forked project must be under GNU license too) and as long as I myself am credited in the project and receive a (discussable) share of monetization rewards (for example curseforge and modrinth points).
 
 Complete re-uploads (of the source code and builds) on other sites is not permitted.
+
+# Contact
+- Discord: dertoaster
+- E-Mail (preferred): [dertoaster@cq-repoured.net](mailto:dertoaster@cq-repoured.net?subject=[MHLib] contact request)
