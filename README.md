@@ -3,6 +3,10 @@ Library for advanced multihitbox mobs. Can sync hitboxes to geckolib bones
 
 The goal is to simplify the process of creating multipart entities. Also it allows synching hitboxes to geckolib animations!
 
+# Downloads
+- [Curseforge](https://www.curseforge.com/minecraft/mc-mods/multihitboxlib)
+- [Modrinth](https://modrinth.com/mod/multihitboxlib)
+
 # Terms of use
 The license needs to be met (GNU license).
 
