@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import de.dertoaster.multihitboxlib.entity.hitbox.AssetEnforcementConfig;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 
 public class HitboxProfileAssetFinder extends AbstractAssetFinder {
@@ -16,9 +17,9 @@ public class HitboxProfileAssetFinder extends AbstractAssetFinder {
 	private static final Predicate<ResourceLocation> RS_CHECK_PREDICATE = rs -> !rs.toString().isBlank() && !rs.getNamespace().isBlank() && !rs.getPath().isBlank();
 	
 	@Override
-	public Set<ResourceLocation> get() {
+	public Set<ResourceLocation> apply(RegistryAccess registryAccess) {
 		Set<ResourceLocation> result = new HashSet<>();
-		for (HitboxProfile hp : MHLibDatapackLoaders.HITBOX_PROFILES.getData().values()) {
+		for (HitboxProfile hp : MHLibDatapackLoaders.HITBOX_PROFILE_REGISTRY.values(registryAccess)) {
 			if (hp == null) {
 				continue;
 			}

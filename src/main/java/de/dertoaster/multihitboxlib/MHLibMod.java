@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
-import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,8 +38,6 @@ public class MHLibMod {
 
 		// Now, initialize all our folders
 		initializeConfigDirectories();
-		
-		MHLibDatapackLoaders.init();
 		
 		if (shouldRegisterExamples()) {
 			//MHLibExampleEntities.registerEntityTypes();

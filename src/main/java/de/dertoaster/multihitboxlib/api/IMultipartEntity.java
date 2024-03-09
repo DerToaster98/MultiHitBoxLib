@@ -169,9 +169,9 @@ public interface IMultipartEntity<T extends Entity> {
 				return resTmp;
 			}
 		}
-		if (this instanceof Entity ent) {
+		if (this instanceof Entity ent && ent.level() != null) {
 			EntityType<?> type = ent.getType();
-			return MHLibDatapackLoaders.getHitboxProfile(type);
+			return MHLibDatapackLoaders.getHitboxProfile(type, ent.level().registryAccess());
 		}
 		return Optional.empty();
 	}

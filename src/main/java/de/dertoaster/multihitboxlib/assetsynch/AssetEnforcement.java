@@ -19,8 +19,9 @@ import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
-import de.dertoaster.multihitboxlib.util.LazyLoadField;
+import de.dertoaster.multihitboxlib.util.LazyLoadFieldFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
@@ -33,7 +34,7 @@ public class AssetEnforcement {
 	private static volatile Map<ResourceLocation, AbstractAssetEnforcementManager> REGISTERED_MANAGERS = new Object2ObjectArrayMap<>();
 	private static final Map<ResourceLocation, AbstractAssetFinder> REGISTERED_SYNCH_ASSET_FINDER = new Object2ObjectArrayMap<>();
 	
-	public static final LazyLoadField<Set<ResourceLocation>> ASSETS_TO_SYNCH = new LazyLoadField<>(AssetEnforcement::collectAssetsToSynch, 600000);
+	public static final LazyLoadFieldFunction<RegistryAccess, Set<ResourceLocation>> ASSETS_TO_SYNCH = new LazyLoadFieldFunction<>(AssetEnforcement::collectAssetsToSynch, 600000);
 	
 	public static void init() {
 		initializeManagers();
@@ -104,7 +105,11 @@ public class AssetEnforcement {
 	public static void sendSynchData(final ServerPlayer connection) {
 		// Collect everything that needs to be synched ONCE, then cache that away=> use lazyloadfield?
 		// After that, create the packet and send it down to the client
-		final Set<ResourceLocation> assetsToSynch = ASSETS_TO_SYNCH.get();
+		if (connection.level() == null || connection.level().registryAccess() == null) {
+			MHLibMod.LOGGER.warn("No registry access for sending synch data on ServerPlayer (level or level.registryAccess is null)!");
+			return;
+		}
+		final Set<ResourceLocation> assetsToSynch = ASSETS_TO_SYNCH.apply(connection.level().registryAccess());
 		
 		sendSynchData(connection, assetsToSynch);
 	}
@@ -191,11 +196,11 @@ public class AssetEnforcement {
 		return result;
 	}
 	
-	public static Set<ResourceLocation> collectAssetsToSynch() {
+	public static Set<ResourceLocation> collectAssetsToSynch(RegistryAccess registryAccess) {
 		Set<ResourceLocation> result = new HashSet<>();
 		
 		for(AbstractAssetFinder finder : REGISTERED_SYNCH_ASSET_FINDER.values()) {
-			Set<ResourceLocation> supplied = finder.get();
+			Set<ResourceLocation> supplied = finder.get(registryAccess);
 			if (supplied == null || supplied.isEmpty()) {
 				MHLibMod.LOGGER.warn("Asset finder with id <" + finder.getId() + "> returned null or an empty set! Skipping...");
 				continue;
