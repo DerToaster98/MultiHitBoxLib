@@ -11,7 +11,7 @@ import net.minecraftforge.fml.loading.LoadingModList;
 
 public class Constants {
 	public static final String MODID = "multihitboxlib";
-	public static final String NETWORK_VERSION = "1.0.0";
+	public static final String NETWORK_VERSION = "1.0.1";
 	
 	public static final LazyLoadField<File> MHLIB_CONFIG_DIR = new LazyLoadField<>(() -> {
 		final Path configDir = FMLPaths.CONFIGDIR.get();
