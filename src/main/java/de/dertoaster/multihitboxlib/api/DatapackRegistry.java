@@ -1,6 +1,9 @@
 package de.dertoaster.multihitboxlib.api;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -46,11 +49,23 @@ public record DatapackRegistry<T>(
 	
 	@Nullable
 	public T get(ResourceLocation id, RegistryAccess registryAccess) {
-		Optional<Registry<T>> optRegistry = registryAccess.registry(this.registryKey());
+		Optional<Registry<T>> optRegistry = this.registry(registryAccess);
 		if (optRegistry.isEmpty()) {
 			return null;
 		}
 		return optRegistry.get().get(id);
+	}
+	
+	public Optional<Registry<T>> registry(RegistryAccess registryAccess) {
+		return registryAccess.registry(this.registryKey());
+	}
+	
+	public List<T> values(RegistryAccess registryAccess) {
+		Optional<Registry<T>> optRegistry = this.registry(registryAccess);
+		if (optRegistry.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return optRegistry.get().stream().collect(Collectors.toList());
 	}
 	
 }
