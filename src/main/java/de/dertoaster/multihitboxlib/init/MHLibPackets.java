@@ -13,15 +13,12 @@ import de.dertoaster.multihitboxlib.network.client.SPacketHandlerSetMaster;
 import de.dertoaster.multihitboxlib.network.client.SPacketHandlerUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.client.assetsync.CPacketRequestSynch;
 import de.dertoaster.multihitboxlib.network.client.assetsync.SPacketHandlerSynchAssets;
-import de.dertoaster.multihitboxlib.network.client.datapacksync.SPacketHandlerSyncHitboxProfile;
 import de.dertoaster.multihitboxlib.network.server.CPacketHandlerBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketFunctionalAnimProgress;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.server.assetsync.CPacketHandlerRequestSynch;
 import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
-import de.dertoaster.multihitboxlib.network.server.datapacksync.SPacketSyncHitboxProfile;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor.PacketTarget;
@@ -35,7 +32,6 @@ public class MHLibPackets {
 	public static void init() {
 		registerClientToServer(CPacketBoneInformation.class, CPacketHandlerBoneInformation.class);
 		
-		registerServerToClient(SPacketSyncHitboxProfile.class, SPacketHandlerSyncHitboxProfile.class);
 		registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
 		registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
 		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
