@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 @Mixin(EntityRenderer.class)
 public interface AccessorEntityRenderer {
 
-	@Accessor
+	@Accessor("entityRenderDispatcher")
 	public EntityRenderDispatcher getEntityRenderDispatcher();
 	
 }
