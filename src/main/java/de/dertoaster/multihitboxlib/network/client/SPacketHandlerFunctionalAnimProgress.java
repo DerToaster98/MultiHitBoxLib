@@ -5,7 +5,6 @@ import de.dertoaster.multihitboxlib.api.glibplus.WrappedAnimationController;
 import de.dertoaster.multihitboxlib.api.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.network.server.SPacketFunctionalAnimProgress;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
