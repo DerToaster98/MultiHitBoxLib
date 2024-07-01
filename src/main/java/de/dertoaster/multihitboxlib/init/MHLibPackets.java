@@ -19,11 +19,10 @@ import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.server.assetsync.CPacketHandlerRequestSynch;
 import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor.PacketTarget;
-import net.minecraftforge.network.simple.SimpleChannel;
 
+/*
+ * TODO: Rewrite Packets for new Packet system
+ */
 public class MHLibPackets {
 	public static final SimpleChannel MHLIB_NETWORK = NetworkRegistry.newSimpleChannel(MHLibMod.prefix("main"), () -> Constants.NETWORK_VERSION, Constants.NETWORK_VERSION::equals, Constants.NETWORK_VERSION::equals);
 	// Start the IDs at 1 so any unregistered messages (ID 0) throw a more obvious exception when received

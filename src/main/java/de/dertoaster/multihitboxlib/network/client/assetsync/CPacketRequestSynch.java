@@ -3,6 +3,9 @@ package de.dertoaster.multihitboxlib.network.client.assetsync;
 import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
 import net.minecraft.network.FriendlyByteBuf;
 
+/*
+ * TODO: Rewrite Packets for new Packet system
+ */
 public class CPacketRequestSynch extends AbstractPacket<CPacketRequestSynch> {
 
 	@Override

@@ -25,9 +25,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 public class AssetEnforcement {
 	
@@ -46,7 +44,10 @@ public class AssetEnforcement {
 		REGISTERED_MANAGERS.values().forEach(result::add);
 		return result;
 	}
-	
+
+	/*
+	 * TODO: Find replacement for Bus.MOD.bus().get()
+	 */
 	private static void initializeAssetFinders() {
 		final Map<ResourceLocation, AbstractAssetFinder> map = new Object2ObjectArrayMap<>();
 		SynchAssetFinderRegistrationEvent event = new SynchAssetFinderRegistrationEvent(map);
@@ -70,6 +71,9 @@ public class AssetEnforcement {
 		}
 	}
 
+	/*
+	 * TODO: Find replacement for Bus.MOD.bus().get()
+	 */
 	private static void initializeManagers() {
 		final Map<ResourceLocation, AbstractAssetEnforcementManager> map = new Object2ObjectArrayMap<>();
 		AssetEnforcementManagerRegistrationEvent event = new AssetEnforcementManagerRegistrationEvent(map);
@@ -146,7 +150,10 @@ public class AssetEnforcement {
 			sendPacket(connection, new SynchDataContainer(managerData));
 		}
 	}
-	
+
+	/*
+	 * TODO: Find replacement for PacketDistributor
+	 */
 	private static void sendPacket(final ServerPlayer connection, final SynchDataContainer payload) {
 		SPacketSynchAssets packet = new SPacketSynchAssets(payload);
 		MHLibPackets.send(packet, PacketDistributor.PLAYER.with(() -> connection));

@@ -1,8 +1,8 @@
 package de.dertoaster.multihitboxlib.api.event;
 
-import java.util.Map;
+import net.neoforged.bus.api.Event;
 
-import net.minecraftforge.eventbus.api.Event;
+import java.util.Map;
 
 public class AbstractRegistrationEvent<K, V> extends Event {
 	
@@ -21,11 +21,6 @@ public class AbstractRegistrationEvent<K, V> extends Event {
 		}
 		REGISTRATION_MAP.put(id, value);
 		return true;
-	}
-	
-	@Override
-	public boolean isCancelable() {
-		return false;
 	}
 
 }

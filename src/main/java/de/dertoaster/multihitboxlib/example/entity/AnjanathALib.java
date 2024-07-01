@@ -1,24 +1,24 @@
 package de.dertoaster.multihitboxlib.example.entity;
 
+import mod.azure.azurelib.common.api.common.animatable.GeoEntity;
+import mod.azure.azurelib.common.internal.common.util.AzureLibUtil;
+import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
+import mod.azure.azurelib.core.animation.AnimatableManager;
+import mod.azure.azurelib.core.animation.RawAnimation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier.Builder;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Anjanath extends Monster implements GeoEntity {
+public class AnjanathALib extends Monster implements GeoEntity {
 
-	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-	
+	private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
+
 	private static final RawAnimation ANIM_WALK = RawAnimation.begin().thenPlay("walk");
 	private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenPlay("idle");
-	
-	public Anjanath(EntityType<? extends Monster> pEntityType, Level pLevel) {
+
+	public AnjanathALib(EntityType<? extends Monster> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
 	}
 

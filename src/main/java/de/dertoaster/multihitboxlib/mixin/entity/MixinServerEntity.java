@@ -18,7 +18,10 @@ public abstract class MixinServerEntity {
 
 	@Shadow
 	private Entity entity;
-	
+
+	/*
+	 * TODO: Rewrite Packets for new Packet system
+	 */
 	@Inject(
 			method = "sendDirtyEntityData()V",
 			at = @At("HEAD")

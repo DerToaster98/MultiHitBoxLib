@@ -17,7 +17,10 @@ import net.minecraft.world.flag.FeatureFlagSet;
 public class AssetSynchPackFinder implements RepositorySource {
 	
 	public static final PackSource PACK_SOURCE = PackSource.create(name -> name.copy().withStyle(ChatFormatting.WHITE).append(" (Server-Enforced)").withStyle(ChatFormatting.RED), true);
-	
+
+	/*
+	 * TODO: Find replacement for Pack.create
+	 */
 	@Override
 	public void loadPacks(Consumer<Pack> pOnLoad) {
 		for (AbstractAssetEnforcementManager aaem : AssetEnforcement.getRegisteredManagers()) {

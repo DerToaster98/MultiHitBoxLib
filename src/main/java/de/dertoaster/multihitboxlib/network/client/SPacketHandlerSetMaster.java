@@ -10,8 +10,10 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent.Context;
 
+/*
+ * TODO: Rewrite Packets for new Packet system
+ */
 public class SPacketHandlerSetMaster extends AbstractPacketHandler<SPacketSetMaster> {
 
 	@Override

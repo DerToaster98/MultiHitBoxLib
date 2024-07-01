@@ -5,11 +5,9 @@ import de.dertoaster.multihitboxlib.api.glibplus.WrappedAnimationController;
 import de.dertoaster.multihitboxlib.api.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.network.server.SPacketFunctionalAnimProgress;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -21,6 +19,9 @@ import java.util.function.Supplier;
  */
 public class SPacketHandlerFunctionalAnimProgress extends AbstractPacketHandler<SPacketFunctionalAnimProgress> {
 
+    /*
+     * TODO: Rewrite Packets for new Packet system
+     */
     @Override
     protected void execHandlePacket(SPacketFunctionalAnimProgress packet, Supplier<NetworkEvent.Context> context, @Nullable Level world, @Nullable Player player) {
         if (!(world instanceof ClientLevel)) return;

@@ -1,6 +1,6 @@
-package de.dertoaster.multihitboxlib.api.glibplus;
+package de.dertoaster.multihitboxlib.api.alibplus;
 
-import software.bernie.geckolib.animation.AnimationController;
+import mod.azure.azurelib.core.animation.AnimationController;
 
 /**
  *

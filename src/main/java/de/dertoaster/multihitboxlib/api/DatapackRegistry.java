@@ -16,7 +16,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DataPackRegistryEvent.NewRegistry;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
 public class DatapackRegistry<T> {
 		
@@ -41,15 +41,15 @@ public class DatapackRegistry<T> {
 		this.registryKey = resourceKey;
 	}
 
-	public void registerSynchable(NewRegistry registryEvent) {
+	public void registerSynchable(DataPackRegistryEvent.NewRegistry registryEvent) {
 		register(registryEvent, true);
 	}
 	
-	public void register(NewRegistry registryEvent) {
+	public void register(DataPackRegistryEvent.NewRegistry registryEvent) {
 		register(registryEvent, false);
 	}
 	
-	public void register(NewRegistry registryEvent, boolean synchable) {
+	public void register(DataPackRegistryEvent.NewRegistry registryEvent, boolean synchable) {
 		if (synchable) {
 			registryEvent.dataPackRegistry(registryKey, objectCodec, objectCodec);
 		} else {
@@ -97,7 +97,9 @@ public class DatapackRegistry<T> {
 	protected Codec<T> createByNameCodec() {
 		return createByNameCodec(this);
 	}
-	
+	/*
+	 * TODO: Find replacement for Holder::get
+	 */
 	protected static <V> Codec<V> createByNameCodec(DatapackRegistry<V> registry) {
 		return registry.registryCodec().xmap(Holder::get, Holder::direct);
 	}

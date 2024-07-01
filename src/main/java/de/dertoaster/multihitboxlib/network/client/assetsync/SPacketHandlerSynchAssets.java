@@ -8,8 +8,10 @@ import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent.Context;
 
+/*
+ * TODO: Rewrite Packets for new Packet system
+ */
 public class SPacketHandlerSynchAssets extends AbstractSPacketHandlerCodecWrappingPacket<SynchDataContainer, SPacketSynchAssets>{
 
 	@Override
