@@ -164,3 +164,39 @@ idea {
         downloadJavadoc = true
     }
 }
+
+if (file('key.properties').exists()) {
+    publishMods {
+        def releaseProp = new Properties()
+        File secretPropsFile = file("key.properties")
+        releaseProp.load(secretPropsFile.newInputStream())
+        file = jar.archiveFile
+        changelog = rootProject.file("changelog.md").text
+        type = STABLE
+        modLoaders.add("neoforge")
+
+        curseforge {
+            projectId = project.curseforge_id
+            projectSlug = project.mod_id
+            accessToken = releaseProp.getProperty("curseKey")
+            minecraftVersions.add(project.minecraft_version)
+            optional {
+                slug = "azurelib"
+            }
+            optional {
+                slug = "geckolib"
+            }
+        }
+        modrinth {
+            projectId = project.modrinth_id
+            accessToken = releaseProp.getProperty('modrinthKey')
+            minecraftVersions.add(project.minecraft_version)
+            optional {
+                slug = "azurelib"
+            }
+            optional {
+                slug = "geckolib"
+            }
+        }
+    }
+}
