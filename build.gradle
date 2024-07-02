@@ -5,6 +5,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'org.parchmentmc.librarian.forgegradle' version "${parchmentmc_version}"
+    id 'me.modmuss50.mod-publish-plugin' version "${modmuss50_mod_publish_version}"
 }
 
 version = "${mc_version}-${mod_version}"
@@ -118,7 +119,7 @@ dependencies {
     // Dependencies (Optional)
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
 
-    implementation fg.deobf("mod.azure.azurelib:azurelib-forge-${azurelib_version}")
+    implementation fg.deobf("mod.azure.azurelib:azurelib-neo-${azurelib_version}")
 
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
@@ -238,4 +239,41 @@ static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
 // Delete slim jar
 build.doLast {
 	delete "${project.projectDir}/build/libs/${modid}-${mc_version}-${mod_version}-slim.jar"
+}
+
+if (file('key.properties').exists()) {
+    publishMods {
+        def releaseProp = new Properties()
+        File secretPropsFile = file("key.properties")
+        releaseProp.load(secretPropsFile.newInputStream())
+        file = jar.archiveFile
+        changelog = rootProject.file("changelog.md").text
+        type = STABLE
+        modLoaders.add("neoforge")
+        modLoaders.add("forge")
+
+        curseforge {
+            projectId = project.curseforge_id
+            projectSlug = project.mod_id
+            accessToken = releaseProp.getProperty("curseKey")
+            minecraftVersions.add(project.minecraft_version)
+            optional {
+                slug = "azurelib"
+            }
+            optional {
+                slug = "geckolib"
+            }
+        }
+        modrinth {
+            projectId = project.modrinth_id
+            accessToken = releaseProp.getProperty('modrinthKey')
+            minecraftVersions.add(project.minecraft_version)
+            optional {
+                slug = "azurelib"
+            }
+            optional {
+                slug = "geckolib"
+            }
+        }
+    }
 }

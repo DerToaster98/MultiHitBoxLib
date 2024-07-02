@@ -1,7 +1,7 @@
 package de.dertoaster.multihitboxlib.network.client;
 
-import de.dertoaster.multihitboxlib.api.glibplus.IExtendedGeoAnimatableEntity;
-import de.dertoaster.multihitboxlib.api.glibplus.WrappedAnimationController;
+import de.dertoaster.multihitboxlib.api.alibplus.IExtendedGeoAnimatableEntity;
+import de.dertoaster.multihitboxlib.api.alibplus.WrappedAnimationController;
 import de.dertoaster.multihitboxlib.api.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.network.server.SPacketFunctionalAnimProgress;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * it's updated on the server. This helps ensure synchronization of functional animation metadata between the client and server, especially
  * in cases where the server is running at less than 18 TPS/is lagging.
  */
-public class SPacketHandlerFunctionalAnimProgress extends AbstractPacketHandler<SPacketFunctionalAnimProgress> {
+public class SPacketHandlerFunctionalAnimProgressAL extends AbstractPacketHandler<SPacketFunctionalAnimProgress> {
 
     @Override
     protected void execHandlePacket(SPacketFunctionalAnimProgress packet, Supplier<NetworkEvent.Context> context, @Nullable Level world, @Nullable Player player) {

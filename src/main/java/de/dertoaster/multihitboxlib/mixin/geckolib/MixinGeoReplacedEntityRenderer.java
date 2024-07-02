@@ -13,7 +13,7 @@ public abstract class MixinGeoReplacedEntityRenderer {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Inject(
-			method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererProvider;Lsoftware/bernie/geckolib/model/GeoModel;Lsoftware/bernie/geckolib/core/animatable/GeoAnimatable;)V",
+			method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererProvider$Context;Lsoftware/bernie/geckolib/model/GeoModel;Lsoftware/bernie/geckolib/core/animatable/GeoAnimatable;)V",
 			at = @At("TAIL")
 			)
 	private void mixinConstructor(CallbackInfo ci) {
