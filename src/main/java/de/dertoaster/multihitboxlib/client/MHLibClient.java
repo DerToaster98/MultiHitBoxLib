@@ -45,9 +45,6 @@ public class MHLibClient {
 		});
 	}
 
-	/*
-	 * TODO: Find replacement for Bus.MOD.bus().get()
-	 */
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event) {
 		EntityRenderEventHandlerCommonLogic.registerRelevantEventListeners(NeoForge.EVENT_BUS);
@@ -55,7 +52,7 @@ public class MHLibClient {
 		// Fire part renderer event and collect
 		final Map<Class<? extends MHLibPartEntity<?>>, Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>>> map = new HashMap<>();
 		PartRendererRegistrationEvent registrationEvent = new PartRendererRegistrationEvent(map);
-		Bus.MOD.bus().get().post(registrationEvent);
+		NeoForge.EVENT_BUS.post(registrationEvent);
 		if (map != null) {
 			map.entrySet().forEach(entry -> registerEntityPartRenderer(entry.getKey(), entry.getValue()));
 		}

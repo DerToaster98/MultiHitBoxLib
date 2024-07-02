@@ -25,7 +25,9 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
 
 public class AssetEnforcement {
 	
@@ -45,13 +47,10 @@ public class AssetEnforcement {
 		return result;
 	}
 
-	/*
-	 * TODO: Find replacement for Bus.MOD.bus().get()
-	 */
 	private static void initializeAssetFinders() {
 		final Map<ResourceLocation, AbstractAssetFinder> map = new Object2ObjectArrayMap<>();
 		SynchAssetFinderRegistrationEvent event = new SynchAssetFinderRegistrationEvent(map);
-		Bus.MOD.bus().get().post(event);
+		NeoForge.EVENT_BUS.post(event);
 		if (map != null) {
 			map.entrySet().forEach(entry -> {
 				registerAssetFinder(entry.getKey(), entry.getValue());
@@ -71,13 +70,10 @@ public class AssetEnforcement {
 		}
 	}
 
-	/*
-	 * TODO: Find replacement for Bus.MOD.bus().get()
-	 */
 	private static void initializeManagers() {
 		final Map<ResourceLocation, AbstractAssetEnforcementManager> map = new Object2ObjectArrayMap<>();
 		AssetEnforcementManagerRegistrationEvent event = new AssetEnforcementManagerRegistrationEvent(map);
-		Bus.MOD.bus().get().post(event);
+		NeoForge.EVENT_BUS.post(event);
 		if (map != null) {
 			map.entrySet().forEach(entry -> {
 				try {
