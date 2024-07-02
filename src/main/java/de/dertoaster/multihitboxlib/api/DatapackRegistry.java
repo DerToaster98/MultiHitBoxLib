@@ -97,11 +97,9 @@ public class DatapackRegistry<T> {
 	protected Codec<T> createByNameCodec() {
 		return createByNameCodec(this);
 	}
-	/*
-	 * TODO: Find replacement for Holder::get
-	 */
+
 	protected static <V> Codec<V> createByNameCodec(DatapackRegistry<V> registry) {
-		return registry.registryCodec().xmap(Holder::get, Holder::direct);
+		return registry.registryCodec().xmap(Holder::value, Holder::direct);
 	}
 	
 }
