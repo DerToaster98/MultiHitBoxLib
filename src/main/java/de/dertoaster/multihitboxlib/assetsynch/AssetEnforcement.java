@@ -52,9 +52,7 @@ public class AssetEnforcement {
 		SynchAssetFinderRegistrationEvent event = new SynchAssetFinderRegistrationEvent(map);
 		NeoForge.EVENT_BUS.post(event);
 		if (map != null) {
-			map.entrySet().forEach(entry -> {
-				registerAssetFinder(entry.getKey(), entry.getValue());
-			});
+			map.entrySet().forEach(entry -> registerAssetFinder(entry.getKey(), entry.getValue()));
 		}
 	}
 
