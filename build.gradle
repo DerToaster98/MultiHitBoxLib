@@ -116,6 +116,11 @@ dependencies {
     minecraft("net.minecraftforge:forge:${mc_version}-${forge_version}")
     annotationProcessor("org.spongepowered:mixin:${mixin_version}:processor")
 
+    // Dependencies (Embedded)
+    implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+
+    jarJar(group: 'commoble.databuddy', name: "${databuddy_branch}", version: "[${databuddy_version},)")
+
     // Dependencies (Optional)
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
 
