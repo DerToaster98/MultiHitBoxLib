@@ -76,7 +76,7 @@ public interface IMultipartEntity<T extends Entity> {
 		final double curZ = entity.getZ();
 		
 		final float rotX = this.mhlibGetEntityRotationXForPartOffset();
-		final float rotY = this.mhlibGetEntityRotationYForPartOffset();
+		final float rotY = (float) (this.mhlibGetEntityRotationYForPartOffset() + Math.toRadians(entity.getYRot()));
 		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
 		
 		final double entityScale = this.mhlibGetEntitySizeScale(entity);
