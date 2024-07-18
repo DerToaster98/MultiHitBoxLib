@@ -122,11 +122,14 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Override
 	public void mhLibOnStopTrackingEvent(ServerPlayer sp) {
 		// System.out.println("Removing tracker: " + sp.getUUID() != null ? sp.getUUID().toString() : "NONE");
-		if (this.trackerQueue.contains(sp.getUUID())) {
-			this.trackerQueue.remove(sp.getUUID());
+		if (this.getTrackerQueue().contains(sp.getUUID())) {
+			this.getTrackerQueue().remove(sp.getUUID());
 		}
 		if (this.getMasterUUID() != null && this.getMasterUUID().equals(sp.getUUID())) {
 			this.setMasterUUID(null);
+		}
+		if (this.getMasterUUID() == null && this.getTrackerQueue().size() > 0) {
+			this.setMasterUUID(this.getTrackerQueue().poll());
 		}
 	}
 	
