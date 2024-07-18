@@ -23,5 +23,8 @@ public class MHLibHitboxTypes {
 	); 
 	
 	public static final RegistryObject<Codec<? extends IHitboxType>> AABB = HITBOX_TYPE_DISPATCHER.registry().register("aabb", () -> AABBHitboxType.CODEC);
+	//public static final RegistryObject<Codec<? extends IHitboxType>> SPHERE = HITBOX_TYPE_DISPATCHER.registry().register("sphere", () -> SphereHitboxType.CODEC);
+	//public static final RegistryObject<Codec<? extends IHitboxType>> ORIENTABLE_SPHEROID = HITBOX_TYPE_DISPATCHER.registry().register("orientable_spheroid", () -> OrientableSpheroidHitboxType.CODEC);
+	//public static final RegistryObject<Codec<? extends IHitboxType>> OBB = HITBOX_TYPE_DISPATCHER.registry().register("orientable_bb", () -> OrientableBBHitboxType.CODEC);
 
 }
