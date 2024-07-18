@@ -212,7 +212,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 						false, 
 						part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, 
 						BoneInformation.DEFAULT_SCALING,
-						part.getConfig() != null ? part.getConfig().baseRotation() : Vec3.ZERO
+						part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO
 				));
 				
 				//System.out.println("Sync data: " + bi.toString());
