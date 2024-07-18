@@ -58,7 +58,7 @@ public interface IMultipartEntity<T extends Entity> {
 	}
 	
 	public default MHLibPartEntity<T> createNewPartFrom(SubPartConfig spc, final T parentEntity, final int subPartNumber) {
-		return new MHLibPartEntity<T>(parentEntity, spc);
+		return spc.hitboxType().createPartEntity(spc, parentEntity, subPartNumber);
 	}
 	
 	public Optional<MHLibPartEntity<T>> getPartByName(final String name);  

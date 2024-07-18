@@ -18,6 +18,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.PartEntity;
 
+//TODO: Refactor most of this into a abstract base class, base MHLibPartEntity is a AABB
 public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	private final SubPartConfig config;
@@ -41,11 +42,15 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	private final LazyLoadField<Boolean> isSynched = new LazyLoadField<>(this::isSynched, 5000);
 
 	private Optional<Tuple<Float, Float>> currentSizeModifier = Optional.empty();
+	
+	protected final Vec3 basePos;
 
-	public MHLibPartEntity(T parent, final SubPartConfig properties) {
+	public MHLibPartEntity(T parent, final SubPartConfig properties, final EntityDimensions baseSize, final Vec3 basePosition) {
 		super(parent);
 		this.config = properties;
-		this.baseSize = EntityDimensions.scalable(this.config.baseSize().x, this.config.baseSize().y);
+		//this.baseSize = EntityDimensions.scalable(this.config.baseSize().x, this.config.baseSize().y);
+		this.baseSize = baseSize;
+		this.basePos = basePosition;
 	}
 	
 	public SubPartConfig getConfig() {
@@ -165,7 +170,7 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	}
 
 	public Vec3 getConfigPositionOffset() {
-		return this.config.basePosition();
+		return this.basePos;
 	}
 	
 	public String getConfigName() {
