@@ -76,6 +76,8 @@ public interface IMultipartEntity<T extends Entity> {
 		final double curZ = entity.getZ();
 		
 		final float rotX = this.mhlibGetEntityRotationXForPartOffset();
+		// TODO: Unsure what to do with this as this could mess up the position if we just add the y rot to it...
+		// ... Otherwise this is for non synched parts, so it should be alright
 		final float rotY = (float) (this.mhlibGetEntityRotationYForPartOffset() + Math.toRadians(entity.getYRot()));
 		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
 		
@@ -96,7 +98,60 @@ public interface IMultipartEntity<T extends Entity> {
 		}
 	}
 	
-	public default <E extends Entity & IMultipartEntity<?>> void alignSynchedSubParts(E entity) {
+	public default void alignSynchedSubParts(T entity, final Map<String, BoneInformation> syncDataMap) {
+		final double curX = entity.getX();
+		final double curY = entity.getY();
+		final double curZ = entity.getZ();
+		
+		final float rotX = this.mhlibGetEntityRotationXForPartOffset();
+		final float rotY = this.mhlibGetEntityRotationYForPartOffset();
+		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
+		
+		final double entityScale = this.mhlibGetEntitySizeScale(entity);
+		
+		// Evaluate model data
+		for (String syncedBone : this.getHitboxProfile().get().synchedBones()) {
+			//System.out.println("Synching bone: " + syncedBone);
+			Optional<MHLibPartEntity<T>> optPart = this.getPartByName(syncedBone);
+			if (optPart.isEmpty()) {
+				//System.out.println("No part found!");
+				continue;
+			}
+			MHLibPartEntity<T> part = optPart.get();
+			
+			Vec3 partOffset = part.getConfigPositionOffset();
+			partOffset = partOffset.xRot(rotX);
+			partOffset = partOffset.yRot(rotY);
+			partOffset = partOffset.zRot(rotZ);
+			
+			partOffset = partOffset.scale(entityScale);
+			
+			//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
+			
+			BoneInformation bi = syncDataMap.getOrDefault(syncedBone, new BoneInformation(
+					syncedBone, 
+					false, 
+					part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, 
+					BoneInformation.DEFAULT_SCALING,
+					part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO
+			));
+			
+			//System.out.println("Sync data: " + bi.toString());
+
+			part.setScaling(bi.scale());
+			part.setPos(bi.worldPos());
+			part.setXRot((float) (bi.rotation().x() + rotX));
+			part.setYRot((float) (bi.rotation().y() + rotY));
+			part.setHidden(bi.hidden());
+		}
+		syncDataMap.clear();
+	}
+	
+	/*
+	 * Updates and resets the master entity on server side.
+	 * On client, if a boneinfobuilder is present, it compiles a packet and sends it to the server, afterwise, the builder gets cleared
+	 */
+	public default <E extends Entity & IMultipartEntity<?>> void updateSynching(E entity) {
 		if (!entity.level().isClientSide()) {
 			// If you already have a master, let's check them...
 			// If there was no packet for quite some time => elect a new master
