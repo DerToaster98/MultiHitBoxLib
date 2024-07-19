@@ -169,6 +169,9 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			return;
 		}
 		
+		// First, send packet if present or handle leader stuff
+		this.updateSynching(this);
+		
 		if (this.level().isClientSide()) {
 			return;
 		}
@@ -176,56 +179,9 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		// Won't align synched parts
 		this.alignSubParts((LivingEntity)(Object)this, this.partMap.values());
 		
-		final double curX = this.getX();
-		final double curY = this.getY();
-		final double curZ = this.getZ();
-		
-		final float rotX = this.mhlibGetEntityRotationXForPartOffset();
-		final float rotY = this.mhlibGetEntityRotationYForPartOffset();
-		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
-		
-		final double entityScale = this.mhlibGetEntitySizeScale((LivingEntity)(Object)this);
-		
 		// Now, handle synched parts
 		if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel()) {
-			// Evaluate model data
-			for (String syncedBone : this.getHitboxProfile().get().synchedBones()) {
-				//System.out.println("Synching bone: " + syncedBone);
-				Optional<MHLibPartEntity<LivingEntity>> optPart = this.getPartByName(syncedBone);
-				if (optPart.isEmpty()) {
-					//System.out.println("No part found!");
-					continue;
-				}
-				MHLibPartEntity<LivingEntity> part = optPart.get();
-				
-				Vec3 partOffset = part.getConfigPositionOffset();
-				partOffset = partOffset.xRot(rotX);
-				partOffset = partOffset.yRot(rotY);
-				partOffset = partOffset.zRot(rotZ);
-				
-				partOffset = partOffset.scale(entityScale);
-				
-				//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
-				
-				BoneInformation bi = this.syncDataMap.getOrDefault(syncedBone, new BoneInformation(
-						syncedBone, 
-						false, 
-						part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, 
-						BoneInformation.DEFAULT_SCALING,
-						part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO
-				));
-				
-				//System.out.println("Sync data: " + bi.toString());
-
-				part.setScaling(bi.scale());
-				part.setPos(bi.worldPos());
-				part.setXRot((float) (bi.rotation().x() + rotX));
-				part.setYRot((float) (bi.rotation().y() + rotY));
-				part.setHidden(bi.hidden());
-			}
-			this.syncDataMap.clear();
-			
-			this.alignSynchedSubParts(this);
+			this.alignSynchedSubParts((LivingEntity)(Object)this, this.syncDataMap);
 		}
 	}
 	
