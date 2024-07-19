@@ -145,7 +145,6 @@ public interface IMultipartEntity<T extends Entity> {
 			part.setYRot((float) (bi.rotation().y() + rotY));
 			part.setHidden(bi.hidden());
 		}
-		syncDataMap.clear();
 	}
 	
 	/*
