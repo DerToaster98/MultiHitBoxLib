@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import javax.annotation.Nullable;
 
@@ -98,7 +99,7 @@ public interface IMultipartEntity<T extends Entity> {
 		}
 	}
 	
-	public default void alignSynchedSubParts(T entity, final Map<String, BoneInformation> syncDataMap) {
+	public default void alignSynchedSubParts(T entity, final BiFunction<String, BoneInformation, BoneInformation> infoRetrievalFunction) {
 		final double curX = entity.getX();
 		final double curY = entity.getY();
 		final double curZ = entity.getZ();
@@ -128,7 +129,7 @@ public interface IMultipartEntity<T extends Entity> {
 			
 			//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
 			
-			BoneInformation bi = syncDataMap.getOrDefault(syncedBone, new BoneInformation(
+			BoneInformation bi = infoRetrievalFunction.apply(syncedBone, new BoneInformation(
 					syncedBone, 
 					false, 
 					part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, 

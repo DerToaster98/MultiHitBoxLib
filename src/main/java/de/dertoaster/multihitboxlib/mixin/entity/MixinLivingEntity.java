@@ -181,7 +181,8 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		// Now, handle synched parts
 		if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel()) {
-			this.alignSynchedSubParts((LivingEntity)(Object)this, this.syncDataMap);
+			this.alignSynchedSubParts((LivingEntity)(Object)this, this.syncDataMap::getOrDefault);
+			this.syncDataMap.clear();
 		}
 	}
 	
