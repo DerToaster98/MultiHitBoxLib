@@ -19,6 +19,8 @@ In addition to that, the following points must be met too:
 - If the library is being used, the authors of this library have to be mentioned at least in the mod's credits section
 - If the library is being used in a commercial (as in you get any form of direct monetary revenue for this (e.g. writing a mod for some youtuber)) projects, direct credit has to be given and we need to be contacted first for permission
 
+In short: as a user installing this mod, just install it normally. If you are a developer that wants to use this library in their mod: don't be a dick, depend on it NORMALLY without including this jar or the source code in your stuff and if you make profits via some "40k$ mr beast mod" stuff then please ask in before if it is alright. Leeching from the work of others isn't cool.
+
 # Contact
 - Discord: dertoaster
 - E-Mail (preferred): [dertoaster@cq-repoured.net](mailto:dertoaster@cq-repoured.net?subject=[MHLib]%20contact%20request)
