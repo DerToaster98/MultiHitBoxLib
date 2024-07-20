@@ -12,6 +12,7 @@ The license needs to be met (GNU license).
 
 In addition to that, the following points must be met too:
 - Jarinjaring, shadowing or directly including the source code or a built jar of this project in any way is not allowed unless otherwisely discussed with me personally.
+- Forks and ports: not allowed. period. If you want it for a different version, create a pull request on github.
 - Forks in any form of the library created for the intent to publish it somewhere else are not allowed. Excuses are to be aranged with me via e-mail contact (dertoaster@cq-repoured.net). Pull requests are allowed and welcome. Reuploading forks or ports to other mod loaders or minecraft versions are not permitted, if you want it for different versions, create a pull request on github.
 - Complete re-uploads (of the source code or builds) on other sites is not permitted unless explicitly permitted by me.
 - Usage of the library in commercial projects  (as in you get any form of direct monetary revenue for this (e.g. writing a mod for some youtuber)) is not permitted by default. For permission, contact me via e-mail (dertoaster@cq-repoured.net) directly
