@@ -1,6 +1,6 @@
 package de.dertoaster.multihitboxlib.api.alibplus;
 
-import mod.azure.azurelib.animatable.GeoEntity;
+import mod.azure.azurelib.common.api.common.animatable.GeoEntity;
 import mod.azure.azurelib.core.animation.AnimationController;
 import org.jetbrains.annotations.Nullable;
 

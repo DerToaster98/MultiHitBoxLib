@@ -1,78 +1,61 @@
 plugins {
-    id 'net.minecraftforge.gradle' version "${forgegradle_version}"
-    id 'org.spongepowered.mixin' version "${mixingradle_version}"
+    id 'java-library'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'org.parchmentmc.librarian.forgegradle' version "${parchmentmc_version}"
+    id 'net.neoforged.moddev' version "${moddevgradle_version}"
     id 'me.modmuss50.mod-publish-plugin' version "${modmuss50_mod_publish_version}"
 }
 
-version = "${mc_version}-${mod_version}"
+tasks.named('wrapper', Wrapper).configure {
+    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
+    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
+    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
+    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
+    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = "${minecraft_version}-${mod_version}"
 group = mod_group
 
 base {
-    archivesName = modid
+    archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-jarJar.enable()
+neoForge {
+    version = project.neo_version
 
-tasks.named('jarJar').configure {
-	archiveClassifier = ''
-}
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-    mappings channel: mappings_channel, version: mappings_version
-
-    copyIdeResources = true
-
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
-        configureEach {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            arg "-mixin.config=${modid}.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            jvmArgs "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"
-            mods {
-                "${modid}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
         client {
-            taskName 'runClient MHLib 1.20.1'
-
-            property 'forge.enabledGameTestNamespaces', modid
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
-            taskName 'runServer MHLib 1.20.1'
-
-            property 'forge.enabledGameTestNamespaces', modid
-        }
-        gameTestServer {
-            taskName 'runTestServer MHLib 1.20.1'
-
-            property 'forge.enabledGameTestNamespaces', modid
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
-        data {
-            workingDirectory project.file('run-data')
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
 
-            taskName 'runData MHLib 1.20.1'
-
-            args '--mod', modid, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
         }
     }
 }
@@ -111,91 +94,50 @@ repositories {
     }
 }
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
-    // Base
-    minecraft("net.minecraftforge:forge:${mc_version}-${forge_version}")
-    annotationProcessor("org.spongepowered:mixin:${mixin_version}:processor")
+    implementation "software.bernie.geckolib:geckolib-neoforge-${geckolib_version}"
 
-    // Dependencies (Embedded)
-    implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+    implementation "mod.azure.azurelib:azurelib-neo-${azurelib_version}"
 
-    jarJar(group: 'commoble.databuddy', name: "${databuddy_branch}", version: "[${databuddy_version},)")
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
 
-    // Dependencies (Optional)
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
 
-    implementation fg.deobf("mod.azure.azurelib:azurelib-neo-${azurelib_version}")
+    implementation "curse.maven:just-enough-effect-descriptions-jeed-532286:${jeed_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    implementation "curse.maven:catalogue-459701:${catalogue_version}"
+    //implementation "curse.maven:gamemenumodoption-353051:${gmmo_version}"
 
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    implementation "curse.maven:jade-324717:${jade_version}"
 
-    implementation fg.deobf("curse.maven:just-enough-effect-descriptions-jeed-532286:${jeed_version}")
-
-    implementation fg.deobf("curse.maven:catalogue-459701:${catalogue_version}")
-    implementation fg.deobf("curse.maven:gamemenumodoption-353051:${gmmo_version}")
-
-    implementation fg.deobf("curse.maven:jade-324717:${jade_version}")
-
-    compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
-    runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}")
-}
-
-createMcpToSrg {
-    outputs.upToDateWhen {false}
-
-    doLast {
-        fixFG5TsrgForMixinAP(output.get().asFile, file("${buildDir}/fixMcpToSrg/output.tsrg"))
-    }
-}
-
-mixin {
-    add sourceSets.main, "${modid}.refmap.json"
-    config "${modid}.mixins.json"
-
-    reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
-
-    debug.verbose = true
-    debug.export = true
-    debug = true
+    compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
+    runtimeOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
 }
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
-            mc_version: mc_version, mc_version_range: mc_version_range,
-            forge_version: forge_version, forge_version_range: forge_version_range,
-            loader_version: loader_version, mod_loader: mod_loader,
-            modid: modid, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            minecraft_version: minecraft_version, mc_version_range: mc_version_range,
+            neo_version: neo_version, neo_version_range: neo_version_range,
+            loader_version_range: loader_version_range, mod_loader: mod_loader,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_credits: mod_credits, mod_description: mod_description, mod_issueTrackerURL: mod_issueTrackerURL,
             geckolib_version_range: geckolib_version_range, azurelib_version_range: azurelib_version_range,
             jei_version_range: jei_version_range, jeed_version_range: jeed_version_range,
-            catalogue_version_range: catalogue_version_range, gmmo_version_range: gmmo_version_range,
+            catalogue_version_range: catalogue_version_range,
             jade_version_range: jade_version_range, appleskin_version_range: appleskin_version_range
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-tasks.named('jar', Jar).configure {
-	archiveClassifier = 'slim'
-    manifest {
-        attributes([
-                'Specification-Title'     : mod_name,
-                'Specification-Vendor'    : mod_credits,
-                'Specification-Version'   : mod_version,
-                'Implementation-Title'    : mod_name,
-                'Implementation-Version'  : mod_version,
-                'Implementation-Vendor'   : mod_credits,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'MixinConfigs'		  	  : "${modid}.mixins.json"
-        ])
-    }
 }
 
 publishing {
@@ -215,35 +157,12 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-// Function that actually fixes the TSRG file
-static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
-    // Make directory if needed
-    outFile.parentFile.mkdirs()
-
-    try (Scanner scanner = new Scanner(inFile); PrintWriter out = new PrintWriter(outFile)) {
-        boolean firstLine = true
-
-        while (scanner.hasNextLine()) {
-            String next = scanner.nextLine()
-
-            // Skip first 'tsrg left right' header line
-            if (firstLine) {
-                firstLine = false
-                continue
-            }
-
-            // Skip 'static' indicators
-            if (next.trim() == "static") continue
-
-            // Export line otherwise
-            out.println(next)
-        }
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
-}
-
-// Delete slim jar
-build.doLast {
-	delete "${project.projectDir}/build/libs/${modid}-${mc_version}-${mod_version}-slim.jar"
 }
 
 if (file('key.properties').exists()) {
@@ -255,7 +174,6 @@ if (file('key.properties').exists()) {
         changelog = rootProject.file("changelog.md").text
         type = STABLE
         modLoaders.add("neoforge")
-        modLoaders.add("forge")
 
         curseforge {
             projectId = project.curseforge_id

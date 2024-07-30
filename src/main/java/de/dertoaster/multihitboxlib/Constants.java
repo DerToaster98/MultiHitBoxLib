@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import java.util.function.Supplier;
 
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.LoadingModList;
 
 public class Constants {
 	public static final String MODID = "multihitboxlib";

@@ -7,13 +7,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@EventBusSubscriber(modid = Constants.MODID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = Constants.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class EntityEventHandler {
 
 	@SubscribeEvent
@@ -27,7 +26,7 @@ public class EntityEventHandler {
 					return;
 				}
 				Vec2 customDims = hp.mainHitboxConfig().baseSize();
-				event.setNewSize(EntityDimensions.scalable(customDims.x, customDims.y), true);
+				event.setNewSize(EntityDimensions.scalable(customDims.x, customDims.y));
 			}
 		}
 	}

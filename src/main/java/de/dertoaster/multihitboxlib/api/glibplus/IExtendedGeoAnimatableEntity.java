@@ -3,6 +3,7 @@ package de.dertoaster.multihitboxlib.api.glibplus;
 
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animation.AnimationController;
 
 /**
  *
@@ -14,7 +15,7 @@ public interface IExtendedGeoAnimatableEntity extends IExtendedGeoAnimatable, Ge
      * You should use {@link #triggerAnim(String)} and its overloaded variants instead of this.
      *
      * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search.
-     * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}.
+     * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}.
      */
     @Override
     default void triggerAnim(@Nullable String controllerName, String animName) {

@@ -12,6 +12,7 @@ import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractNInOneEntriesEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.client.TextureClientLogic;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
 
 public class TextureEnforcementManager extends AbstractNInOneEntriesEnforcementManager {
 
@@ -87,4 +88,11 @@ public class TextureEnforcementManager extends AbstractNInOneEntriesEnforcementM
 		return new File(Constants.MHLIB_SYNC_DIR, this.getSubDirectoryName());
 	}
 
+	/*
+	 * TODO: Return proper location
+	 */
+	@Override
+	public PackLocationInfo location() {
+		return null;
+	}
 }

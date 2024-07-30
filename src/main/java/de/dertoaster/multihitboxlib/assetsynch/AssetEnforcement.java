@@ -25,9 +25,9 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
 
 public class AssetEnforcement {
 	
@@ -46,15 +46,13 @@ public class AssetEnforcement {
 		REGISTERED_MANAGERS.values().forEach(result::add);
 		return result;
 	}
-	
+
 	private static void initializeAssetFinders() {
 		final Map<ResourceLocation, AbstractAssetFinder> map = new Object2ObjectArrayMap<>();
 		SynchAssetFinderRegistrationEvent event = new SynchAssetFinderRegistrationEvent(map);
-		Bus.MOD.bus().get().post(event);
+		NeoForge.EVENT_BUS.post(event);
 		if (map != null) {
-			map.entrySet().forEach(entry -> {
-				registerAssetFinder(entry.getKey(), entry.getValue());
-			});
+			map.entrySet().forEach(entry -> registerAssetFinder(entry.getKey(), entry.getValue()));
 		}
 	}
 
@@ -73,7 +71,7 @@ public class AssetEnforcement {
 	private static void initializeManagers() {
 		final Map<ResourceLocation, AbstractAssetEnforcementManager> map = new Object2ObjectArrayMap<>();
 		AssetEnforcementManagerRegistrationEvent event = new AssetEnforcementManagerRegistrationEvent(map);
-		Bus.MOD.bus().get().post(event);
+		NeoForge.EVENT_BUS.post(event);
 		if (map != null) {
 			map.entrySet().forEach(entry -> {
 				try {
@@ -146,7 +144,10 @@ public class AssetEnforcement {
 			sendPacket(connection, new SynchDataContainer(managerData));
 		}
 	}
-	
+
+	/*
+	 * TODO: Find replacement for PacketDistributor
+	 */
 	private static void sendPacket(final ServerPlayer connection, final SynchDataContainer payload) {
 		SPacketSynchAssets packet = new SPacketSynchAssets(payload);
 		MHLibPackets.send(packet, PacketDistributor.PLAYER.with(() -> connection));
