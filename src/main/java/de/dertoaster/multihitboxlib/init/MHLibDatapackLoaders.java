@@ -1,18 +1,18 @@
 package de.dertoaster.multihitboxlib.init;
 
-import java.util.Optional;
-
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.DatapackRegistry;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+
+import java.util.Optional;
 
 @EventBusSubscriber(modid = Constants.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class MHLibDatapackLoaders {
@@ -30,10 +30,10 @@ public class MHLibDatapackLoaders {
 	}
 
 	/*
-	 * TODO: Find replacement for getKey
+	 * DONE: Find replacement for getKey
 	 */
 	public static Optional<HitboxProfile> getHitboxProfile(EntityType<?> entityType, RegistryAccess registryAccess) {
-		return getHitboxProfile(Registries.ENTITY_TYPE.getKey(entityType), registryAccess);
+		return getHitboxProfile(BuiltInRegistries.ENTITY_TYPE.getKey(entityType), registryAccess);
 	}
 	
 }
