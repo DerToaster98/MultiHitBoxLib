@@ -10,6 +10,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /*
  * TODO: Rewrite Packets for new Packet system
@@ -17,7 +18,7 @@ import net.minecraft.world.level.Level;
 public class SPacketHandlerSetMaster extends AbstractPacketHandler<SPacketSetMaster> {
 
 	@Override
-	protected void execHandlePacket(SPacketSetMaster packet, Supplier<Context> context, Level world, Player player) {
+	protected void execHandlePacket(SPacketSetMaster packet, Supplier<IPayloadContext> context, Level world, Player player) {
 		if (!(world instanceof ClientLevel || player instanceof AbstractClientPlayer)) {
 			// Illegal side, ignore
 			return;

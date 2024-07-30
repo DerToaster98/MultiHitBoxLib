@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent.Context;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public abstract class AbstractSPacketHandlerCodecWrappingPacket<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMessageHandler<P> {
 
@@ -15,7 +16,7 @@ public abstract class AbstractSPacketHandlerCodecWrappingPacket<T extends Object
 	}
 	
 	@Override
-	public void handlePacket(P packet, Supplier<Context> context) {
+	public void handlePacket(P packet, Supplier<IPayloadContext> context) {
 		context.get().enqueueWork(() -> {
 			Player sender = null;
 			Level world = null;
@@ -38,5 +39,5 @@ public abstract class AbstractSPacketHandlerCodecWrappingPacket<T extends Object
 		context.get().setPacketHandled(true);
 	}
 
-	protected abstract void execHandlePacket(P packet, Supplier<Context> context, Level world, Player sender);
+	protected abstract void execHandlePacket(P packet, Supplier<IPayloadContext> context, Level world, Player sender);
 }

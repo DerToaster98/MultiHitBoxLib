@@ -8,6 +8,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -23,7 +24,7 @@ public class SPacketHandlerFunctionalAnimProgress extends AbstractPacketHandler<
      * TODO: Rewrite Packets for new Packet system
      */
     @Override
-    protected void execHandlePacket(SPacketFunctionalAnimProgress packet, Supplier<NetworkEvent.Context> context, @Nullable Level world, @Nullable Player player) {
+    protected void execHandlePacket(SPacketFunctionalAnimProgress packet, Supplier<IPayloadContext> context, @Nullable Level world, @Nullable Player player) {
         if (!(world instanceof ClientLevel)) return;
 
         String wrappedControllerName = packet.getWrappedControllerName();
