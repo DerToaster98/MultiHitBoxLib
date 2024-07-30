@@ -1,5 +1,6 @@
 package de.dertoaster.multihitboxlib.assetsynch.pack;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
@@ -7,7 +8,11 @@ import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.BuiltInPackSource;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.Pack.Position;
 import net.minecraft.server.packs.repository.PackSource;
@@ -19,12 +24,12 @@ public class AssetSynchPackFinder implements RepositorySource {
 	public static final PackSource PACK_SOURCE = PackSource.create(name -> name.copy().withStyle(ChatFormatting.WHITE).append(" (Server-Enforced)").withStyle(ChatFormatting.RED), true);
 
 	/*
-	 * TODO: Find replacement for Pack.create
+	 * DONE: Find replacement for Pack.create => Pack.readMetaAndCreate() (https://github.com/JTK222/Global-Packs/blob/dev/1.19.4/Common/src/main/java/net/dark_roleplay/gdarp/pack_finders/GlobalPackFinder.java)
 	 */
 	@Override
 	public void loadPacks(Consumer<Pack> pOnLoad) {
 		for (AbstractAssetEnforcementManager aaem : AssetEnforcement.getRegisteredManagers()) {
-			Pack pack = Pack.create(
+			/*Pack pack = Pack.create(
 					aaem.getId().toString(), 
 					Component.literal(aaem.getId().toString() + "(enforced assets)"), 
 					true, 
@@ -34,8 +39,20 @@ public class AssetSynchPackFinder implements RepositorySource {
 					Position.TOP, 
 					true, 
 					PACK_SOURCE
+			);*/
+			Pack.ResourcesSupplier resourcesSupplier = BuiltInPackSource.fixedResources(aaem);
+			Pack pack = Pack.readMetaAndCreate(
+				new PackLocationInfo(
+					aaem.getId().toString(),
+					Component.literal(aaem.getId().toString() + "(enforced assets)"),
+					PACK_SOURCE,
+		Optional.empty()
+				),
+				resourcesSupplier,
+				aaem.packType(),
+				new PackSelectionConfig(true, Pack.Position.TOP, true)
 			);
-			
+
 			if (pack != null) {
 				pOnLoad.accept(pack);
 			}
