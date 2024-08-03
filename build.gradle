@@ -99,6 +99,11 @@ repositories {
         name = "CubicInterpolation Maven"
         url = "https://cubicinterpolation.net/maven/"
     }
+	
+	maven {
+		name = "Commoble Databuddy"
+		url = "https://commoble.net/maven/"
+	}
 
     maven {
         name = "BlameJared maven"
@@ -141,6 +146,8 @@ dependencies {
     compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
     runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}")
 }
+
+jarJar.enable()
 
 createMcpToSrg {
     outputs.upToDateWhen {false}
