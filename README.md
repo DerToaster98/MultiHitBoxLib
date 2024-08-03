@@ -46,7 +46,7 @@ ${mc_version} and ${multihitboxlib_version} are parameters drawn from gradle.pro
 Example:
 ```
 mc_version=1.20.1
-multihitboxlib_version=1.4.0
+multihitboxlib_version=1.6.0
 ```
 
 Please depend on the library like a normal mod!
