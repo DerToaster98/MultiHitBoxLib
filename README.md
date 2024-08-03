@@ -26,7 +26,7 @@ To use MHLib, either use cursemaven or ivy.
 For ivy, you need to do this:
 ```
 repositories {
-	ivy {
+    ivy {
             name "Github Releases - DT Versioning" // Github Releases
             url "https://github.com"
 
@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-	 implementation fg.deobf("dertoaster98:multihitboxlib:${mc_version}-${multihitboxlib_version}@jar")
+    implementation fg.deobf("dertoaster98:multihitboxlib:${mc_version}-${multihitboxlib_version}@jar")
 }
 ```
 ${mc_version} and ${multihitboxlib_version} are parameters drawn from gradle.properties, so set them there.
