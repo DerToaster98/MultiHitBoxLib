@@ -10,6 +10,7 @@ import java.util.function.BiConsumer;
 
 import javax.annotation.Nullable;
 
+import net.neoforged.neoforge.entity.PartEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,8 +34,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.network.PacketDistributor;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity implements IMultipartEntity<LivingEntity> {
@@ -200,7 +199,10 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		this._mhlibTicksSinceLastSync++;
 	}
-	
+
+	/*
+	 * TODO: Rewrite Packets for new Packet system
+	 */
 	@Override
 	public void setMasterUUID(UUID id) {
 		if (this.level().isClientSide()) {

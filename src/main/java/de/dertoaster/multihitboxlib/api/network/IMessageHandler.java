@@ -1,11 +1,12 @@
 package de.dertoaster.multihitboxlib.api.network;
 
-import java.util.function.Supplier;
 
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.function.Supplier;
 
 public interface IMessageHandler<T extends Object> {
 	
-	public void handlePacket(T packet, Supplier<NetworkEvent.Context> context);
+	public void handlePacket(T packet, Supplier<IPayloadContext> context);
 
 }

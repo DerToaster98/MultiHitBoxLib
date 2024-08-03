@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public abstract class AbstractPacketHandler<P extends Object> implements IMessageHandler<P> {
 
@@ -17,7 +18,7 @@ public abstract class AbstractPacketHandler<P extends Object> implements IMessag
 	}
 	
 	@Override
-	public final void handlePacket(P packet, Supplier<NetworkEvent.Context> context) {
+	public final void handlePacket(P packet, Supplier<IPayloadContext> context) {
 		context.get().enqueueWork(() -> {
 			Player sender = null;
 			Level world = null;
@@ -47,6 +48,6 @@ public abstract class AbstractPacketHandler<P extends Object> implements IMessag
 	 * world: Optional, set when player is not null or the packet is received clientside, then it is the currently opened world
 	 * player: Either the sender of the packet or the local player. Is null for packets recepted during login
 	 */
-	protected abstract void execHandlePacket(P packet, Supplier<NetworkEvent.Context> context, @Nullable Level world, @Nullable Player player);
+	protected abstract void execHandlePacket(P packet, Supplier<IPayloadContext> context, @Nullable Level world, @Nullable Player player);
 
 }

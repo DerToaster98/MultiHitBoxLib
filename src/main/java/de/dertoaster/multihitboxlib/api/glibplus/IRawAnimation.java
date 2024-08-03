@@ -1,6 +1,6 @@
 package de.dertoaster.multihitboxlib.api.glibplus;
 
-import software.bernie.geckolib.core.animation.Animation;
+import software.bernie.geckolib.animation.Animation;
 
 public interface IRawAnimation {
 

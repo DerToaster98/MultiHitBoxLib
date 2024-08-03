@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.apache.commons.io.FileUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class DiskSaveRunner extends HashSet<Tuple<ResourceLocation, byte[]>> implements Runnable, Set<Tuple<ResourceLocation, byte[]>> {
 	

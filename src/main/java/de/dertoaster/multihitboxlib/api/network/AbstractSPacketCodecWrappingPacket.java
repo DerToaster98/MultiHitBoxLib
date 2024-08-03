@@ -57,9 +57,7 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 	@Override
 	public void toBytes(P packet, FriendlyByteBuf buffer) {
 		DataResult<JsonElement> dr = packet.codec().encodeStart(JsonOps.COMPRESSED, packet.data);
-		JsonElement je = dr.getOrThrow(false, (s) -> {
-			
-		});
+		JsonElement je = dr.getOrThrow();
 		if (je != null) {
 			byte[] bytes = je.toString().getBytes();
 			try {

@@ -1,8 +1,6 @@
 package de.dertoaster.multihitboxlib.api.glibplus;
 
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animation.AnimationController;
 
 /**
  *

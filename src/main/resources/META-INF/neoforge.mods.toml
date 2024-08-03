@@ -4,25 +4,27 @@ license="${mod_license}"
 issueTrackerURL="${mod_issueTrackerURL}"
 
 [[mods]]
-modId="${modid}"
+modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/multihitboxlib"
 logoFile="logo.png"
 credits="${mod_credits}"
 description='''${mod_description}'''
+[[mixins]]
+config="${mod_id}.mixins.json"
 
 # Base
 [[dependencies."${modid}"]]
-    modId="forge"
-    mandatory=true
-    versionRange="${forge_version_range}"
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_version_range}"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies."${modid}"]]
     modId="minecraft"
-    mandatory=true
+    type="required"
     versionRange="${mc_version_range}"
     ordering="NONE"
     side="BOTH"
@@ -31,35 +33,35 @@ description='''${mod_description}'''
 #   COMMON
 [[dependencies."${modid}"]]
     modId="geckolib"
-    mandatory=false
+    type="optional"
     versionRange="${geckolib_version_range}"
     ordering="BEFORE"
     side="BOTH"
 
 [[dependencies."${modid}"]]
     modId="azurelib"
-    mandatory=false
+    type="optional"
     versionRange="${azurelib_version_range}"
     ordering="BEFORE"
     side="BOTH"
 
 [[dependencies."${modid}"]]
     modId="jei"
-    mandatory=false
+    type="optional"
     versionRange="${jei_version_range}"
     ordering="BEFORE"
     side="BOTH"
 
 [[dependencies."${modid}"]]
     modId="jeed"
-    mandatory=false
+    type="optional"
     versionRange="${jeed_version_range}"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies."${modid}"]]
     modId="jade"
-    mandatory=false
+    type="optional"
     versionRange="${jade_version_range}"
     ordering="NONE"
     side="BOTH"
@@ -67,21 +69,14 @@ description='''${mod_description}'''
 #   CLIENT
 [[dependencies."${modid}"]]
     modId="appleskin"
-    mandatory=false
+    type="optional"
     versionRange="${appleskin_version_range}"
     ordering="NONE"
     side="CLIENT"
 
 [[dependencies."${modid}"]]
     modId="catalogue"
-    mandatory=false
+    type="optional"
     versionRange="${catalogue_version_range}"
-    ordering="NONE"
-    side="CLIENT"
-
-[[dependencies."${modid}"]]
-    modId="gamemenumodoption"
-    mandatory=false
-    versionRange="${gmmo_version_range}"
     ordering="NONE"
     side="CLIENT"

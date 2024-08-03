@@ -8,11 +8,10 @@ import de.dertoaster.multihitboxlib.assetsynch.impl.AlibModelEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.impl.GlibAnimationEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.impl.GlibModelEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.impl.TextureEnforcementManager;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = Constants.MODID, bus = Bus.MOD)
+@EventBusSubscriber(modid = Constants.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ModEventHandler {
 
 	@SubscribeEvent
