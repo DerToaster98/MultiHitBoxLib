@@ -21,11 +21,8 @@ import net.minecraft.world.flag.FeatureFlagSet;
 
 public class AssetSynchPackFinder implements RepositorySource {
 	
-	public static final PackSource PACK_SOURCE = PackSource.create(name -> name.copy().withStyle(ChatFormatting.WHITE).append(" (Server-Enforced)").withStyle(ChatFormatting.RED), true);
+	public static final PackSource PACK_SOURCE = PackSource.create(name -> name.copy().withStyle(ChatFormatting.WHITE).append(" (Server-Enforced)").withStyle(ChatFormatting.GOLD), true);
 
-	/*
-	 * DONE: Find replacement for Pack.create => Pack.readMetaAndCreate() (https://github.com/JTK222/Global-Packs/blob/dev/1.19.4/Common/src/main/java/net/dark_roleplay/gdarp/pack_finders/GlobalPackFinder.java)
-	 */
 	@Override
 	public void loadPacks(Consumer<Pack> pOnLoad) {
 		for (AbstractAssetEnforcementManager aaem : AssetEnforcement.getRegisteredManagers()) {

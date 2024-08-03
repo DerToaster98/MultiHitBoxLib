@@ -29,30 +29,46 @@
 			"collidable": true,
 			"can-receive-damage": true,
 			"damage-modifier": 0.5,
-			"size": [
-				1,
-				2
-			],
-			"position": [
-				-1,
-				0,
-				1.5
-			]
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [
+					1,
+					2
+				],
+				"position": [
+					-1,
+					0,
+					1.5
+				],
+				"pivot-offset": [
+					0,
+					0,
+					0
+				]
+			}
 		},
 		{
 			"name": "hbLeftLeg",
 			"collidable": true,
 			"can-receive-damage": true,
 			"damage-modifier": 0.5,
-			"size": [
-				1.25,
-				2
-			],
-			"position": [
-				-1,
-				2.1,
-				1.25
-			]
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [
+					1.25,
+					2
+				],
+				"position": [
+					-1,
+					2.1,
+					1.25
+				],
+				"pivot-offset": [
+					0,
+					0,
+					0
+				]
+			}
 		}
 	]
 }
