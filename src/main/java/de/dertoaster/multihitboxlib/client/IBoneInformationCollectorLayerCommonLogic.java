@@ -38,22 +38,23 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 			final Vec3 worldPos = this.getBoneWorldPosition(bone);
 			this.calcScales(bone);
 			this.calcRotations(bone);
-			if (this.getCurrentTick() == entity.tickCount || this.getCurrentTick() < 0) {
+
+			if (hitboxProfile.synchedBones().contains(this.getBoneName(bone))) {
 				if (hitboxProfile.syncToModel()) {
-					if (hitboxProfile.synchedBones().contains(this.getBoneName(bone))) {
+					if (this.getCurrentTick() == entity.tickCount || this.getCurrentTick() < 0) {
 						ime.tryAddBoneInformation(this.getBoneName(bone), this.isBoneHidden(bone), worldPos, this.getScaleVector(), this.getRotationVector());
 						//System.out.println("RenderRecursively: " + worldPos.toString());
 						//ime.getPartByName(bone.getName()).get().setPos(worldPos);
 					}
 				}
-			}
-			// After we collected stuff, we set the position directly if we trust the client...
-			// Unsafe but honestly, mixins are a thing. Nobody can stop anyone else from installing a clientside mod that moves all hitboxes out of place...
-			if (hitboxProfile.trustClient()) {
-				Optional<? extends MHLibPartEntity<?>> optPart = ime.getPartByName(this.getBoneName(bone));
-				if (optPart.isPresent()) {
-					MHLibPartEntity<?> part = optPart.get();
-					part.applyInformation(worldPos, this.getScaleVector(), this.getRotationVector(), this.isBoneHidden(bone));
+				// After we collected stuff, we set the position directly if we trust the client...
+				// Unsafe but honestly, mixins are a thing. Nobody can stop anyone else from installing a clientside mod that moves all hitboxes out of place...
+				if (hitboxProfile.trustClient()) {
+					Optional<? extends MHLibPartEntity<?>> optPart = ime.getPartByName(this.getBoneName(bone));
+					if (optPart.isPresent()) {
+						MHLibPartEntity<?> part = optPart.get();
+						part.applyInformation(worldPos, this.getScaleVector(), this.getRotationVector(), this.isBoneHidden(bone));
+					}
 				}
 			}
 		}
