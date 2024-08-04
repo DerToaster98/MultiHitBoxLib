@@ -2,6 +2,7 @@ package de.dertoaster.multihitboxlib.entity;
 
 import java.util.Optional;
 
+import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
@@ -43,13 +44,15 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	private Optional<Tuple<Float, Float>> currentSizeModifier = Optional.empty();
 	
 	protected final Vec3 basePos;
+	protected final Vec3 pivot;
 
-	public MHLibPartEntity(T parent, final SubPartConfig properties, final EntityDimensions baseSize, final Vec3 basePosition) {
+	public MHLibPartEntity(T parent, final SubPartConfig properties, final EntityDimensions baseSize, final Vec3 basePosition, Vec3 pivot) {
 		super(parent);
 		this.config = properties;
 		//this.baseSize = EntityDimensions.scalable(this.config.baseSize().x, this.config.baseSize().y);
 		this.baseSize = baseSize;
 		this.basePos = basePosition;
+		this.pivot = pivot;
 	}
 	
 	public SubPartConfig getConfig() {
@@ -261,9 +264,22 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		this.currentSizeModifier = Optional.ofNullable(new Tuple<Float, Float>((float)scale.x(), (float)scale.y()));
 	}
 
+	public Vec3 getPivot() {
+		return this.pivot;
+	}
+
 	public void applyInformation(BoneInformation bi) {
+		Vec3 pivot = this.getPivot();
+		if (pivot != Vec3.ZERO) {
+			pivot = pivot.xRot((float) (bi.rotation().x())).yRot((float) (bi.rotation().y())).zRot((float) (bi.rotation().z()));
+		}
+		if (this.getParent() instanceof IMHLibSizeCallback sc) {
+			pivot = pivot.scale(sc.mhlibGetEntitySizeScale(this.getParent()));
+		}
 		this.setScaling(bi.scale());
-		this.setPos(bi.worldPos());
+		// Subtract pivot from worldpos so we are at the correct position
+		// keep in mind that the pivot was rotated before to match the given rotation!
+		this.setPos(bi.worldPos().subtract(pivot));
 		this.setXRot((float) (bi.rotation().x()));
 		this.setYRot((float) (bi.rotation().y()));
 		this.setHidden(bi.hidden());

@@ -16,19 +16,19 @@ public class AABBHitboxType implements IHitboxType {
 	
 	protected final Vec2 baseSize;
 	protected final Vec3 basePosition;
-	protected final Vec3 pivotOffset;
+	protected final Vec3 pivot;
 	
-	public AABBHitboxType(Vec2 size, Vec3 pos, Vec3 pivotOffset) {
+	public AABBHitboxType(Vec2 size, Vec3 pos, Vec3 pivot) {
 		this.baseSize = size;
 		this.basePosition = pos;
-		this.pivotOffset = pivotOffset;
+		this.pivot = pivot;
 	}
 
 	public static final Codec<AABBHitboxType> CODEC = RecordCodecBuilder.create(instance -> {
 		return instance.group(
 				UtilityCodecs.VEC2_CODEC.fieldOf("size").forGetter(obj -> obj.baseSize),
 				Vec3.CODEC.fieldOf("position").forGetter(obj -> obj.basePosition),
-				Vec3.CODEC.optionalFieldOf("pivot-offset", Vec3.ZERO).forGetter(obj -> obj.pivotOffset)
+				Vec3.CODEC.optionalFieldOf("pivot", Vec3.ZERO).forGetter(obj -> obj.pivot)
 			).apply(instance, AABBHitboxType::new);
 	});
 	
@@ -39,7 +39,7 @@ public class AABBHitboxType implements IHitboxType {
 
 	@Override
 	public <T extends Entity> MHLibPartEntity<T> createPartEntity(SubPartConfig config, T parent, int partNumber) {
-		return new MHLibPartEntity<T>(parent, config, EntityDimensions.scalable(this.baseSize.x, this.baseSize.y), this.basePosition);
+		return new MHLibPartEntity<T>(parent, config, EntityDimensions.scalable(this.baseSize.x, this.baseSize.y), this.basePosition, this.pivot);
 	}
 
 }

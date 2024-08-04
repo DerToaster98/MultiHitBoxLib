@@ -164,8 +164,13 @@ public interface IMultipartEntity<T extends Entity> {
 			partOffset = partOffset.zRot(rotZ);
 			
 			partOffset = partOffset.scale(entityScale);
+
+			partOffset = partOffset.add(curX, curY, curZ);
+			// Subtract pivot so the position is correct
+			partOffset = partOffset.subtract(part.getPivot());
+
 			part.setScaling(new Vec3(entityScale, entityScale, entityScale));
-			part.setPos(partOffset.add(curX, curY, curZ));
+			part.setPos(partOffset);
 		}
 	}
 	
@@ -208,12 +213,10 @@ public interface IMultipartEntity<T extends Entity> {
 					BoneInformation.DEFAULT_SCALING,
 					part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO
 			));
-			Vec3 scaleBI = bi.scale();
-			scaleBI = scaleBI.multiply(entityScale, entityScale, entityScale);
+			bi = bi.scale(entityScale);
 			//System.out.println("Sync data: " + bi.toString());
 
 			part.applyInformation(bi);
-			part.setScaling(scaleBI);
 		}
 	}
 
