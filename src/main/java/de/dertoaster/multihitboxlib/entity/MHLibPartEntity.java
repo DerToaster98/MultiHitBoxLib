@@ -268,21 +268,25 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		return this.pivot;
 	}
 
-	public void applyInformation(BoneInformation bi) {
+	public void applyInformation(Vec3 worldPos, Vec3 scale, Vec3 rotation, boolean hidden) {
 		Vec3 pivot = this.getPivot();
 		if (pivot != Vec3.ZERO) {
-			pivot = pivot.xRot((float) (bi.rotation().x())).yRot((float) (bi.rotation().y())).zRot((float) (bi.rotation().z()));
+			pivot = pivot.xRot((float) (rotation.x())).yRot((float) (rotation.y())).zRot((float) (rotation.z()));
 		}
 		if (this.getParent() instanceof IMHLibSizeCallback sc) {
 			pivot = pivot.scale(sc.mhlibGetEntitySizeScale(this.getParent()));
 		}
-		this.setScaling(bi.scale());
+		this.setScaling(scale);
 		// Subtract pivot from worldpos so we are at the correct position
 		// keep in mind that the pivot was rotated before to match the given rotation!
-		this.setPos(bi.worldPos().subtract(pivot));
-		this.setXRot((float) (bi.rotation().x()));
-		this.setYRot((float) (bi.rotation().y()));
-		this.setHidden(bi.hidden());
+		this.setPos(worldPos.subtract(pivot));
+		this.setXRot((float) (rotation.x()));
+		this.setYRot((float) (rotation.y()));
+		this.setHidden(hidden);
+	}
+
+	public void applyInformation(BoneInformation bi) {
+		applyInformation(bi.worldPos(), bi.scale(), bi.rotation(), bi.hidden());
 	}
 
 	public void setEnabled(boolean value) {
