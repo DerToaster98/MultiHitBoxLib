@@ -5,6 +5,7 @@ import java.util.Optional;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
+import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -259,5 +260,12 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public void setScaling(Vec3 scale) {
 		this.currentSizeModifier = Optional.ofNullable(new Tuple<Float, Float>((float)scale.x(), (float)scale.y()));
 	}
-	
+
+	public void applyInformation(BoneInformation bi) {
+		this.setScaling(bi.scale());
+		this.setPos(bi.worldPos());
+		this.setXRot((float) (bi.rotation().x()));
+		this.setYRot((float) (bi.rotation().y()));
+		this.setHidden(bi.hidden());
+	}
 }
