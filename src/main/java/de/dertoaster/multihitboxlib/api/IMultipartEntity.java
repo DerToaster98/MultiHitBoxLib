@@ -420,7 +420,8 @@ public interface IMultipartEntity<T extends Entity> {
 
 	public default void mhlibSetID(int id) {
 		if (this instanceof Entity entity) {
-			entity.setId(id);
+			// NEVER DO THIS, this will cause a infintie recursion loop!
+			//entity.setId(id);
 
 			if (entity.isMultipartEntity() && entity.getParts() != null) {
 				for (int i = 0; i < entity.getParts().length; i++) {

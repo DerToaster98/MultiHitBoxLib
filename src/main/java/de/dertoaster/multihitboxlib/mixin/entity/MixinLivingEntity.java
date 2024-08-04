@@ -137,6 +137,8 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	// Override setID to also set the id of the parts
 	@Override
 	public void setId(int pId) {
+		// Attention: First call super, then MHLib!
+		super.setId(pId);
 		IMultipartEntity.super.mhlibSetID(pId);
 	}
 
