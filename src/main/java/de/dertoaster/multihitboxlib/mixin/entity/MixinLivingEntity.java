@@ -162,4 +162,65 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		cir.setReturnValue(IMultipartEntity.super.mhLibIsPickable(cir.getReturnValue()));
 	}
 
+	// MHLib access stuff
+	@Override
+	public PartEntity<?>[] _mhlibAccess_getPartArray() {
+		return this.partArray;
+	}
+
+	@Override
+	public void _mhlibAccess_setPartArray(final PartEntity<?>[] value) {
+		this.partArray = value;
+	}
+
+	@Override
+	public Queue<UUID> _mhlibAccess_getTrackerQueue() {
+		return this.trackerQueue;
+	}
+
+	@Override
+	public int _mhlibAccess_getTicksSinceLastSynch() {
+		return this._mhlibTicksSinceLastSync;
+	}
+
+	@Override
+	public void _mhlibAccess_setTicksSinceLastSynch(int value) {
+		this._mhlibTicksSinceLastSync = value;
+	}
+
+	@Override
+	public Map<String, MHLibPartEntity<LivingEntity>> _mhlibAccess_getPartMap() {
+		return this.partMap;
+	}
+
+	@Override
+	public void _mhlibAccess_setPartMap(Map<String, MHLibPartEntity<LivingEntity>> value) {
+		this.partMap = value;
+	}
+
+	@Override
+	public Map<String, BoneInformation> _mhlibAccess_getSynchMap() {
+		return this.syncDataMap;
+	}
+
+	@Override
+	public UUID _mhlibAccess_getMasterUUID() {
+		return this.masterUUID;
+	}
+
+	@Override
+	public void _mhlibAccess_setMasterUUID(UUID value) {
+		this.masterUUID = value;
+	}
+
+	@Override
+	public Optional<CPacketBoneInformation.Builder> _mlibAccess_getBoneInfoBuilder() {
+		return this.boneInformationBuilder;
+	}
+
+	@Override
+	public void _mlibAccess_setBoneInfoBuilder(Optional<CPacketBoneInformation.Builder> value) {
+		this.boneInformationBuilder = value;
+	}
+
 }
