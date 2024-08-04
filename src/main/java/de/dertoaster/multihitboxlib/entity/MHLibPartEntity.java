@@ -284,4 +284,8 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		this.setYRot((float) (bi.rotation().y()));
 		this.setHidden(bi.hidden());
 	}
+
+	public void setEnabled(boolean value) {
+		this.enabled = value;
+	}
 }
