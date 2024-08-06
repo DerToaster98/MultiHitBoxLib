@@ -15,6 +15,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 
@@ -167,8 +168,10 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public void setPos(double pX, double pY, double pZ) {
 		super.setPosRaw(pX, pY, pZ);
 		this.setOldPosAndRot();
-		
+
 		this.setBoundingBox(this.getDimensions(Pose.STANDING).makeBoundingBox(pX, pY, pZ));
+		// recalculates the scaling
+		this.getDimensions(Pose.STANDING);
 	}
 
 	public Vec3 getConfigPositionOffset() {
@@ -230,6 +233,11 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		} else {
 			return super.hurt(pSource, pAmount);
 		}
+	}
+
+	@Override
+	protected AABB getBoundingBoxForPose(Pose pPose) {
+		return this.getBoundingBox();
 	}
 
 	@Override
