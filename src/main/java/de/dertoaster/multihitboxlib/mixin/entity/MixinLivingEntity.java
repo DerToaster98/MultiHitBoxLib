@@ -64,7 +64,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			at = @At("TAIL")
 			)
 	private void mixinConstructor(CallbackInfo ci) {
-		IMultipartEntity.super.mhlibOnConstructor();
+		this.mhlibOnConstructor();
 	}
 	
 	/*@Inject(
@@ -103,7 +103,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			return;
 		}
 
-		IMultipartEntity.super.mhlibAiStep();
+		this.mhlibAiStep();
 	}
 	
 	// In tick method => intercept and tick the subparts
@@ -139,7 +139,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	public void setId(int pId) {
 		// Attention: First call super, then MHLib!
 		super.setId(pId);
-		IMultipartEntity.super.mhlibSetID(pId);
+		this.mhlibSetID(pId);
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Override
 	@Nullable
 	public PartEntity<?>[] getParts() {
-		return IMultipartEntity.super.mhLibGetParts();
+		return this.mhLibGetParts();
 	}
 
 	// Also make sure to modify the result of isMultipartEntity to be correct
@@ -161,7 +161,7 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 			cancellable = true
 	)
 	private void mixinIsPickable(CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(IMultipartEntity.super.mhLibIsPickable(cir.getReturnValue()));
+		cir.setReturnValue(this.mhLibIsPickable(cir.getReturnValue()));
 	}
 
 	// MHLib access stuff
