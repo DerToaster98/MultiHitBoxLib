@@ -8,6 +8,12 @@ public class SPacketFunctionalAnimProgress extends AbstractPacket<SPacketFunctio
     private final int animatableOwnerId;
     private final double clientUpdateTickDelta;
 
+    public SPacketFunctionalAnimProgress() {
+        this.wrappedControllerName = "";
+        this.animatableOwnerId = -1;
+        this.clientUpdateTickDelta = -1;
+    }
+
     public SPacketFunctionalAnimProgress(String wrappedControllerName, int animatableOwnerId, double clientUpdateTickDelta) {
         this.wrappedControllerName = wrappedControllerName;
         this.animatableOwnerId = animatableOwnerId;

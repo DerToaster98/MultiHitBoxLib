@@ -18,4 +18,14 @@ public record BoneInformation(String name, boolean hidden, Vec3 worldPos, Vec3 s
 				Vec3.CODEC.optionalFieldOf("rotation", Vec3.ZERO).forGetter(BoneInformation::rotation)
 			).apply(instance, BoneInformation::new);
 	});
+
+	public BoneInformation scale(double scaling) {
+		return new BoneInformation(
+				name(),
+				hidden(),
+				worldPos(),
+				scale.scale(scaling),
+				rotation()
+		);
+	}
 }

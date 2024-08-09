@@ -12,8 +12,12 @@ public class SPacketSetMaster extends AbstractPacket<SPacketSetMaster> {
 	private final int entityID;
 	private final UUID masterUUID;
 	
-	public <T extends Entity & IMultipartEntity<?>> SPacketSetMaster(final T entity) {
-		this.entityID = entity.getId();
+	public <T extends IMultipartEntity<?>> SPacketSetMaster(final T entity) {
+		if (entity instanceof Entity entityTmp) {
+			this.entityID = ((Entity) entity).getId();
+		} else {
+			throw new IllegalStateException("entity is a instance of IMultipartEntity that is not implemented on a entity!");
+		}
 		this.masterUUID = entity.getMasterUUID();
 	}
 	

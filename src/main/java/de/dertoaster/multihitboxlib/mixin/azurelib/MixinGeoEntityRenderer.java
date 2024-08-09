@@ -15,7 +15,7 @@ public abstract class MixinGeoEntityRenderer {
 	@Inject(
 			method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererProvider$Context;Lmod/azure/azurelib/common/api/client/model/GeoModel;)V",
 			at = @At("TAIL")
-			)
+	)
 	private void mixinConstructor(CallbackInfo ci) {
 		GeoEntityRenderer self = (GeoEntityRenderer)(Object)this;
 		self.addRenderLayer(new AzurelibBoneInformationCollectorLayer(self));

@@ -69,7 +69,7 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 		MHLibPackets.sendToServer(this);
 	}
 
-	public static <T extends Entity & IMultipartEntity<?>> Builder builder(T entity) {
+	public static Builder builder(Entity entity) {
 		return new Builder(entity.getId());
 	}
 

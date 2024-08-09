@@ -17,14 +17,13 @@ import java.util.Optional;
 @EventBusSubscriber(modid = Constants.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class MHLibDatapackLoaders {
 	
-	public static final DatapackRegistry<HitboxProfile> HITBOX_PROFILE_REGISTRY = new DatapackRegistry<>(MHLibMod.prefix("entity/hitbox_profiles"), HitboxProfile.CODEC);
+	public static final DatapackRegistry<HitboxProfile> HITBOX_PROFILE_REGISTRY = new DatapackRegistry<>(MHLibMod.prefix("hitbox_profiles"), HitboxProfile.CODEC);
 
 	@SubscribeEvent
 	public static void onRegistryRegistration(DataPackRegistryEvent.NewRegistry event) {
 		HITBOX_PROFILE_REGISTRY.registerSynchable(event);
 	}
 
-	
 	public static Optional<HitboxProfile> getHitboxProfile(ResourceLocation entityID, RegistryAccess registryAccess) {
 		return Optional.ofNullable(HITBOX_PROFILE_REGISTRY.get(entityID, registryAccess));
 	}
