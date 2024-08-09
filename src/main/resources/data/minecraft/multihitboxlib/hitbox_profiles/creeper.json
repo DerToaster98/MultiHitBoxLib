@@ -29,7 +29,7 @@
 		{
 			"name": "feet",
 			"collidable": true,
-			"can-receive-damage": 42,
+			"can-receive-damage": true,
 			"damage-modifier": 0.5,
 			"max-deviation-from-server": 0.125,
 			"box": {
@@ -43,7 +43,7 @@
 					0,
 					0
 				],
-				"pivot-offset": [
+				"pivot": [
 					0,
 					0,
 					0
@@ -64,6 +64,11 @@
 				"position": [
 					0,
 					0.5,
+					0
+				],
+				"pivot": [
+					0,
+					0,
 					0
 				]
 			}

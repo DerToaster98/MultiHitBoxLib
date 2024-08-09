@@ -21,6 +21,7 @@ public class TextureEnforcementManager extends AbstractNInOneEntriesEnforcementM
 		List<byte[]> result = new ArrayList<>(2);
 		File location = this.getFileForId(id);
 		if (!location.exists() || !location.isFile()) {
+			// TODO: Scan the relevant modjar for this file and add that, but this is hacky, so watch out! Also if you found it, write the file to disk
 			return List.of();
 		}
 		try {

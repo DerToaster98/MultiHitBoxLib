@@ -2,9 +2,11 @@ package de.dertoaster.multihitboxlib.entity;
 
 import java.util.Optional;
 
+import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
+import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -14,6 +16,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 
@@ -43,13 +46,15 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	private Optional<Tuple<Float, Float>> currentSizeModifier = Optional.empty();
 	
 	protected final Vec3 basePos;
+	protected final Vec3 pivot;
 
-	public MHLibPartEntity(T parent, final SubPartConfig properties, final EntityDimensions baseSize, final Vec3 basePosition) {
+	public MHLibPartEntity(T parent, final SubPartConfig properties, final EntityDimensions baseSize, final Vec3 basePosition, Vec3 pivot) {
 		super(parent);
 		this.config = properties;
 		//this.baseSize = EntityDimensions.scalable(this.config.baseSize().x, this.config.baseSize().y);
 		this.baseSize = baseSize;
 		this.basePos = basePosition;
+		this.pivot = pivot;
 	}
 	
 	public SubPartConfig getConfig() {
@@ -164,8 +169,10 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public void setPos(double pX, double pY, double pZ) {
 		super.setPosRaw(pX, pY, pZ);
 		this.setOldPosAndRot();
-		
+
 		this.setBoundingBox(this.getDimensions(Pose.STANDING).makeBoundingBox(pX, pY, pZ));
+		// recalculates the scaling
+		this.getDimensions(Pose.STANDING);
 	}
 
 	public Vec3 getConfigPositionOffset() {
@@ -230,6 +237,11 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	}
 
 	@Override
+	protected AABB getBoundingBoxForPose(Pose pPose) {
+		return this.getBoundingBox();
+	}
+
+	@Override
 	public EntityDimensions getDimensions(Pose pPose) {
 		if (this.baseSize == null) {
 			return FALLBACK_SIZE;
@@ -260,5 +272,33 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public void setScaling(Vec3 scale) {
 		this.currentSizeModifier = Optional.ofNullable(new Tuple<Float, Float>((float)scale.x(), (float)scale.y()));
 	}
-	
+
+	public Vec3 getPivot() {
+		return this.pivot;
+	}
+
+	public void applyInformation(Vec3 worldPos, Vec3 scale, Vec3 rotation, boolean hidden) {
+		Vec3 pivot = this.getPivot();
+		if (pivot != Vec3.ZERO) {
+			pivot = pivot.xRot((float) (rotation.x())).yRot((float) (rotation.y())).zRot((float) (rotation.z()));
+		}
+		if (this.getParent() instanceof IMHLibSizeCallback sc) {
+			pivot = pivot.scale(sc.mhlibGetEntitySizeScale(this.getParent()));
+		}
+		this.setScaling(scale);
+		// Subtract pivot from worldpos so we are at the correct position
+		// keep in mind that the pivot was rotated before to match the given rotation!
+		this.setPos(worldPos.subtract(pivot));
+		this.setXRot((float) (rotation.x()));
+		this.setYRot((float) (rotation.y()));
+		this.setHidden(hidden);
+	}
+
+	public void applyInformation(BoneInformation bi) {
+		applyInformation(bi.worldPos(), bi.scale(), bi.rotation(), bi.hidden());
+	}
+
+	public void setEnabled(boolean value) {
+		this.enabled = value;
+	}
 }
