@@ -1,5 +1,24 @@
 package de.dertoaster.multihitboxlib.mixin.entity;
 
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.function.BiConsumer;
+
+import javax.annotation.Nullable;
+
+import net.neoforged.neoforge.entity.PartEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import de.dertoaster.multihitboxlib.api.IMHLibFieldAccessor;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
@@ -10,17 +29,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.entity.PartEntity;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.LinkedTransferQueue;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity implements IMultipartEntity<LivingEntity>, IMHLibFieldAccessor<LivingEntity> {
@@ -118,7 +126,10 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		
 		this.tickParts(this.partMap.values());
 	}
-	
+
+	/*
+	 * TODO: Rewrite Packets for new Packet system
+	 */
 	@Override
 	public synchronized boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling, Vec3 rotation) {
 		return IMultipartEntity.super.tryAddBoneInformation(boneName, hidden, position, scaling, rotation);

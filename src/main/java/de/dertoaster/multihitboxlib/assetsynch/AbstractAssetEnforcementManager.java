@@ -26,8 +26,8 @@ import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.IoSupplier;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.util.thread.SidedThreadGroups;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.util.thread.SidedThreadGroups;
 
 public abstract class AbstractAssetEnforcementManager implements PackResources {
 
@@ -266,10 +266,10 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 		return this.getId().toString();
 	}
 	
-	@Override
-	public boolean isBuiltin() {
-		return true;
-	}
+//	@Override
+//	public boolean isBuiltin() {
+//		return true;
+//	}
 	
 	@Override
 	public void close() {

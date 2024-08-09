@@ -6,9 +6,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Anjanath extends Monster implements GeoEntity {
@@ -20,8 +20,11 @@ public class Anjanath extends Monster implements GeoEntity {
 	
 	public Anjanath(EntityType<? extends Monster> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
-		
-		this.setMaxUpStep(2.0F);
+	}
+
+	@Override
+	public float maxUpStep() {
+		return 2.0f;
 	}
 
 	public static Builder createAttributes() {
@@ -39,7 +42,7 @@ public class Anjanath extends Monster implements GeoEntity {
 	}
 
 	@Override
-	public void registerControllers(ControllerRegistrar arg0) {
+	public void registerControllers(AnimatableManager.ControllerRegistrar arg0) {
 		
 	}
 

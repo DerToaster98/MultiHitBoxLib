@@ -9,6 +9,7 @@ import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,7 +18,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.entity.PartEntity;
+import net.neoforged.neoforge.entity.PartEntity;
 
 //TODO: Refactor most of this into a abstract base class, base MHLibPartEntity is a AABB
 public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
@@ -131,9 +132,9 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 				this.getZ(),
 				this.getYRot(),
 				this.getXRot(),
-				this.baseSize.width,
-				this.baseSize.height,
-				this.baseSize.fixed,
+				this.baseSize.width(),
+				this.baseSize.height(),
+				this.baseSize.fixed(),
 				getEntityData().isDirty(),
 				getEntityData().isDirty() ? getEntityData().packDirty() : null);
 
@@ -183,7 +184,7 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	}
 
 	@Override
-	protected void defineSynchedData() {
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 
 	}
 

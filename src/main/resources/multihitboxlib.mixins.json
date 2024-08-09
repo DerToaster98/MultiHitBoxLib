@@ -1,14 +1,16 @@
 {
 	"required": true,
 	"package": "de.dertoaster.multihitboxlib.mixin",
-	"compatibilityLevel": "JAVA_17",
+	"compatibilityLevel": "JAVA_21",
 	"plugin": "de.dertoaster.multihitboxlib.mixin.MHLibPlugin",
 	"refmap": "multihitboxlib.refmap.json",
 	"mixins": [
 		"entity.MixinLivingEntity",
 		"entity.MixinServerEntity",
 		"geckolib.MixinGeoEntityRenderer",
-		"geckolib.MixinGeoReplacedEntityRenderer"
+		"geckolib.MixinGeoReplacedEntityRenderer",
+		"azurelib.MixinGeoEntityRenderer",
+		"azurelib.MixinGeoReplacedEntityRenderer"
 	],
 	"client": [
 		"accessor.AccessorEntityRenderer",

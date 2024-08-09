@@ -11,13 +11,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.network.NetworkEvent.Context;
+import net.neoforged.neoforge.entity.PartEntity;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+/*
+ * TODO: Rewrite Packets for new Packet system
+ */
 public class SPacketHandlerUpdateMultipart extends AbstractPacketHandler<SPacketUpdateMultipart> {
 
 	@Override
-	protected void execHandlePacket(SPacketUpdateMultipart packet, Supplier<Context> context, Level world, Player player) {
+	protected void execHandlePacket(SPacketUpdateMultipart packet, Supplier<IPayloadContext> context, Level world, Player player) {
 		Entity ent = world.getEntity(packet.getId());
 		if (ent != null && ent.isMultipartEntity() && ent instanceof IMultipartEntity<?> ime && ime.getHitboxProfile().isPresent()) {
 			PartEntity<?>[] parts = ent.getParts();

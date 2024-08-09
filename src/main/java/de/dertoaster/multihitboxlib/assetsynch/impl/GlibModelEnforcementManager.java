@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.util.GsonHelper;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -38,6 +39,9 @@ public class GlibModelEnforcementManager extends MHLibEnforcementManager {
 		return optModel.isPresent() && optModel.get().formatVersion() == FormatVersion.V_1_12_0;
 	}
 
+	/*
+	 * TODO: Find replacement for GEO_GSON
+	 */
 	private Optional<Model> createBakedModel(byte[] data) {
 		String stringData = new String(data);
 		JsonObject jo = GsonHelper.fromJson(JsonUtil.GEO_GSON, stringData, JsonObject.class);
@@ -50,6 +54,14 @@ public class GlibModelEnforcementManager extends MHLibEnforcementManager {
 	@Override
 	public String getSubDirectoryName() {
 		return "models/" + Constants.Dependencies.GECKOLIB_MODID;
+	}
+
+	/*
+	 * TODO: Return proper location
+	 */
+	@Override
+	public PackLocationInfo location() {
+		return null;
 	}
 
 }
