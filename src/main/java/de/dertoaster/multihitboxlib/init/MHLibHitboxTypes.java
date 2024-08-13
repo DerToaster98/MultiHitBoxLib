@@ -20,9 +20,9 @@ public class MHLibHitboxTypes {
 			builder -> {}
 	); 
 	
-	public static final DeferredHolder<MapCodec<? extends IHitboxType>> AABB = HITBOX_TYPE_DISPATCHER.defreg().register("aabb", () -> MapCodec.of());
-	//public static final RegistryObject<Codec<? extends IHitboxType>> SPHERE = HITBOX_TYPE_DISPATCHER.registry().register("sphere", () -> SphereHitboxType.CODEC);
-	//public static final RegistryObject<Codec<? extends IHitboxType>> ORIENTABLE_SPHEROID = HITBOX_TYPE_DISPATCHER.registry().register("orientable_spheroid", () -> OrientableSpheroidHitboxType.CODEC);
-	//public static final RegistryObject<Codec<? extends IHitboxType>> OBB = HITBOX_TYPE_DISPATCHER.registry().register("orientable_bb", () -> OrientableBBHitboxType.CODEC);
+	public static final DeferredHolder<MapCodec<? extends IHitboxType>, MapCodec<AABBHitboxType>> AABB = HITBOX_TYPE_DISPATCHER.defreg().register("aabb", () -> AABBHitboxType.CODEC);
+	//public static final DeferredHolder<MapCodec<? extends IHitboxType>, MapCodec<SphereHitboxType>> SPHERE = HITBOX_TYPE_DISPATCHER.registry().register("sphere", () -> SphereHitboxType.CODEC);
+	//public static final DeferredHolder<MapCodec<? extends IHitboxType>, MapCodec<OrientableSpheroidHitboxType>> ORIENTABLE_SPHEROID = HITBOX_TYPE_DISPATCHER.registry().register("orientable_spheroid", () -> OrientableSpheroidHitboxType.CODEC);
+	//public static final DeferredHolder<MapCodec<? extends IHitboxType>, MapCodec<OrientableBBHitboxType>> OBB = HITBOX_TYPE_DISPATCHER.registry().register("orientable_bb", () -> OrientableBBHitboxType.CODEC);
 
 }

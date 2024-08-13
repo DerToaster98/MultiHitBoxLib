@@ -26,7 +26,7 @@ public class AABBHitboxType implements IHitboxType {
 		this.pivot = pivot;
 	}
 
-	public static final Codec<AABBHitboxType> CODEC = RecordCodecBuilder.create(instance -> {
+	public static final MapCodec<AABBHitboxType> CODEC = RecordCodecBuilder.mapCodec(instance -> {
 		return instance.group(
 				UtilityCodecs.VEC2_CODEC.fieldOf("size").forGetter(obj -> obj.baseSize),
 				Vec3.CODEC.fieldOf("position").forGetter(obj -> obj.basePosition),
