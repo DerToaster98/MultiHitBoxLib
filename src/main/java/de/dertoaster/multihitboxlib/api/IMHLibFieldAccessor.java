@@ -4,12 +4,12 @@ import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.entity.PartEntity;
+import net.neoforged.neoforge.entity.PartEntity;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Map;
-import java.util.Queue;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.UUID;
 
 // DO NOT IMPLEMENT THIS INTERFACE!!
