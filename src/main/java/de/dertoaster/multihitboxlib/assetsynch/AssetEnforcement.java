@@ -1,14 +1,5 @@
 package de.dertoaster.multihitboxlib.assetsynch;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.zip.DataFormatException;
-
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.event.server.AssetEnforcementManagerRegistrationEvent;
 import de.dertoaster.multihitboxlib.api.event.server.SynchAssetFinderRegistrationEvent;
@@ -16,8 +7,6 @@ import de.dertoaster.multihitboxlib.assetsynch.assetfinders.AbstractAssetFinder;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataManagerData;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
-import de.dertoaster.multihitboxlib.init.MHLibPackets;
-import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import de.dertoaster.multihitboxlib.util.LazyLoadFieldFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -25,9 +14,13 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.zip.DataFormatException;
 
 public class AssetEnforcement {
 	
@@ -113,10 +106,6 @@ public class AssetEnforcement {
 	}
 	
 	public static void sendSynchData(final ServerPlayer connection, final Set<ResourceLocation> assetsToSynch) {
-		sendSynchData(connection, assetsToSynch, false);
-	}
-	
-	public static void sendSynchData(final ServerPlayer connection, final Set<ResourceLocation> assetsToSynch, boolean separatePackets) {
 		if (assetsToSynch.isEmpty()) {
 			// No need to do anything
 			return;
@@ -134,10 +123,6 @@ public class AssetEnforcement {
 			}
 			if (!content.isEmpty()) {
 				managerData.add(new SynchDataManagerData(entry.getKey(), content));
-				if (separatePackets) {
-					sendPacket(connection, new SynchDataContainer(managerData));
-					managerData.clear();
-				}
 			}
 		}
 		if (!managerData.isEmpty()) {
@@ -146,11 +131,14 @@ public class AssetEnforcement {
 	}
 
 	/*
-	 * TODO: Find replacement for PacketDistributor
+	 * DONE: Find replacement for PacketDistributor
 	 */
 	private static void sendPacket(final ServerPlayer connection, final SynchDataContainer payload) {
-		SPacketSynchAssets packet = new SPacketSynchAssets(payload);
-		MHLibPackets.send(packet, PacketDistributor.PLAYER.with(() -> connection));
+		payload.getPacketList().forEach(p -> {
+			/*SPacketSynchAssets packet = new SPacketSynchAssets(payload);
+			MHLibPackets.send(packet, PacketDistributor.PLAYER.with(() -> connection));*/
+			PacketDistributor.sendToPlayer(connection, p);
+		});
 	}
 	
 	public static boolean handleEntry(final SynchDataManagerData entry) {
