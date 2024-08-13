@@ -7,10 +7,7 @@ import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.network.IMessage;
 import de.dertoaster.multihitboxlib.api.network.IMessageHandler;
-import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
-import de.dertoaster.multihitboxlib.network.client.SPacketHandlerFunctionalAnimProgress;
-import de.dertoaster.multihitboxlib.network.client.SPacketHandlerSetMaster;
-import de.dertoaster.multihitboxlib.network.client.SPacketHandlerUpdateMultipart;
+import de.dertoaster.multihitboxlib.network.client.*;
 import de.dertoaster.multihitboxlib.network.client.assetsync.CPacketRequestSynch;
 import de.dertoaster.multihitboxlib.network.client.assetsync.SPacketHandlerSynchAssets;
 import de.dertoaster.multihitboxlib.network.server.CPacketHandlerBoneInformation;
@@ -34,6 +31,7 @@ public class MHLibPackets {
 		registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
 		registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
 		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
+		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgressAL.class);
 		
 		// Asset Synch
 		registerClientToServer(CPacketRequestSynch.class, CPacketHandlerRequestSynch.class);

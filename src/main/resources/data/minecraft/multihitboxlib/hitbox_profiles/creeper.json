@@ -1,6 +1,7 @@
 {
 	"synched-assets": {
 		"models": [
+			"geckolib:geo/entity/creeper.geo.json"
 		],
 		"animations": [
 		],
@@ -30,30 +31,47 @@
 			"collidable": true,
 			"can-receive-damage": true,
 			"damage-modifier": 0.5,
-			"size": [
-				0.75,
-				0.5
-			],
-			"position": [
-				0,
-				0,
-				0
-			]
+			"max-deviation-from-server": 0.125,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [
+					0.75,
+					0.5
+				],
+				"position": [
+					0,
+					0,
+					0
+				],
+				"pivot": [
+					0,
+					0,
+					0
+				]
+			}
 		},
 		{
 			"name": "body",
 			"collidable": true,
 			"can-receive-damage": true,
 			"damage-modifier": 1.0,
-			"size": [
-				0.5,
-				0.75
-			],
-			"position": [
-				0,
-				0.5,
-				0
-			]
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [
+					0.5,
+					0.75
+				],
+				"position": [
+					0,
+					0.5,
+					0
+				],
+				"pivot": [
+					0,
+					0,
+					0
+				]
+			}
 		},
 		{
 			"name": "head",
@@ -61,15 +79,18 @@
 			"can-receive-damage": true,
 			"max-deviation-from-server": 9.0,
 			"damage-modifier": 2.0,
-			"size": [
-				0.6,
-				0.6
-			],
-			"position": [
-				0,
-				1.2,
-				0
-			]
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [
+					0.6,
+					0.6
+				],
+				"position": [
+					0,
+					1.2,
+					0
+				]
+			}
 		}
 	]
 }
