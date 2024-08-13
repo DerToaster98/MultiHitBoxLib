@@ -1,11 +1,13 @@
 package de.dertoaster.multihitboxlib.entity.hitbox.type.implementation;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.entity.hitbox.type.IHitboxType;
+import de.dertoaster.multihitboxlib.init.MHLibHitboxTypes;
 import de.dertoaster.multihitboxlib.util.UtilityCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -33,8 +35,8 @@ public class AABBHitboxType implements IHitboxType {
 	});
 	
 	@Override
-	public Codec<? extends IHitboxType> getType() {
-		return CODEC;
+	public MapCodec<? extends IHitboxType> getType() {
+		return MHLibHitboxTypes.AABB.get();
 	}
 
 	@Override

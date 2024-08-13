@@ -2,6 +2,7 @@ package de.dertoaster.multihitboxlib.entity.hitbox.type;
 
 import com.mojang.serialization.Codec;
 
+import com.mojang.serialization.MapCodec;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +14,7 @@ public interface IHitboxType {
 		return Vec3.ZERO;
 	}
 	
-	public Codec<? extends IHitboxType> getType();
+	public MapCodec<? extends IHitboxType> getType();
 	
 	public <T extends Entity> MHLibPartEntity<T> createPartEntity(final SubPartConfig config, final T parent, final int partNumber);
 	
