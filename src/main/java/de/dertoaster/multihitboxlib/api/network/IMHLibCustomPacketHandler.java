@@ -1,6 +1,5 @@
 package de.dertoaster.multihitboxlib.api.network;
 
-import ca.weblite.objc.Client;
 import net.neoforged.neoforge.network.handling.ClientPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
