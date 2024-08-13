@@ -6,6 +6,7 @@ import com.mojang.serialization.DataResult;
 import de.dertoaster.multihitboxlib.api.network.AbstractSPacketCodecWrappingPacket;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 
+// TODO: Make sure this is at most 1 MiB in size. If it is larger, we need to send multiple packets!
 public class SPacketSynchAssets extends AbstractSPacketCodecWrappingPacket<SynchDataContainer, SPacketSynchAssets> {
 	
 	public SPacketSynchAssets() {
