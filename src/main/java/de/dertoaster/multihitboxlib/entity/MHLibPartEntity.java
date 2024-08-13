@@ -236,10 +236,11 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		}
 	}
 
-	@Override
+	// TODO: Find replacement, seems to be removed though
+	/*@Override
 	protected AABB getBoundingBoxForPose(Pose pPose) {
 		return this.getBoundingBox();
-	}
+	}*/
 
 	@Override
 	public EntityDimensions getDimensions(Pose pPose) {
