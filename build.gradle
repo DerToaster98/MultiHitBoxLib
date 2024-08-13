@@ -36,24 +36,6 @@ neoForge {
     accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
-        configureEach {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            arg "-mixin.config=${modid}.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            //jvmArgs "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"
-            mods {
-                "${modid}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -100,11 +82,6 @@ repositories {
         name = "CubicInterpolation Maven"
         url = "https://cubicinterpolation.net/maven/"
     }
-	
-	maven {
-		name = "Commoble Databuddy"
-		url = "https://commoble.net/maven/"
-	}
 
     maven {
         name = "BlameJared maven"
@@ -114,6 +91,11 @@ repositories {
     maven {
         name = "RyanLiptak Maven"
         url = "https://maven.ryanliptak.com/"
+    }
+
+    maven {
+        name = "Commoble Databuddy"
+        url = "https://commoble.net/maven/"
     }
 }
 
@@ -140,6 +122,9 @@ dependencies {
 
     compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
     runtimeOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
+
+    implementation "net.commoble.databuddy:${databuddy_branch}:${databuddy_version}"
+    jarJar(group: 'net.commoble.databuddy', name: "${databuddy_branch}", version: "[${databuddy_version},)")
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -185,41 +170,5 @@ idea {
     module {
         downloadSources = true
         downloadJavadoc = true
-    }
-}
-
-if (file('key.properties').exists()) {
-    publishMods {
-        def releaseProp = new Properties()
-        File secretPropsFile = file("key.properties")
-        releaseProp.load(secretPropsFile.newInputStream())
-        file = jar.archiveFile
-        changelog = rootProject.file("changelog.md").text
-        type = STABLE
-        modLoaders.add("neoforge")
-
-        curseforge {
-            projectId = project.curseforge_id
-            projectSlug = project.mod_id
-            accessToken = releaseProp.getProperty("curseKey")
-            minecraftVersions.add(project.minecraft_version)
-            optional {
-                slug = "azurelib"
-            }
-            optional {
-                slug = "geckolib"
-            }
-        }
-        modrinth {
-            projectId = project.modrinth_id
-            accessToken = releaseProp.getProperty('modrinthKey')
-            minecraftVersions.add(project.minecraft_version)
-            optional {
-                slug = "azurelib"
-            }
-            optional {
-                slug = "geckolib"
-            }
-        }
     }
 }
