@@ -53,5 +53,5 @@ Please depend on the library like a normal mod!
 That in essence means add it to your mods requirements list and don't shadow or jar-in-jar or directly include it or similar in your mod's jar or source code.
 
 # Contact
-- Discord: dertoaster
-- E-Mail (preferred): [dertoaster@cq-repoured.net](mailto:dertoaster@cq-repoured.net?subject=[MHLib]%20contact%20request)
+- Project discord server: [MHLib Discord](https://discord.com/invite/XxwCynDtf3)
+- E-Mail (for contacts regarding commercial use. Alternatively, ask on the discord server): [dertoaster@cq-repoured.net](mailto:dertoaster@cq-repoured.net?subject=[MHLib]%20contact%20request)
