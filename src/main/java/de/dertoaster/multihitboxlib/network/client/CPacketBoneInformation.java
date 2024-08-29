@@ -1,76 +1,69 @@
 package de.dertoaster.multihitboxlib.network.client;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
+import com.mojang.serialization.Codec;
+import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
+import de.dertoaster.multihitboxlib.init.MHLibNetwork;
 import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformation> {
+import java.util.*;
 
-	private int entityID;
-	private Map<String, BoneInformation> boneInformation;
+public record CPacketBoneInformation(
+		int entityID,
+		Map<String, BoneInformation> boneInformation
+) implements IMHLibCustomPacketPayload<CPacketBoneInformation> {
 
 	// Necessary for how the packet "api" works
 	public CPacketBoneInformation() {
-
-	}
-
-	@Override
-	public Class<CPacketBoneInformation> getPacketClass() {
-		return CPacketBoneInformation.class;
-	}
-
-	@Override
-	public CPacketBoneInformation fromBytes(FriendlyByteBuf buffer) {
-		final int entityID = buffer.readInt();
-		int infoCount = buffer.readInt();
-		final Map<String, BoneInformation> infoMap = new Object2ObjectArrayMap<>(infoCount);
-		while (infoCount > 0) {
-			infoCount--;
-			BoneInformation bi = buffer.readJsonWithCodec(BoneInformation.CODEC);
-			infoMap.put(bi.name(), bi);
-		}
-
-		return new CPacketBoneInformation(entityID, infoMap);
-	}
-
-	@Override
-	public void toBytes(CPacketBoneInformation packet, FriendlyByteBuf buffer) {
-		buffer.writeInt(packet.entityID);
-		buffer.writeInt(packet.boneInformation.values().size());
-		for (BoneInformation bi : packet.boneInformation.values()) {
-			buffer.writeJsonWithCodec(BoneInformation.CODEC, bi);
-		}
+		this(0, new HashMap<>());
 	}
 
 	CPacketBoneInformation(final int entityID, final Set<BoneInformation> boneInformation) {
-		this.entityID = entityID;
-		this.boneInformation = new Object2ObjectArrayMap<>(boneInformation.size());
-		for (BoneInformation bi : boneInformation) {
-			this.boneInformation.put(bi.name(), bi);
-		}
+		this(entityID, compileMap(boneInformation));
 	}
 
-	CPacketBoneInformation(final int entityID, final Map<String, BoneInformation> boneInformation) {
-		this.entityID = entityID;
-		this.boneInformation = boneInformation;
+	protected static Map<String, BoneInformation> compileMap(final Set<BoneInformation> boneInformation) {
+		Map<String, BoneInformation> map = new Object2ObjectArrayMap<>(boneInformation.size());
+		for (BoneInformation bi : boneInformation) {
+			map.put(bi.name(), bi);
+		}
+		return map;
 	}
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, CPacketBoneInformation> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			CPacketBoneInformation::entityID,
+			ByteBufCodecs.fromCodec(
+					Codec.unboundedMap(Codec.STRING, BoneInformation.CODEC)
+			),
+			CPacketBoneInformation::boneInformation,
+			CPacketBoneInformation::new
+	);
 
 	public void send() {
-		MHLibPackets.sendToServer(this);
+		PacketDistributor.sendToServer(this);
 	}
 
 	public static Builder builder(Entity entity) {
 		return new Builder(entity.getId());
+	}
+
+	@Override
+	public StreamCodec<RegistryFriendlyByteBuf, CPacketBoneInformation> getStreamCodec() {
+		return STREAM_CODEC;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return MHLibNetwork.C2S_BONE_INFORMATION;
 	}
 
 	public static class Builder {
@@ -165,14 +158,6 @@ public class CPacketBoneInformation extends AbstractPacket<CPacketBoneInformatio
 
 			return new CPacketBoneInformation(this.entityID, this.boneInformation);
 		}
-	}
-
-	public int getEntityID() {
-		return this.entityID;
-	}
-
-	public Map<String, BoneInformation> getBoneInformation() {
-		return this.boneInformation;
 	}
 
 }
