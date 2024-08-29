@@ -6,7 +6,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public interface IMHLibCustomPacketPayload<T extends CustomPacketPayload> extends CustomPacketPayload {
 
-    public CustomPacketPayload.Type<T> getType();
     public StreamCodec<RegistryFriendlyByteBuf, T> getStreamCodec();
 
 }
