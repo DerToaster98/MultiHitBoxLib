@@ -1,26 +1,30 @@
 package de.dertoaster.multihitboxlib.network.client.assetsync;
 
-import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
-import net.minecraft.network.FriendlyByteBuf;
+import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
+import de.dertoaster.multihitboxlib.init.MHLibNetwork;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 /*
  * TODO: Rewrite Packets for new Packet system
  */
-public class CPacketRequestSynch extends AbstractPacket<CPacketRequestSynch> {
+public record CPacketRequestSynch() implements IMHLibCustomPacketPayload<CPacketRequestSynch> {
+
+	public CPacketRequestSynch() {
+
+	}
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, CPacketRequestSynch> STREAM_CODEC = StreamCodec.unit(new CPacketRequestSynch());
 
 	@Override
-	public Class<CPacketRequestSynch> getPacketClass() {
-		return CPacketRequestSynch.class;
+	public StreamCodec<RegistryFriendlyByteBuf, CPacketRequestSynch> getStreamCodec() {
+		return STREAM_CODEC;
 	}
 
 	@Override
-	public CPacketRequestSynch fromBytes(FriendlyByteBuf buffer) {
-		return new CPacketRequestSynch();
+	public Type<? extends CustomPacketPayload> type() {
+		return MHLibNetwork.C2S_REQUEST_SYNCH;
 	}
-
-	@Override
-	public void toBytes(CPacketRequestSynch packet, FriendlyByteBuf buffer) {
-		
-	}
-
 }
