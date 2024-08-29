@@ -23,6 +23,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import net.neoforged.neoforge.entity.PartEntity;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public interface IMultipartEntity<T extends Entity> {
@@ -58,7 +59,8 @@ public interface IMultipartEntity<T extends Entity> {
 				System.out.println("Master set to: " + id != null ? id.toString() : "NONE");
 			}*/
 			SPacketSetMaster masterPacket = new SPacketSetMaster(this);
-			MHLibPackets.send(masterPacket, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
+			//MHLibPackets.send(masterPacket, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, masterPacket);
 		} else {
 			throw new IllegalStateException("Access interface not implemented");
 		}
@@ -412,7 +414,7 @@ public interface IMultipartEntity<T extends Entity> {
 	public default void processSetMasterPacket(final SPacketSetMaster packet) {
 		if(this instanceof Entity entity) {
 			if (entity.level().isClientSide()) {
-				this.setMasterUUID(packet.getMasterUUID());
+				this.setMasterUUID(packet.masterUUID());
 			}
 		} else {
 			throw new IllegalStateException("This interface may only be implemented on entities!");
