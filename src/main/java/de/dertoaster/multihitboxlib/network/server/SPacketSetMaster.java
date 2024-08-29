@@ -1,68 +1,54 @@
 package de.dertoaster.multihitboxlib.network.server;
 
-import java.util.UUID;
-
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
-import net.minecraft.network.FriendlyByteBuf;
+import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
+import de.dertoaster.multihitboxlib.init.MHLibNetwork;
+import de.dertoaster.multihitboxlib.util.UtilityCodecs;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 
-public class SPacketSetMaster extends AbstractPacket<SPacketSetMaster> {
+import java.util.UUID;
 
-	private final int entityID;
-	private final UUID masterUUID;
-	
+public record SPacketSetMaster(int entityID, UUID masterUUID) implements IMHLibCustomPacketPayload<SPacketSetMaster> {
+
 	public <T extends IMultipartEntity<?>> SPacketSetMaster(final T entity) {
+		this(retrieveEntityID(entity), retrieveMasterUUID(entity));
+	}
+
+	protected static <T extends IMultipartEntity<?>> int retrieveEntityID(final T entity) {
 		if (entity instanceof Entity entityTmp) {
-			this.entityID = ((Entity) entity).getId();
+			return ((Entity) entity).getId();
 		} else {
 			throw new IllegalStateException("entity is a instance of IMultipartEntity that is not implemented on a entity!");
 		}
-		this.masterUUID = entity.getMasterUUID();
+	}
+
+	protected static <T extends IMultipartEntity<?>> UUID retrieveMasterUUID(final T entity) {
+		return entity.getMasterUUID();
 	}
 	
 	public SPacketSetMaster() {
-		this.entityID = -1;
-		this.masterUUID = null;
-		
+		this(-1, UUID.randomUUID());
 	}
-	
-	protected SPacketSetMaster(final int id, final UUID masterID) {
-		this.entityID = id;
-		this.masterUUID = masterID;
-	}
-	
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, SPacketSetMaster> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			SPacketSetMaster::entityID,
+			ByteBufCodecs.fromCodec(UtilityCodecs.UUID_STRING_CODEC),
+			SPacketSetMaster::masterUUID,
+			SPacketSetMaster::new
+	);
+
 	@Override
-	public Class<SPacketSetMaster> getPacketClass() {
-		return SPacketSetMaster.class;
+	public StreamCodec<RegistryFriendlyByteBuf, SPacketSetMaster> getStreamCodec() {
+		return STREAM_CODEC;
 	}
 
 	@Override
-	public SPacketSetMaster fromBytes(FriendlyByteBuf buffer) {
-		int id = buffer.readInt();
-		if(buffer.readBoolean()) {
-			return new SPacketSetMaster(id, buffer.readUUID());
-		} else {
-			return new SPacketSetMaster(id, null);
-		}
+	public Type<? extends CustomPacketPayload> type() {
+		return MHLibNetwork.S2C_SET_MASTER;
 	}
-
-	@Override
-	public void toBytes(SPacketSetMaster packet, FriendlyByteBuf buffer) {
-		buffer.writeInt(packet.getEntityID());
-		buffer.writeBoolean(packet.getMasterUUID() != null);
-		if(packet.getMasterUUID() != null) {
-			buffer.writeUUID(packet.getMasterUUID());
-		}
-		
-	}
-	
-	public UUID getMasterUUID() {
-		return masterUUID;
-	}
-	
-	public int getEntityID() {
-		return entityID;
-	}
-
 }
