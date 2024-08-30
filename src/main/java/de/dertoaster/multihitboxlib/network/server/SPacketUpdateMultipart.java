@@ -1,86 +1,88 @@
 package de.dertoaster.multihitboxlib.network.server;
 
+import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
+import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
+import de.dertoaster.multihitboxlib.init.MHLibNetwork;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.entity.PartEntity;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
-import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.entity.Entity;
-import net.minecraftforge.entity.PartEntity;
-
-public class SPacketUpdateMultipart extends AbstractPacket<SPacketUpdateMultipart> {
-
-	private int id;
-	private Entity entity;
-	private int len;
-	private final List<PartDataHolder> data = new ArrayList<>();
+public record SPacketUpdateMultipart(
+		int entityId,
+		@Nullable Entity entity,
+		@Nullable List<PartDataHolder> data
+) implements IMHLibCustomPacketPayload<SPacketUpdateMultipart> {
 
 	public SPacketUpdateMultipart() {
 		// Nothing to do here...
+		this(-1, null, null);
 	}
 
 	public SPacketUpdateMultipart(Entity entity) {
-		this.entity = entity;
+		this(entity.getId(), entity, compileList(entity));
 	}
 
-	@Override
-	public Class<SPacketUpdateMultipart> getPacketClass() {
-		return SPacketUpdateMultipart.class;
+	public SPacketUpdateMultipart(RegistryFriendlyByteBuf buf) {
+		this(buf.readInt(), null, new ArrayList<>());
+		int length = buf.readInt();
+		for (int i = 0; i < length; i++) {
+			this.data.add(PartDataHolder.decode(buf));
+		}
+		// If this fails, we have a problem
+		int endMarker = buf.readInt();
+		if (endMarker != -1) {
+			throw new IllegalStateException("End marker invalid!");
+		}
 	}
 
-	@Override
-	public SPacketUpdateMultipart fromBytes(FriendlyByteBuf buffer) {
-		SPacketUpdateMultipart result = new SPacketUpdateMultipart();
-		result.id = buffer.readInt();
-		result.len = buffer.readInt();
-		for (int i = 0; i < result.len; i++) {
-			if (buffer.readBoolean()) {
-				result.data.add(PartDataHolder.decode(buffer));
+	public void write(RegistryFriendlyByteBuf buf) {
+		if (this.entity == null)
+			throw new IllegalStateException("Null Entity while encoding SPacketUpdateMultipart");
+		if (this.data == null)
+			throw new IllegalStateException("Null Data while encoding SPacketUpdateMultipart");
+		buf.writeInt(this.entity.getId());
+		buf.writeInt(this.data.size());
+		for (PartDataHolder data : this.data) {
+			data.encode(buf);
+		}
+		buf.writeInt(-1);
+	}
+
+	protected static List<PartDataHolder> compileList(final Entity entity) {
+		List<PartDataHolder> result = new ArrayList<>();
+		for (PartEntity<?> part : entity.getParts()) {
+			if (!(part instanceof MHLibPartEntity<?>)) {
+				continue;
 			}
+			MHLibPartEntity<?> mhLibPart = (MHLibPartEntity<?>) part;
+			result.add(mhLibPart.writeData());
 		}
 		return result;
 	}
 
+	public static final StreamCodec<RegistryFriendlyByteBuf, SPacketUpdateMultipart> STREAM_CODEC = CustomPacketPayload.codec(SPacketUpdateMultipart::write, SPacketUpdateMultipart::new);
+
 	@Override
-	public void toBytes(SPacketUpdateMultipart packet, FriendlyByteBuf buffer) {
-		buffer.writeInt(packet.entity.getId());
-		PartEntity<?>[] parts = packet.entity.getParts();
-		// We assume the client and server part arrays are identical, else everything will crash and burn. Don't even bother handling it.
-		if (parts != null) {
-			buffer.writeInt(parts.length);
-			for (PartEntity<?> part : parts) {
-				if (part instanceof MHLibPartEntity<?> subPart) {
-					buffer.writeBoolean(true);
-					subPart.writeData().encode(buffer);
-				} else {
-					buffer.writeBoolean(false);
-				}
-			}
-		} else {
-			buffer.writeInt(0);
-		}
-
-	}
-	
-	public int getId() {
-		return id;
+	public StreamCodec<RegistryFriendlyByteBuf, SPacketUpdateMultipart> getStreamCodec() {
+		return STREAM_CODEC;
 	}
 
-	public int getLen() {
-		return len;
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return MHLibNetwork.S2C_UPDATE_MULTIPART;
 	}
-
-	public List<PartDataHolder> getData() {
-		return data;
-	}
-
 
 	// Copied from https://github.com/TeamTwilight/twilightforest/blob/aa59de8ff2e9f84fe36d3da595e2cab53d4695af/src/main/java/twilightforest/network/UpdateTFMultipartPacket.java#L16
 	public record PartDataHolder(double x, double y, double z, float yRot, float xRot, float width, float height, boolean fixed, boolean dirty, List<SynchedEntityData.DataValue<?>> data) {
 
-		public void encode(FriendlyByteBuf buffer) {
+		public void encode(RegistryFriendlyByteBuf buffer) {
 			buffer.writeDouble(this.x);
 			buffer.writeDouble(this.y);
 			buffer.writeDouble(this.z);
@@ -99,13 +101,13 @@ public class SPacketUpdateMultipart extends AbstractPacket<SPacketUpdateMultipar
 			}
 		}
 
-		static PartDataHolder decode(FriendlyByteBuf buffer) {
+		static PartDataHolder decode(RegistryFriendlyByteBuf buffer) {
 			boolean dirty;
 			return new PartDataHolder(buffer.readDouble(), buffer.readDouble(), buffer.readDouble(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readBoolean(), dirty = buffer.readBoolean(), dirty ? unpack(
 					buffer) : null);
 		}
 
-		private static List<SynchedEntityData.DataValue<?>> unpack(FriendlyByteBuf buf) {
+		private static List<SynchedEntityData.DataValue<?>> unpack(RegistryFriendlyByteBuf buf) {
 			List<SynchedEntityData.DataValue<?>> list = new ArrayList<>();
 
 			int i;
