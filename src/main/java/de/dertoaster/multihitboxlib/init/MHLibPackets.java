@@ -26,15 +26,15 @@ public class MHLibPackets {
 	private static int MESSAGE_ID = 0;
 
 	public static void init() {
-		registerClientToServer(CPacketBoneInformation.class, CPacketHandlerBoneInformation.class);
+		//registerClientToServer(CPacketBoneInformation.class, CPacketHandlerBoneInformation.class);
 		
-		registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
-		registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
+		//registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
+		//registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
 		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
 		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgressAL.class);
 		
 		// Asset Synch
-		registerClientToServer(CPacketRequestSynch.class, CPacketHandlerRequestSynch.class);
+		//registerClientToServer(CPacketRequestSynch.class, CPacketHandlerRequestSynch.class);
 		registerServerToClient(SPacketSynchAssets.class, SPacketHandlerSynchAssets.class);
 	}
 	
