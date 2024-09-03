@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
 
 public abstract class MHLibEnforcementManager extends AbstractAssetEnforcementManager {
 
