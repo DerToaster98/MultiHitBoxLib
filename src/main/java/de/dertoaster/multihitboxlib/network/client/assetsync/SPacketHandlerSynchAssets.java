@@ -1,7 +1,5 @@
 package de.dertoaster.multihitboxlib.network.client.assetsync;
 
-import java.util.function.Supplier;
-
 import de.dertoaster.multihitboxlib.api.network.AbstractSPacketHandlerCodecWrappingPacket;
 import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
@@ -16,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class SPacketHandlerSynchAssets extends AbstractSPacketHandlerCodecWrappingPacket<SynchDataContainer, SPacketSynchAssets>{
 
 	@Override
-	protected void execHandlePacket(SPacketSynchAssets packet, Supplier<IPayloadContext> context, Level world, Player sender) {
+	protected void execHandlePacket(SPacketSynchAssets packet, IPayloadContext context, Level world, Player sender) {
 		AssetEnforcement.handlePacketData(packet.getData());
 	}
 
