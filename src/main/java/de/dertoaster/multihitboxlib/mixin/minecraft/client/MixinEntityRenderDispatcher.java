@@ -13,7 +13,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.dertoaster.multihitboxlib.entity.IOrientableHitbox;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.entity.PartEntity;
+import net.neoforged.neoforge.entity.PartEntity;
 
 @Mixin(EntityRenderDispatcher.class)
 public abstract class MixinEntityRenderDispatcher {
