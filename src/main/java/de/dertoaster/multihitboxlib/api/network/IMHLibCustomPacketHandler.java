@@ -4,7 +4,7 @@ import net.neoforged.neoforge.network.handling.ClientPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
-public interface IMHLibCustomPacketHandler<T extends IMHLibCustomPacketPayload> {
+public interface IMHLibCustomPacketHandler<T extends IMHLibCustomPacketPayload<?>> {
 
     // Clientside => C
     public default void handle(final T data, final IPayloadContext context) {
