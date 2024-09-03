@@ -8,10 +8,12 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public abstract class AbstractSPacketSyncDatapackContent<C extends Object, T extends AbstractSPacketSyncDatapackContent<C, ?>> implements IMessage<T> {
+public abstract class AbstractSPacketSyncDatapackContent<C extends Object, T extends AbstractSPacketSyncDatapackContent<C, ?>> implements IMHLibCustomPacketPayload<T> {
 
 	protected final Codec<Map<ResourceLocation, C>> MAPPER = this.createMapper();
 	public final Map<ResourceLocation, C> data;
@@ -20,9 +22,19 @@ public abstract class AbstractSPacketSyncDatapackContent<C extends Object, T ext
 	protected abstract Codec<C> getCodec();
 	protected abstract T createFromPacket(Map<ResourceLocation, C> data);
 	public abstract BiConsumer<ResourceLocation, C> consumer();
+	protected final StreamCodec<RegistryFriendlyByteBuf, T> STREAM_CODEC = buildStreamCodec();
 
 	public AbstractSPacketSyncDatapackContent() {
 		this.data = null;
+	}
+	
+	protected StreamCodec<RegistryFriendlyByteBuf, T> buildStreamCodec() {
+		return CustomPacketPayload.codec(AbstractSPacketSyncDatapackContent::write, this::read);
+	}
+	
+	@Override
+	public StreamCodec<RegistryFriendlyByteBuf, T> getStreamCodec() {
+		return this.STREAM_CODEC;
 	}
 	
 	public AbstractSPacketSyncDatapackContent(Map<ResourceLocation, C> data) {
@@ -33,14 +45,12 @@ public abstract class AbstractSPacketSyncDatapackContent<C extends Object, T ext
 		return this.data;
 	}
 	
-	@Override
-	public T fromBytes(FriendlyByteBuf buffer) {
+	public T read(RegistryFriendlyByteBuf buffer) {
 		return this.createFromPacket(this.MAPPER.parse(NbtOps.INSTANCE, buffer.readNbt()).result().orElse(new HashMap<>()));
 	}
 	
-	@Override
-	public void toBytes(T packet, FriendlyByteBuf buffer) {
-		buffer.writeNbt((CompoundTag) (packet.MAPPER.encodeStart(NbtOps.INSTANCE, packet.data).result().orElse(new CompoundTag())));
+	public void write(RegistryFriendlyByteBuf buffer) {
+		buffer.writeNbt((CompoundTag) (this.MAPPER.encodeStart(NbtOps.INSTANCE, this.data).result().orElse(new CompoundTag())));
 	}
 	
 	protected Codec<Map<ResourceLocation, C>> createMapper() {

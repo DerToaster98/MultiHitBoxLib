@@ -10,15 +10,10 @@ import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public abstract class AbstractSPacketHandlerSyncDatapackContent<C extends Object, P extends AbstractSPacketSyncDatapackContent<C, ?>> implements IMessageHandler<P> {
+public abstract class AbstractSPacketHandlerSyncDatapackContent<C extends Object, P extends AbstractSPacketSyncDatapackContent<C, ?>> implements IMHLibCustomPacketHandler<P> {
 
-	public IMessageHandler<P> cast() {
-		return (IMessageHandler<P>)this;
-	}
-	
 	@Override
 	public final void handlePacket(P packet, Supplier<IPayloadContext> context) {
 		context.get().enqueueWork(() -> {
