@@ -12,10 +12,17 @@ import com.mojang.serialization.JsonOps;
 
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMessage<P> {
+public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMHLibCustomPacketPayload<P> {
 
 	protected final T data;
+	protected final StreamCodec<RegistryFriendlyByteBuf, P> STREAM_CODEC = buildStreamCodec();
+	protected abstract Codec<T> codec();
+	protected abstract P createPacket(DataResult<T> dr);
+	protected abstract P createPacket(T data);
 	
 	public AbstractSPacketCodecWrappingPacket() {
 		this.data = null;
@@ -25,13 +32,16 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 		this.data = data;
 	}
 	
-	protected abstract Codec<T> codec();
-	protected abstract P createPacket(DataResult<T> dr);
-	protected abstract P createPacket(T data);
+	protected StreamCodec<RegistryFriendlyByteBuf, P> buildStreamCodec() {
+		return CustomPacketPayload.codec(AbstractSPacketCodecWrappingPacket::write, this::read);
+	}
 	
 	@Override
-	public P fromBytes(FriendlyByteBuf buffer) {
-		// Crashes the client for some odd reason
+	public StreamCodec<RegistryFriendlyByteBuf, P> getStreamCodec() {
+		return STREAM_CODEC;
+	}
+
+	public P read(RegistryFriendlyByteBuf buffer) {
 		if (buffer.readBoolean()) {
 			byte[] bytes = buffer.readByteArray();
 			if (bytes.length > 0) {
@@ -50,13 +60,13 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 			}
 		}
 		return this.createPacket((T)null);
+		// Crashes the client for some odd reason
 		//T data = buffer.readJsonWithCodec(this.codec());
 		//return this.createPacket(data);
 	}
 
-	@Override
-	public void toBytes(P packet, FriendlyByteBuf buffer) {
-		DataResult<JsonElement> dr = packet.codec().encodeStart(JsonOps.COMPRESSED, packet.data);
+	public void write(FriendlyByteBuf buffer) {
+		DataResult<JsonElement> dr = this.codec().encodeStart(JsonOps.COMPRESSED, this.data);
 		JsonElement je = dr.getOrThrow();
 		if (je != null) {
 			byte[] bytes = je.toString().getBytes();
