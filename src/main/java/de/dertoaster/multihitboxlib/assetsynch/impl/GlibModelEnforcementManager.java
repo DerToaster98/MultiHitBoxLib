@@ -13,9 +13,9 @@ import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.json.FormatVersion;
 import software.bernie.geckolib.loading.json.raw.Model;
+import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
-import software.bernie.geckolib.util.JsonUtil;
 
 public class GlibModelEnforcementManager extends MHLibEnforcementManager {
 
@@ -39,14 +39,11 @@ public class GlibModelEnforcementManager extends MHLibEnforcementManager {
 		return optModel.isPresent() && optModel.get().formatVersion() == FormatVersion.V_1_12_0;
 	}
 
-	/*
-	 * TODO: Find replacement for GEO_GSON
-	 */
 	private Optional<Model> createBakedModel(byte[] data) {
 		String stringData = new String(data);
-		JsonObject jo = GsonHelper.fromJson(JsonUtil.GEO_GSON, stringData, JsonObject.class);
+		JsonObject jo = GsonHelper.fromJson(KeyFramesAdapter.GEO_GSON, stringData, JsonObject.class);
 		if (jo != null) {
-			return Optional.of(JsonUtil.GEO_GSON.fromJson(jo, Model.class));
+			return Optional.of(KeyFramesAdapter.GEO_GSON.fromJson(jo, Model.class));
 		}
 		return Optional.empty();
 	}
