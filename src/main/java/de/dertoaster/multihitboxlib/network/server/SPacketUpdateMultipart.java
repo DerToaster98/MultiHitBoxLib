@@ -3,6 +3,7 @@ package de.dertoaster.multihitboxlib.network.server;
 import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.init.MHLibNetwork;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -29,30 +30,38 @@ public record SPacketUpdateMultipart(
 		this(entity.getId(), entity, compileList(entity));
 	}
 
-	public SPacketUpdateMultipart(RegistryFriendlyByteBuf buf) {
+	public SPacketUpdateMultipart(FriendlyByteBuf buf) {
 		this(buf.readInt(), null, new ArrayList<>());
-		int length = buf.readInt();
+		if (!(buf instanceof RegistryFriendlyByteBuf)) {
+			throw new IllegalStateException("SPacketUpdateMultiPart can ONLY be sent on the play network channel!");
+		}
+		RegistryFriendlyByteBuf regBuf = (RegistryFriendlyByteBuf) buf;
+		int length = regBuf.readInt();
 		for (int i = 0; i < length; i++) {
-			this.data.add(PartDataHolder.decode(buf));
+			this.data.add(PartDataHolder.decode(regBuf));
 		}
 		// If this fails, we have a problem
-		int endMarker = buf.readInt();
+		int endMarker = regBuf.readInt();
 		if (endMarker != -1) {
 			throw new IllegalStateException("End marker invalid!");
 		}
 	}
 
-	public void write(RegistryFriendlyByteBuf buf) {
+	public void write(FriendlyByteBuf buf) {
+		if (!(buf instanceof RegistryFriendlyByteBuf)) {
+			throw new IllegalStateException("SPacketUpdateMultiPart can ONLY be sent on the play network channel!");
+		}
+		RegistryFriendlyByteBuf regBuf = (RegistryFriendlyByteBuf) buf;
 		if (this.entity == null)
 			throw new IllegalStateException("Null Entity while encoding SPacketUpdateMultipart");
 		if (this.data == null)
 			throw new IllegalStateException("Null Data while encoding SPacketUpdateMultipart");
-		buf.writeInt(this.entity.getId());
-		buf.writeInt(this.data.size());
+		regBuf.writeInt(this.entity.getId());
+		regBuf.writeInt(this.data.size());
 		for (PartDataHolder data : this.data) {
-			data.encode(buf);
+			data.encode(regBuf);
 		}
-		buf.writeInt(-1);
+		regBuf.writeInt(-1);
 	}
 
 	protected static List<PartDataHolder> compileList(final Entity entity) {
@@ -67,10 +76,10 @@ public record SPacketUpdateMultipart(
 		return result;
 	}
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, SPacketUpdateMultipart> STREAM_CODEC = CustomPacketPayload.codec(SPacketUpdateMultipart::write, SPacketUpdateMultipart::new);
+	public static final StreamCodec<FriendlyByteBuf, SPacketUpdateMultipart> STREAM_CODEC = CustomPacketPayload.codec(SPacketUpdateMultipart::write, SPacketUpdateMultipart::new);
 
 	@Override
-	public StreamCodec<RegistryFriendlyByteBuf, SPacketUpdateMultipart> getStreamCodec() {
+	public StreamCodec<FriendlyByteBuf, SPacketUpdateMultipart> getStreamCodec() {
 		return STREAM_CODEC;
 	}
 
