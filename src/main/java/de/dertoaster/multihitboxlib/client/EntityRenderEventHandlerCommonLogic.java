@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.client.azurelib.AzurelibEntityRenderEventHandler;
 import de.dertoaster.multihitboxlib.client.geckolib.GeckolibEntityRenderEventHandler;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.mixin.accessor.AccessorEntityRenderer;
@@ -25,8 +24,9 @@ public abstract class EntityRenderEventHandlerCommonLogic {
 			bus.addListener(GeckolibEntityRenderEventHandler::onPostRenderReplacedEntity);
 		}
 		if (Constants.Dependencies.isModLoaded(Constants.Dependencies.AZURELIB_MODID)) {
-			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderEntity);
-			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderReplacedEntity);
+			// TODO: Fix this, looks like AzureLib removed events...
+			//bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderEntity);
+			//bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderReplacedEntity);
 		}
 	}
 	
@@ -35,7 +35,7 @@ public abstract class EntityRenderEventHandlerCommonLogic {
 		if (!(entitybeingRenderer instanceof LivingEntity le)) {
 			return;
 		}
-		if (le.isMultipartEntity() &&  entitybeingRenderer instanceof IMultipartEntity<?> ime && le.getParts() != null && le.getParts().length > 0) {
+		if (le.isMultipartEntity() &&  entitybeingRenderer instanceof IMultipartEntity<?> && le.getParts() != null && le.getParts().length > 0) {
 			for(PartEntity<?> part : le.getParts()) {
 				if(part instanceof MHLibPartEntity<?> mhlpe) {
 					if (mhlpe.hasCustomRenderer() && mhlpe.isPartEnabled()) {
