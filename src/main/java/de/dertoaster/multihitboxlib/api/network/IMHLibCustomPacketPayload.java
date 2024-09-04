@@ -8,8 +8,13 @@ public interface IMHLibCustomPacketPayload<T extends CustomPacketPayload> extend
 
     public StreamCodec<FriendlyByteBuf, T> getStreamCodec();
     
-    public default Type<T> _castType() {
-    	return (Type<T>) this.type();
+    @SuppressWarnings("unchecked")
+	public default Type<T> _castType() {
+    	try {
+    		return (Type<T>) this.type();
+    	} catch(ClassCastException cce) {
+    		throw new IllegalStateException("Somehow, the type given to packet " + this.getClass().getName() + " does not fit to it");
+    	}
     }
 
 }
