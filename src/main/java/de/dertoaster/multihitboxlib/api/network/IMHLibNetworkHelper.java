@@ -1,18 +1,18 @@
 package de.dertoaster.multihitboxlib.api.network;
 
+import java.lang.reflect.InvocationTargetException;
+
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-
-import java.lang.reflect.InvocationTargetException;
 
 public interface IMHLibNetworkHelper {
 
     // Reimplementation of the questionable packet system :>
-    public static <P extends IMHLibCustomPacketPayload<?>, HC extends IMHLibCustomPacketHandler<P>, HS extends IMHLibCustomPacketHandler<P>> void register(final PayloadRegistrar register, Class<P> packetClass, Class<HS> serverHandlerClass, Class<HC> clientHandlerClass) {
+    public static <P extends IMHLibCustomPacketPayload<P>, HC extends IMHLibCustomPacketHandler<P>, HS extends IMHLibCustomPacketHandler<P>> void register(final PayloadRegistrar register, Class<P> packetClass, Class<HS> serverHandlerClass, Class<HC> clientHandlerClass) {
         register(register, packetClass, serverHandlerClass, clientHandlerClass, true);
     }
 
-    public static <P extends IMHLibCustomPacketPayload<?>, HC extends IMHLibCustomPacketHandler<P>, HS extends IMHLibCustomPacketHandler<P>> void register(final PayloadRegistrar register, Class<P> packetClass, Class<HS> serverHandlerClass, Class<HC> clientHandlerClass, boolean playOrCommon) {
+    public static <P extends IMHLibCustomPacketPayload<P>, HC extends IMHLibCustomPacketHandler<P>, HS extends IMHLibCustomPacketHandler<P>> void register(final PayloadRegistrar register, Class<P> packetClass, Class<HS> serverHandlerClass, Class<HC> clientHandlerClass, boolean playOrCommon) {
         P packet = null;
         HC clientHandler = null;
         HS serverHandler = null;
@@ -41,35 +41,35 @@ public interface IMHLibNetworkHelper {
             // Bi
             if (clientHandler != null && serverHandler != null) {
                 if (playOrCommon) {
-                    register.playBidirectional(packet.type(), packet.getStreamCodec(), new DirectionalPayloadHandler<P>(clientHandler::handle, serverHandler::handle));
+                    register.playBidirectional(packet._castType(), packet.getStreamCodec(), new DirectionalPayloadHandler<P>(clientHandler::handle, serverHandler::handle));
                 } else {
-                    register.commonBidirectional(packet.type(), packet.getStreamCodec(), new DirectionalPayloadHandler<P>(clientHandler::handle, serverHandler::handle));
+                    register.commonBidirectional(packet._castType(), packet.getStreamCodec(), new DirectionalPayloadHandler<P>(clientHandler::handle, serverHandler::handle));
                 }
             }
             // S2C
             else if (clientHandler != null) {
                 if (playOrCommon) {
-                    register.playToClient(packet.type(), packet.getStreamCodec(), clientHandler::handle);
+                    register.playToClient(packet._castType(), packet.getStreamCodec(), clientHandler);
                 } else {
-                    register.commonToClient(packet.type(), packet.getStreamCodec(), clientHandler::handle);
+                    register.commonToClient(packet._castType(), packet.getStreamCodec(), clientHandler);
                 }
             }
             // C2S
             else {
                 if (playOrCommon) {
-                    register.playToServer(packet.type(), packet.getStreamCodec(), serverHandler::handle);
+                    register.playToServer(packet._castType(), packet.getStreamCodec(), serverHandler);
                 } else {
-                    register.commonToServer(packet.type(), packet.getStreamCodec(), serverHandler::handle);
+                    register.commonToServer(packet._castType(), packet.getStreamCodec(), serverHandler);
                 }
             }
         }
     }
 
-    public static <P extends IMHLibCustomPacketPayload<?>, H extends IMHLibCustomPacketHandler<P>>void registerC2S(final PayloadRegistrar register, Class<P> packetClass, Class<H> handlerClass) {
+    public static <P extends IMHLibCustomPacketPayload<P>, H extends IMHLibCustomPacketHandler<P>>void registerC2S(final PayloadRegistrar register, Class<P> packetClass, Class<H> handlerClass) {
         register(register, packetClass, handlerClass, null);
     }
 
-    public static <P extends IMHLibCustomPacketPayload<?>, H extends IMHLibCustomPacketHandler<P>>void registerS2C(final PayloadRegistrar register, Class<P> packetClass, Class<H> handlerClass) {
+    public static <P extends IMHLibCustomPacketPayload<P>, H extends IMHLibCustomPacketHandler<P>>void registerS2C(final PayloadRegistrar register, Class<P> packetClass, Class<H> handlerClass) {
         register(register, packetClass, null, handlerClass);
     }
 

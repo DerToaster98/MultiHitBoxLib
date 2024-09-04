@@ -2,9 +2,10 @@ package de.dertoaster.multihitboxlib.api.network;
 
 import net.neoforged.neoforge.network.handling.ClientPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
-public interface IMHLibCustomPacketHandler<T extends IMHLibCustomPacketPayload<?>> {
+public interface IMHLibCustomPacketHandler<T extends IMHLibCustomPacketPayload<?>> extends IPayloadHandler<T> {
 
     // Clientside => C
     public default void handle(final T data, final IPayloadContext context) {
