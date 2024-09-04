@@ -1,20 +1,24 @@
 package de.dertoaster.multihitboxlib.network.client;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import com.mojang.serialization.Codec;
+
 import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
 import de.dertoaster.multihitboxlib.init.MHLibNetwork;
-import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.*;
 
 public record CPacketBoneInformation(
 		int entityID,
@@ -38,7 +42,7 @@ public record CPacketBoneInformation(
 		return map;
 	}
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, CPacketBoneInformation> STREAM_CODEC = StreamCodec.composite(
+	public static final StreamCodec<FriendlyByteBuf, CPacketBoneInformation> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			CPacketBoneInformation::entityID,
 			ByteBufCodecs.fromCodec(
@@ -57,7 +61,7 @@ public record CPacketBoneInformation(
 	}
 
 	@Override
-	public StreamCodec<RegistryFriendlyByteBuf, CPacketBoneInformation> getStreamCodec() {
+	public StreamCodec<FriendlyByteBuf, CPacketBoneInformation> getStreamCodec() {
 		return STREAM_CODEC;
 	}
 

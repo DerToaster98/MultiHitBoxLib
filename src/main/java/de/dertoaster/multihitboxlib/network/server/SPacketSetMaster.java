@@ -1,16 +1,16 @@
 package de.dertoaster.multihitboxlib.network.server;
 
+import java.util.UUID;
+
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
 import de.dertoaster.multihitboxlib.init.MHLibNetwork;
 import de.dertoaster.multihitboxlib.util.UtilityCodecs;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
-
-import java.util.UUID;
 
 public record SPacketSetMaster(int entityID, UUID masterUUID) implements IMHLibCustomPacketPayload<SPacketSetMaster> {
 
@@ -20,7 +20,7 @@ public record SPacketSetMaster(int entityID, UUID masterUUID) implements IMHLibC
 
 	protected static <T extends IMultipartEntity<?>> int retrieveEntityID(final T entity) {
 		if (entity instanceof Entity entityTmp) {
-			return ((Entity) entity).getId();
+			return entityTmp.getId();
 		} else {
 			throw new IllegalStateException("entity is a instance of IMultipartEntity that is not implemented on a entity!");
 		}
@@ -34,7 +34,7 @@ public record SPacketSetMaster(int entityID, UUID masterUUID) implements IMHLibC
 		this(-1, UUID.randomUUID());
 	}
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, SPacketSetMaster> STREAM_CODEC = StreamCodec.composite(
+	public static final StreamCodec<FriendlyByteBuf, SPacketSetMaster> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			SPacketSetMaster::entityID,
 			ByteBufCodecs.fromCodec(UtilityCodecs.UUID_STRING_CODEC),
@@ -43,7 +43,7 @@ public record SPacketSetMaster(int entityID, UUID masterUUID) implements IMHLibC
 	);
 
 	@Override
-	public StreamCodec<RegistryFriendlyByteBuf, SPacketSetMaster> getStreamCodec() {
+	public StreamCodec<FriendlyByteBuf,SPacketSetMaster> getStreamCodec() {
 		return STREAM_CODEC;
 	}
 

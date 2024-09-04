@@ -12,14 +12,13 @@ import com.mojang.serialization.JsonOps;
 
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P extends AbstractSPacketCodecWrappingPacket<T, ?>> implements IMHLibCustomPacketPayload<P> {
 
 	protected final T data;
-	protected final StreamCodec<RegistryFriendlyByteBuf, P> STREAM_CODEC = buildStreamCodec();
+	protected final StreamCodec<FriendlyByteBuf, P> STREAM_CODEC = buildStreamCodec();
 	protected abstract Codec<T> codec();
 	protected abstract P createPacket(DataResult<T> dr);
 	protected abstract P createPacket(T data);
@@ -32,16 +31,16 @@ public abstract class AbstractSPacketCodecWrappingPacket<T extends Object, P ext
 		this.data = data;
 	}
 	
-	protected StreamCodec<RegistryFriendlyByteBuf, P> buildStreamCodec() {
+	protected StreamCodec<FriendlyByteBuf, P> buildStreamCodec() {
 		return CustomPacketPayload.codec(AbstractSPacketCodecWrappingPacket::write, this::read);
 	}
 	
 	@Override
-	public StreamCodec<RegistryFriendlyByteBuf, P> getStreamCodec() {
+	public StreamCodec<FriendlyByteBuf, P> getStreamCodec() {
 		return STREAM_CODEC;
 	}
 
-	public P read(RegistryFriendlyByteBuf buffer) {
+	public P read(FriendlyByteBuf buffer) {
 		if (buffer.readBoolean()) {
 			byte[] bytes = buffer.readByteArray();
 			if (bytes.length > 0) {
