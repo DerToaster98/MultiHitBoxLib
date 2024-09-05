@@ -1,9 +1,6 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
-import java.util.Optional;
-
 import com.google.gson.JsonObject;
-
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import mod.azure.azurelib.cache.AzureLibCache;
@@ -11,6 +8,8 @@ import mod.azure.azurelib.loading.object.BakedAnimations;
 import mod.azure.azurelib.util.JsonUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+
+import java.util.Optional;
 
 public class AlibAnimationEnforcementManager extends MHLibEnforcementManager {
 

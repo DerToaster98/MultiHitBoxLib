@@ -1,13 +1,12 @@
 package de.dertoaster.multihitboxlib.assetsynch.client;
 
-import java.io.IOException;
-
 import com.mojang.blaze3d.platform.NativeImage;
-
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
+
+import java.io.IOException;
 
 public class TextureClientLogic {
 	

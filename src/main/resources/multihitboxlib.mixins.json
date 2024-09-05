@@ -5,13 +5,17 @@
 	"plugin": "de.dertoaster.multihitboxlib.mixin.MHLibPlugin",
 	"refmap": "multihitboxlib.refmap.json",
 	"mixins": [
+		"accesor.AccessorEntity",
 		"entity.MixinLivingEntity",
 		"entity.MixinServerEntity",
 		"geckolib.MixinGeoEntityRenderer",
-		"geckolib.MixinGeoReplacedEntityRenderer"
+		"geckolib.MixinGeoReplacedEntityRenderer",
+		"partentity.MixinEntity"
 	],
 	"client": [
-		"accessor.AccessorEntityRenderer",
+		"accesor.AccessorEntityRenderer",
+		"azurelib.MixinGeoEntityRenderer",
+		"azurelib.MixinGeoReplacedEntityRenderer",
 		"minecraft.MixinMinecraft"
 	],
 	"minVersion": "0.8"

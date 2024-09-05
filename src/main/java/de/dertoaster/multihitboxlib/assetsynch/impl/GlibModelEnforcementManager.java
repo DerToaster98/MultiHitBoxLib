@@ -1,9 +1,6 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
-import java.util.Optional;
-
 import com.google.gson.JsonObject;
-
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.MHLibMod;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +12,8 @@ import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
 import software.bernie.geckolib.util.JsonUtil;
+
+import java.util.Optional;
 
 public class GlibModelEnforcementManager extends MHLibEnforcementManager {
 

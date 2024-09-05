@@ -1,16 +1,16 @@
 package de.dertoaster.multihitboxlib.assetsynch.assetfinders;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import de.dertoaster.multihitboxlib.entity.hitbox.AssetEnforcementConfig;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class HitboxProfileAssetFinder extends AbstractAssetFinder {
 

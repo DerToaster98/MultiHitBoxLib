@@ -1,10 +1,10 @@
 package de.dertoaster.multihitboxlib.assetsynch.assetfinders;
 
-import java.util.Set;
-import java.util.function.Function;
-
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Set;
+import java.util.function.Function;
 
 public abstract class AbstractAssetFinder implements Function<RegistryAccess, Set<ResourceLocation>> {
 

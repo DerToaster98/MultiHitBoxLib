@@ -1,5 +1,11 @@
 package de.dertoaster.multihitboxlib.assetsynch;
 
+import de.dertoaster.multihitboxlib.util.CompressionUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.resources.ResourceLocation;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,12 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.Deflater;
-
-import de.dertoaster.multihitboxlib.util.CompressionUtil;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.resources.ResourceLocation;
 
 public abstract class AbstractNInOneEntriesEnforcementManager extends AbstractAssetEnforcementManager {
 	

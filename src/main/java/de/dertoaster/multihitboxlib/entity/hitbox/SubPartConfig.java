@@ -2,9 +2,9 @@ package de.dertoaster.multihitboxlib.entity.hitbox;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import de.dertoaster.multihitboxlib.entity.hitbox.type.IHitboxType;
-import de.dertoaster.multihitboxlib.init.MHLibHitboxTypes;
+import de.dertoaster.multihitboxlib.util.UtilityCodecs;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 
 public record SubPartConfig(
 		String name,
@@ -12,7 +12,10 @@ public record SubPartConfig(
 		boolean canReceiveDamage,
 		float damageModifier,
 		double maxDeviationFromServer,
-		IHitboxType hitboxType
+		Vec2 baseSize,
+		Vec3 baseRotation, //Only to be used for rendering stuff. Won't change the hitbox as that is still axis alinged
+		Vec3 basePosition,
+		Vec3 pivotOffset
 		) {
 	
 	public static final Codec<SubPartConfig> CODEC = RecordCodecBuilder.create(instance -> {
@@ -22,7 +25,10 @@ public record SubPartConfig(
 				Codec.BOOL.fieldOf("can-receive-damage").forGetter(SubPartConfig::canReceiveDamage),
 				Codec.FLOAT.optionalFieldOf("damage-modifier", 1.0F).forGetter(SubPartConfig::damageModifier),
 				Codec.DOUBLE.optionalFieldOf("max-deviation-from-server", 0.0D).forGetter(SubPartConfig::maxDeviationFromServer),
-				MHLibHitboxTypes.HITBOX_TYPE_DISPATCHER.dispatchedCodec().fieldOf("box").forGetter(SubPartConfig::hitboxType)
+				UtilityCodecs.VEC2_CODEC.fieldOf("size").forGetter(SubPartConfig::baseSize),
+				Vec3.CODEC.optionalFieldOf("rotation", Vec3.ZERO).forGetter(SubPartConfig::baseRotation),
+				Vec3.CODEC.fieldOf("position").forGetter(SubPartConfig::basePosition),
+				Vec3.CODEC.optionalFieldOf("pivot-offset", Vec3.ZERO).forGetter(SubPartConfig::pivotOffset)
 			).apply(instance, SubPartConfig::new);
 			
 	});
