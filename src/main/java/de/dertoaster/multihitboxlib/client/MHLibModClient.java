@@ -1,8 +1,11 @@
 package de.dertoaster.multihitboxlib.client;
 
+import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.event.client.PartRendererRegistrationEvent;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
+import de.dertoaster.multihitboxlib.example.TestingEntityRender;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 
@@ -49,5 +52,6 @@ public class MHLibModClient implements ClientModInitializer {
         if (!map.isEmpty()) {
             map.forEach(MHLibModClient::registerEntityPartRenderer);
         }
+        EntityRendererRegistry.register(MHLibMod.DOOMHUNTER, TestingEntityRender::new);
     }
 }
