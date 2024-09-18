@@ -23,6 +23,8 @@ public abstract class EntityRenderEventHandlerCommonLogic {
 		if (Constants.Dependencies.isModLoaded(Constants.Dependencies.GECKOLIB_MODID)) {
 			bus.addListener(GeckolibEntityRenderEventHandler::onPostRenderEntity);
 			bus.addListener(GeckolibEntityRenderEventHandler::onPostRenderReplacedEntity);
+			bus.addListener(GeckolibEntityRenderEventHandler::onPreRenderEntity);
+			bus.addListener(GeckolibEntityRenderEventHandler::onPreRenderReplacedEntity);
 		}
 		if (Constants.Dependencies.isModLoaded(Constants.Dependencies.AZURELIB_MODID)) {
 			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderEntity);
