@@ -80,3 +80,17 @@ config="${mod_id}.mixins.json"
     versionRange="${catalogue_version_range}"
     ordering="NONE"
     side="CLIENT"
+
+[[dependencies."${modid}"]]
+    modId="gamemenumodoption"
+    mandatory=false
+    versionRange="${gmmo_version_range}"
+    ordering="NONE"
+    side="CLIENT"
+
+[[dependencies."${modid}"]]
+	modId="mixinbooster"
+	mandatory=true
+	versionRange="${mixinbooster_version_range}"
+	ordering="BEFORE"
+	side="BOTH"

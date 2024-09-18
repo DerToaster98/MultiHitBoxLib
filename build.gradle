@@ -119,6 +119,8 @@ dependencies {
     //implementation "curse.maven:gamemenumodoption-353051:${gmmo_version}"
 
     implementation "curse.maven:jade-324717:${jade_version}"
+	
+	implementation fg.deobf("curse.maven:mixinbooster-980731:${mixinbooster_version}")
 
     compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
     runtimeOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
@@ -136,7 +138,9 @@ tasks.named('processResources', ProcessResources).configure {
             mod_credits: mod_credits, mod_description: mod_description, mod_issueTrackerURL: mod_issueTrackerURL,
             geckolib_version_range: geckolib_version_range, azurelib_version_range: azurelib_version_range,
             jei_version_range: jei_version_range, jeed_version_range: jeed_version_range,
-            catalogue_version_range: catalogue_version_range,
+            catalogue_version_range: catalogue_version_range, gmmo_version_range: gmmo_version_range,
+            mixinbooster_version_range: mixinbooster_version_range,
+            mixinbooster_version: mixinbooster_verison,
             jade_version_range: jade_version_range, appleskin_version_range: appleskin_version_range
     ]
     inputs.properties replaceProperties
