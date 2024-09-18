@@ -17,5 +17,5 @@
 		"accessor.AccessorEntityRenderer",
 		"minecraft.MixinMinecraft"
 	],
-	"minVersion": "0.12"
+	"minVersion": "0.8"
 }

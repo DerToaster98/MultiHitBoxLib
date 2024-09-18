@@ -36,6 +36,27 @@ neoForge {
     accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
+<<<<<<< HEAD
+=======
+        configureEach {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            arg "--mixin.config=${modid}.mixins.json"
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            //jvmArgs "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"
+            mods {
+                "${modid}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+>>>>>>> 58a6414... correct version ranges, use their maven, adjust mixins file
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -92,6 +113,30 @@ repositories {
         name = "RyanLiptak Maven"
         url = "https://maven.ryanliptak.com/"
     }
+<<<<<<< HEAD
+=======
+
+    maven {
+        name = 'Sinytra'
+        url = 'https://maven.su5ed.dev/releases/'
+    }
+}
+
+dependencies {
+    // Base
+    minecraft("net.minecraftforge:forge:${mc_version}-${forge_version}")
+    annotationProcessor("org.spongepowered:mixin:${mixin_version}:processor")
+
+    // Dependencies (Embedded)
+    implementation fg.deobf("commoble.databuddy:${databuddy_branch}:${databuddy_version}")
+
+    jarJar(group: 'commoble.databuddy', name: "${databuddy_branch}", version: "[${databuddy_version},)")
+
+    // Dependencies (Optional)
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
+
+    implementation fg.deobf("mod.azure.azurelib:azurelib-neo-${azurelib_version}")
+>>>>>>> 58a6414... correct version ranges, use their maven, adjust mixins file
 
     maven {
         name = "Commoble Databuddy"
@@ -120,7 +165,8 @@ dependencies {
 
     implementation "curse.maven:jade-324717:${jade_version}"
 	
-	implementation fg.deobf("curse.maven:mixinbooster-980731:${mixinbooster_version}")
+	//implementation fg.deobf("curse.maven:mixinbooster-980731:${mixinbooster_version}")
+	implementation("org.sinytra.mixinbooster:mixin-booster:${mixinbooster_version}+${mc_version}")
 
     compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
     runtimeOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
