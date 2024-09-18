@@ -87,8 +87,8 @@ description='''${mod_description}'''
     side="CLIENT"
 
 [[dependencies."${modid}"]]
-modId="mixinbooster"
-mandatory=true
-versionRange="${mixinbooster_version_range}"
-ordering="BEFORE"
-side="BOTH"
+    modId="mixinbooster"
+    mandatory=true
+    versionRange="${mixinbooster_version_range}"
+    ordering="BEFORE"
+    side="BOTH"
