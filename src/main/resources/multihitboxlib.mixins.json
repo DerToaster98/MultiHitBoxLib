@@ -6,14 +6,11 @@
 	"refmap": "multihitboxlib.refmap.json",
 	"mixins": [
 		"entity.MixinLivingEntity",
-		"entity.MixinServerEntity",
-		"geckolib.MixinGeoEntityRenderer",
-		"geckolib.MixinGeoReplacedEntityRenderer",
-		"geckolib.MixinGeoRenderer"
+		"entity.MixinServerEntity"
 	],
 	"client": [
 		"accessor.AccessorEntityRenderer",
 		"minecraft.MixinMinecraft"
 	],
-	"minVersion": "0.12"
+	"minVersion": "0.8"
 }
