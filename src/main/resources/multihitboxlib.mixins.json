@@ -8,7 +8,8 @@
 		"entity.MixinLivingEntity",
 		"entity.MixinServerEntity",
 		"geckolib.MixinGeoEntityRenderer",
-		"geckolib.MixinGeoReplacedEntityRenderer"
+		"geckolib.MixinGeoReplacedEntityRenderer",
+		"geckolib.MixinGeoRenderer"
 	],
 	"client": [
 		"accessor.AccessorEntityRenderer",
