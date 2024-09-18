@@ -140,7 +140,7 @@ tasks.named('processResources', ProcessResources).configure {
             jei_version_range: jei_version_range, jeed_version_range: jeed_version_range,
             catalogue_version_range: catalogue_version_range, gmmo_version_range: gmmo_version_range,
             mixinbooster_version_range: mixinbooster_version_range,
-            mixinbooster_version: mixinbooster_verison,
+            mixinbooster_version: mixinbooster_version,
             jade_version_range: jade_version_range, appleskin_version_range: appleskin_version_range
     ]
     inputs.properties replaceProperties
