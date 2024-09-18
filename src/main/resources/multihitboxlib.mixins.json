@@ -9,6 +9,7 @@
 		"entity.MixinServerEntity",
 		"geckolib.MixinGeoEntityRenderer",
 		"geckolib.MixinGeoReplacedEntityRenderer",
+		"geckolib.MixinGeoRenderer",
 		"azurelib.MixinGeoEntityRenderer",
 		"azurelib.MixinGeoReplacedEntityRenderer"
 	],
