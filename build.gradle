@@ -43,7 +43,7 @@ neoForge {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
 
-            arg "--mixin.config=${modid}.mixins.json"
+            //arg "--mixin.config=${modid}.mixins.json"
             //property 'mixin.env.remapRefMap', 'true'
             //property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
