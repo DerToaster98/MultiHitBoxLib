@@ -39,8 +39,8 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             arg "--mixin.config=${modid}.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            //property 'mixin.env.remapRefMap', 'true'
+            //property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             //jvmArgs "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"
             mods {
@@ -157,23 +157,15 @@ dependencies {
 
 jarJar.enable()
 
-createMcpToSrg {
-    outputs.upToDateWhen {false}
-
-    doLast {
-        fixFG5TsrgForMixinAP(output.get().asFile, file("${buildDir}/fixMcpToSrg/output.tsrg"))
-    }
-}
-
 mixin {
     add sourceSets.main, "${modid}.refmap.json"
     config "${modid}.mixins.json"
 
-    reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
+    //reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
 
     debug.verbose = true
     debug.export = true
-    debug = true
+    //debug = true
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -197,6 +189,10 @@ tasks.named('processResources', ProcessResources).configure {
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+java {
+    withSourcesJar()
 }
 
 tasks.named('jar', Jar).configure {
@@ -232,30 +228,9 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-// Function that actually fixes the TSRG file
-static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
-    // Make directory if needed
-    outFile.parentFile.mkdirs()
-
-    try (Scanner scanner = new Scanner(inFile); PrintWriter out = new PrintWriter(outFile)) {
-        boolean firstLine = true
-
-        while (scanner.hasNextLine()) {
-            String next = scanner.nextLine()
-
-            // Skip first 'tsrg left right' header line
-            if (firstLine) {
-                firstLine = false
-                continue
-            }
-
-            // Skip 'static' indicators
-            if (next.trim() == "static") continue
-
-            // Export line otherwise
-            out.println(next)
-        }
-    }
+afterEvaluate {
+    jar.finalizedBy reobfJar
+    reobfJar.dependsOn 'addMixinsToJar'
 }
 
 // Delete slim jar
