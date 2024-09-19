@@ -6,7 +6,12 @@
 	"refmap": "multihitboxlib.refmap.json",
 	"mixins": [
 		"entity.MixinLivingEntity",
-		"entity.MixinServerEntity"
+		"entity.MixinServerEntity",
+		"geckolib.MixinGeoEntityRenderer",
+		"geckolib.MixinGeoReplacedEntityRenderer",
+		"geckolib.MixinGeoRenderer",
+		"azurelib.MixinGeoEntityRenderer",
+		"azurelib.MixinGeoReplacedEntityRenderer"
 	],
 	"client": [
 		"accessor.AccessorEntityRenderer",
