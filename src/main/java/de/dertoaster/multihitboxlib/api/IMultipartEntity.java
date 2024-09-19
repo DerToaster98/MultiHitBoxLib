@@ -233,7 +233,7 @@ public interface IMultipartEntity<T extends Entity> {
 		}
 	}
 
-	public default <E extends Entity & IMultipartEntity> void mhlibAiStep() {
+	public default <E extends Entity & IMultipartEntity<?>> void mhlibAiStep() {
 		if (this instanceof IMHLibFieldAccessor access) {
 			E e = (E)this;
 			// First, send packet if present or handle leader stuff
