@@ -36,8 +36,7 @@ neoForge {
     accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
-<<<<<<< HEAD
-=======
+
         configureEach {
             workingDirectory project.file('run')
 
@@ -45,8 +44,8 @@ neoForge {
             property 'forge.logging.console.level', 'debug'
 
             arg "--mixin.config=${modid}.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            //property 'mixin.env.remapRefMap', 'true'
+            //property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             //jvmArgs "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"
             mods {
@@ -56,7 +55,6 @@ neoForge {
             }
         }
 
->>>>>>> 58a6414... correct version ranges, use their maven, adjust mixins file
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -113,12 +111,15 @@ repositories {
         name = "RyanLiptak Maven"
         url = "https://maven.ryanliptak.com/"
     }
-<<<<<<< HEAD
-=======
 
     maven {
         name = 'Sinytra'
         url = 'https://maven.su5ed.dev/releases/'
+    }
+	
+	maven {
+        name = "Commoble Databuddy"
+        url = "https://commoble.net/maven/"
     }
 }
 
@@ -136,12 +137,8 @@ dependencies {
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
 
     implementation fg.deobf("mod.azure.azurelib:azurelib-neo-${azurelib_version}")
->>>>>>> 58a6414... correct version ranges, use their maven, adjust mixins file
-
-    maven {
-        name = "Commoble Databuddy"
-        url = "https://commoble.net/maven/"
-    }
+	
+    
 }
 
 configurations {
@@ -175,6 +172,18 @@ dependencies {
     jarJar(group: 'net.commoble.databuddy', name: "${databuddy_branch}", version: "[${databuddy_version},)")
 }
 
+mixin {
+    add sourceSets.main, "${modid}.refmap.json"
+    config "${modid}.mixins.json"
+
+    //reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
+
+    debug.verbose = true
+    debug.export = true
+    //debug = true
+
+}
+
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version: minecraft_version, mc_version_range: mc_version_range,
@@ -196,6 +205,26 @@ tasks.named('processResources', ProcessResources).configure {
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+java {
+    withSourcesJar()
+}
+
+tasks.named('jar', Jar).configure {
+	archiveClassifier = 'slim'
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_name,
+                'Specification-Vendor'    : mod_credits,
+                'Specification-Version'   : mod_version,
+                'Implementation-Title'    : mod_name,
+                'Implementation-Version'  : mod_version,
+                'Implementation-Vendor'   : mod_credits,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'		  	  : "${modid}.mixins.json"
+        ])
+    }
 }
 
 publishing {
@@ -220,5 +249,52 @@ idea {
     module {
         downloadSources = true
         downloadJavadoc = true
+	}
+}
+
+afterEvaluate {
+    jar.finalizedBy reobfJar
+    reobfJar.dependsOn 'addMixinsToJar'
+}
+
+// Delete slim jar
+build.doLast {
+	delete "${project.projectDir}/build/libs/${modid}-${mc_version}-${mod_version}-slim.jar"
+}
+
+if (file('key.properties').exists()) {
+    publishMods {
+        def releaseProp = new Properties()
+        File secretPropsFile = file("key.properties")
+        releaseProp.load(secretPropsFile.newInputStream())
+        file = jar.archiveFile
+        changelog = rootProject.file("changelog.md").text
+        type = STABLE
+        modLoaders.add("neoforge")
+        modLoaders.add("forge")
+
+        curseforge {
+            projectId = project.curseforge_id
+            projectSlug = project.mod_id
+            accessToken = releaseProp.getProperty("curseKey")
+            minecraftVersions.add(project.minecraft_version)
+            optional {
+                slug = "azurelib"
+            }
+            optional {
+                slug = "geckolib"
+            }
+        }
+        modrinth {
+            projectId = project.modrinth_id
+            accessToken = releaseProp.getProperty('modrinthKey')
+            minecraftVersions.add(project.minecraft_version)
+            optional {
+                slug = "azurelib"
+            }
+            optional {
+                slug = "geckolib"
+            }
+        }
     }
 }
