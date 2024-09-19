@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Specification-Title: Multihitbox Library
+Specification-Vendor: DerToaster, Meme Man
+Specification-Version: 1.7.0
+Implementation-Title: Multihitbox Library
+Implementation-Version: 1.7.0
+Implementation-Vendor: DerToaster, Meme Man
+Implementation-Timestamp: 2024-09-19T18:27:56+0200
+MixinConfigs: multihitboxlib.mixins.json
+
