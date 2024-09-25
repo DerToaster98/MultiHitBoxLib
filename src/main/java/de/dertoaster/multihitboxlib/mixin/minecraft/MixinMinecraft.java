@@ -12,13 +12,13 @@ import net.minecraft.server.packs.repository.RepositorySource;
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
 
-	@ModifyArg(
-			method = "<init>",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>([Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
-			index = 0
-	)
-	private RepositorySource[] mhlibAddPackfinder(RepositorySource[] arg) {
-		return ArrayUtils.addAll(arg, AssetSynchPackFinder.instance());
-	}
-	
+    @ModifyArg(
+            method = "<init>",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>([Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
+            index = 0
+    )
+    private RepositorySource[] mhlibAddPackfinder(RepositorySource[] arg) {
+        return ArrayUtils.addAll(arg, AssetSynchPackFinder.instance());
+    }
+
 }
