@@ -1,28 +1,16 @@
 package de.dertoaster.multihitboxlib.mixin.geckolib;
 
-import java.util.function.Consumer;
-
+import de.dertoaster.multihitboxlib.api.glibplus.MHLibExtendedGeoLayer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-
-import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.api.glibplus.MHLibExtendedGeoLayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.entity.Entity;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.util.RenderUtils;
 
-@Mixin(GeoRenderer.class)
+import java.util.function.Consumer;
+
+@Mixin(value = GeoRenderer.class, priority = Integer.MAX_VALUE - 1)
 public interface MixinGeoRenderer {
 	// TODO: Fix, this does not work yet
 
@@ -36,11 +24,13 @@ public interface MixinGeoRenderer {
 		}
 	}
 
+	//renderRecursively(Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/lang/Object;Lsoftware/bernie/geckolib/cache/object/BakedGeoModel;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/mojang/blaze3d/vertex/VertexConsumer;ZFIIFFFF)V
 	@Inject(method = "renderRecursively", at = @At("HEAD"), remap = false)
-	default void mixinRenderRecursivelyStart(CallbackInfo ci) {
-		// if (animatable != null && animatable instanceof Entity entity && entity.isMultipartEntity() && animatable instanceof IMultipartEntity<?> ime && ime.getHitboxProfile().isPresent()) {
-		this._mhlib_callLayers(MHLibExtendedGeoLayer::onRenderRecursivelyStart);
-		// }
+	default void mixinRenderRecursivelyStart(/*PoseStack poseStack, GeoAnimatable animatable, BakedGeoModel mode, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha,*/ CallbackInfo ci) {
+		System.exit(-500);
+		//if (animatable != null && animatable instanceof Entity entity && entity.isMultipartEntity() && animatable instanceof IMultipartEntity<?> ime && ime.getHitboxProfile().isPresent()) {
+			this._mhlib_callLayers(MHLibExtendedGeoLayer::onRenderRecursivelyStart);
+		//}
 	}
 
 	@Inject(method = "renderRecursively", at = @At("TAIL"), remap = false)
@@ -53,7 +43,7 @@ public interface MixinGeoRenderer {
 		// }
 	}
 
-	@Overwrite
+	/*@Overwrite
 	default void renderRecursively(PoseStack poseStack, GeoAnimatable animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red,
 			float green, float blue, float alpha) {
 		boolean iNeedToCallMHLIB = (animatable != null && animatable instanceof Entity entity && entity.isMultipartEntity() && animatable instanceof IMultipartEntity<?> ime && ime.getHitboxProfile().isPresent());
@@ -75,6 +65,6 @@ public interface MixinGeoRenderer {
 		if (iNeedToCallMHLIB) {
 			this._mhlib_callLayers(MHLibExtendedGeoLayer::onRenderRecursivelyEnd);
 		}
-	}
+	}*/
 
 }
