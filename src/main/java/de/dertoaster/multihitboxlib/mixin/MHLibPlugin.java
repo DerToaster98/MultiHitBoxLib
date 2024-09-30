@@ -24,7 +24,8 @@ public class MHLibPlugin implements IMixinConfigPlugin {
 			"de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoRenderer", Constants.Dependencies.GECKOLIB_LOADED,
 			// Azurelib
 			"de.dertoaster.multihitboxlib.mixin.azurelib.MixinGeoEntityRenderer", Constants.Dependencies.AZURELIB_LOADED,
-			"de.dertoaster.multihitboxlib.mixin.azurelib.MixinGeoReplacedEntityRenderer", Constants.Dependencies.AZURELIB_LOADED
+			"de.dertoaster.multihitboxlib.mixin.azurelib.MixinGeoReplacedEntityRenderer", Constants.Dependencies.AZURELIB_LOADED,
+			"de.dertoaster.multihitboxlib.mixin.azurelib.MixinGeoRenderer", Constants.Dependencies.AZURELIB_LOADED
 	);
 
 	@Override

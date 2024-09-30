@@ -11,7 +11,8 @@
 		"geckolib.MixinGeoReplacedEntityRenderer",
 		"geckolib.MixinGeoRenderer",
 		"azurelib.MixinGeoEntityRenderer",
-		"azurelib.MixinGeoReplacedEntityRenderer"
+		"azurelib.MixinGeoReplacedEntityRenderer",
+		"azurelib.MixinGeoRenderer"
 	],
 	"client": [
 		"accessor.AccessorEntityRenderer",

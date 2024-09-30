@@ -29,6 +29,8 @@ public abstract class EntityRenderEventHandlerCommonLogic {
 		if (Constants.Dependencies.isModLoaded(Constants.Dependencies.AZURELIB_MODID)) {
 			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderEntity);
 			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderReplacedEntity);
+			bus.addListener(AzurelibEntityRenderEventHandler::onPreRenderEntity);
+			bus.addListener(AzurelibEntityRenderEventHandler::onPreRenderReplacedEntity);
 		}
 	}
 	
