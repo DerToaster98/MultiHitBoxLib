@@ -1,11 +1,15 @@
 package de.dertoaster.multihitboxlib.client.azurelib;
 
+import de.dertoaster.multihitboxlib.api.alibplus.MHLibExtendedGeoLayer;
 import de.dertoaster.multihitboxlib.client.EntityRenderEventHandlerCommonLogic;
 import de.dertoaster.multihitboxlib.client.IBoneInformationCollectorLayerCommonLogic;
 import mod.azure.azurelib.event.GeoRenderEvent;
 import mod.azure.azurelib.renderer.GeoEntityRenderer;
+import mod.azure.azurelib.renderer.GeoRenderer;
 import mod.azure.azurelib.renderer.layer.GeoRenderLayer;
 import net.minecraft.world.entity.Entity;
+
+import java.util.function.Consumer;
 
 public class AzurelibEntityRenderEventHandler extends EntityRenderEventHandlerCommonLogic {
 
