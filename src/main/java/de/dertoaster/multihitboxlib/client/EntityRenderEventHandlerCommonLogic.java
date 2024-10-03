@@ -26,9 +26,10 @@ public abstract class EntityRenderEventHandlerCommonLogic {
 			bus.addListener(GeckolibEntityRenderEventHandler::onPreRenderReplacedEntity);
 		}
 		if (Constants.Dependencies.isModLoaded(Constants.Dependencies.AZURELIB_MODID)) {
-			// TODO: Fix this, looks like AzureLib removed events...
-			//bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderEntity);
-			//bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderReplacedEntity);
+			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderEntity);
+			bus.addListener(AzurelibEntityRenderEventHandler::onPostRenderReplacedEntity);
+			bus.addListener(AzurelibEntityRenderEventHandler::onPreRenderEntity);
+			bus.addListener(AzurelibEntityRenderEventHandler::onPreRenderReplacedEntity);
 		}
 	}
 	

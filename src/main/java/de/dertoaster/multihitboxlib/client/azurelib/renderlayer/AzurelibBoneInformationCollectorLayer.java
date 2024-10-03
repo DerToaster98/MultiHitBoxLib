@@ -3,30 +3,25 @@ package de.dertoaster.multihitboxlib.client.azurelib.renderlayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import de.dertoaster.multihitboxlib.api.alibplus.MHLibExtendedGeoLayer;
 import de.dertoaster.multihitboxlib.client.IBoneInformationCollectorLayerCommonLogic;
 import mod.azure.azurelib.common.api.client.renderer.GeoReplacedEntityRenderer;
 import mod.azure.azurelib.common.api.client.renderer.layer.GeoRenderLayer;
 import mod.azure.azurelib.common.internal.client.renderer.GeoRenderer;
 import mod.azure.azurelib.common.internal.common.cache.object.GeoBone;
 import mod.azure.azurelib.core.animatable.GeoAnimatable;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3d;
 
-public class AzurelibBoneInformationCollectorLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> implements IBoneInformationCollectorLayerCommonLogic<GeoBone>{
+public class AzurelibBoneInformationCollectorLayer<T extends GeoAnimatable> extends MHLibExtendedGeoLayer<T> implements IBoneInformationCollectorLayerCommonLogic<GeoBone>{
 
 	public AzurelibBoneInformationCollectorLayer(GeoRenderer<T> entityRendererIn) {
 		super(entityRendererIn);
 	}
-	
-	private double scaleX = 1;
-	private double scaleY = 1;
-	private double scaleZ = 1;
-	
-	private double rotX = 0;
-	private double rotY = 0;
-	private double rotZ = 0;
 	
 	private int currentTick = -1;
 	
@@ -55,9 +50,13 @@ public class AzurelibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 
 	@Override
 	public void calcScales(GeoBone bone) {
-		this.scaleX *= bone.getScaleX();
-		this.scaleY *= bone.getScaleY();
-		this.scaleZ *= bone.getScaleZ();
+		Vector3d scale = this.getCurrentScalingEntry();
+		scale.x *= bone.getScaleX();
+		scale.y *= bone.getScaleY();
+		scale.z *= bone.getScaleZ();
+		//this.scaleX *= bone.getScaleX();
+		//this.scaleY *= bone.getScaleY();
+		//this.scaleZ *= bone.getScaleZ();
 	}
 
 	@Override
@@ -78,33 +77,47 @@ public class AzurelibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 
 	@Override
 	public Vec3 getScaleVector() {
-		return new Vec3(this.scaleX, this.scaleY, this.scaleZ);
+		Vector3d scale = this.getCurrentScalingEntry();
+		return new Vec3(scale.x, scale.y, scale.z);
 	}
 
 	@Override
 	public void setScales(int x, int y, int z) {
-		this.scaleX = x;
+		Vector3d scale = this.getCurrentScalingEntry();
+		scale.x *= x;
+		scale.y *= y;
+		scale.z *= z;
+		/*this.scaleX = x;
 		this.scaleY = y;
-		this.scaleZ = z;
+		this.scaleZ = z;*/
 	}
 
 	@Override
 	public void calcRotations(GeoBone bone) {
-		this.rotX += bone.getRotX();
+		Vector3d rot = this.getCurrentRotationEntry();
+		rot.x += bone.getRotX();
+		rot.y += bone.getRotY();
+		rot.z += bone.getRotZ();
+		/*this.rotX += bone.getRotX();
 		this.rotY += bone.getRotY();
-		this.rotZ += bone.getRotZ();
+		this.rotZ += bone.getRotZ();*/
 	}
 
 	@Override
 	public Vec3 getRotationVector() {
-		return new Vec3(this.rotX, this.rotY, this.rotZ);
+		Vector3d rot = this.getCurrentRotationEntry();
+		return new Vec3(rot.x, rot.y, rot.z);
 	}
 
 	@Override
 	public void setRotations(int x, int y, int z) {
-		this.rotX = x;
+		Vector3d rot = this.getCurrentRotationEntry();
+		rot.x = x;
+		rot.y = y;
+		rot.z = z;
+		/*this.rotX = x;
 		this.rotY = y;
-		this.rotZ = z;
+		this.rotZ = z;*/
 	}
 
 }
