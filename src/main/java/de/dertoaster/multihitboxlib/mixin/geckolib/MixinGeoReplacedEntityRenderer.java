@@ -1,21 +1,21 @@
 package de.dertoaster.multihitboxlib.mixin.geckolib;
 
-import de.dertoaster.multihitboxlib.api.glibplus.MHLibExtendedGeoLayer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.world.entity.Entity;
+import java.util.function.Consumer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.geckolib.renderlayer.GeckolibBoneInformationCollectorLayer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
-
-import java.util.function.Consumer;
 
 @Mixin(value = GeoReplacedEntityRenderer.class, priority = Integer.MAX_VALUE)
 public abstract class MixinGeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable> extends EntityRenderer<E> implements GeoRenderer<T> {
@@ -35,10 +35,10 @@ public abstract class MixinGeoReplacedEntityRenderer<E extends Entity, T extends
 	}
 
 	@Unique
-	private void _mhlib_callLayers(final Consumer<MHLibExtendedGeoLayer> runPerLayer) {
+	private void _mhlib_callLayers(final Consumer<IMHLibExtendedRenderLayer> runPerLayer) {
 		GeoRenderer self = (GeoRenderer) this;
 		for (Object layerGeo : self.getRenderLayers()) {
-			if (layerGeo instanceof MHLibExtendedGeoLayer mhlibExtension) {
+			if (layerGeo instanceof IMHLibExtendedRenderLayer mhlibExtension) {
 				runPerLayer.accept(mhlibExtension);
 			}
 		}
@@ -46,12 +46,12 @@ public abstract class MixinGeoReplacedEntityRenderer<E extends Entity, T extends
 
 	@Inject(method = "renderRecursively", at = @At("HEAD"), remap = false)
 	private void mixinRenderRecursivelyStart(CallbackInfo ci) {
-		this._mhlib_callLayers(MHLibExtendedGeoLayer::onRenderRecursivelyStart);
+		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyStart);
 	}
 
 	@Inject(method = "renderRecursively", at = @At("TAIL"), remap = false)
 	private void mixinRenderRecursivelyEnd(CallbackInfo ci) {
-		this._mhlib_callLayers(MHLibExtendedGeoLayer::onRenderRecursivelyEnd);
+		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyEnd);
 	}
 	
 }
