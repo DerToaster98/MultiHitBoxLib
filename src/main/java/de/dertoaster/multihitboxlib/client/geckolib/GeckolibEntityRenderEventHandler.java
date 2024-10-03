@@ -1,22 +1,21 @@
 package de.dertoaster.multihitboxlib.client.geckolib;
 
-import de.dertoaster.multihitboxlib.api.glibplus.MHLibExtendedGeoLayer;
+import java.util.function.Consumer;
+
+import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.EntityRenderEventHandlerCommonLogic;
 import de.dertoaster.multihitboxlib.client.IBoneInformationCollectorLayerCommonLogic;
 import net.minecraft.world.entity.Entity;
-import org.spongepowered.asm.mixin.Unique;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
-import java.util.function.Consumer;
-
 public class GeckolibEntityRenderEventHandler extends EntityRenderEventHandlerCommonLogic {
 
-	static void callLayers(GeoRenderer<?> renderer, Consumer<MHLibExtendedGeoLayer<?>> runPerLayer) {
+	static void callLayers(GeoRenderer<?> renderer, Consumer<IMHLibExtendedRenderLayer> runPerLayer) {
 		for(GeoRenderLayer<?> layerGeo : renderer.getRenderLayers()) {
-			if (layerGeo instanceof MHLibExtendedGeoLayer mhlibExtension) {
+			if (layerGeo instanceof IMHLibExtendedRenderLayer mhlibExtension) {
 				runPerLayer.accept(mhlibExtension);
 			}
 		}
@@ -29,21 +28,21 @@ public class GeckolibEntityRenderEventHandler extends EntityRenderEventHandlerCo
 		if (!event.getEntity().isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPostRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPostRender);
 	}
 
 	public static void onPreRenderEntity(GeoRenderEvent.Entity.Pre event) {
 		if (!event.getEntity().isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPreRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPreRender);
 	}
 
 	public static void onPreRenderReplacedEntity(GeoRenderEvent.ReplacedEntity.Pre event) {
 		if (!event.getReplacedEntity().isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPreRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPreRender);
 	}
 
 	public static void onPostRenderReplacedEntity(GeoRenderEvent.ReplacedEntity.Post event) {
@@ -52,7 +51,7 @@ public class GeckolibEntityRenderEventHandler extends EntityRenderEventHandlerCo
 		if (!animatable.isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPostRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPostRender);
 	}
 	
 	private static void performGlibLogic(GeoEntityRenderer<?> geoRenderer, Entity entitybeingRenderer) {

@@ -1,17 +1,17 @@
 package de.dertoaster.multihitboxlib.mixin.azurelib;
 
-import de.dertoaster.multihitboxlib.api.alibplus.MHLibExtendedGeoLayer;
-import mod.azure.azurelib.renderer.GeoRenderer;
+import java.util.function.Consumer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.azurelib.renderlayer.AzurelibBoneInformationCollectorLayer;
+import mod.azure.azurelib.renderer.GeoRenderer;
 import mod.azure.azurelib.renderer.GeoReplacedEntityRenderer;
-
-import java.util.function.Consumer;
 
 @Mixin(GeoReplacedEntityRenderer.class)
 public abstract class MixinGeoReplacedEntityRenderer {
@@ -27,10 +27,10 @@ public abstract class MixinGeoReplacedEntityRenderer {
 	}
 
 	@Unique
-	private void _mhlib_callLayers(final Consumer<MHLibExtendedGeoLayer> runPerLayer) {
+	private void _mhlib_callLayers(final Consumer<IMHLibExtendedRenderLayer> runPerLayer) {
 		GeoRenderer self = (GeoRenderer) this;
 		for (Object layerGeo : self.getRenderLayers()) {
-			if (layerGeo instanceof MHLibExtendedGeoLayer mhlibExtension) {
+			if (layerGeo instanceof IMHLibExtendedRenderLayer mhlibExtension) {
 				runPerLayer.accept(mhlibExtension);
 			}
 		}
@@ -38,12 +38,12 @@ public abstract class MixinGeoReplacedEntityRenderer {
 
 	@Inject(method = "renderRecursively", at = @At("HEAD"), remap = false)
 	private void mixinRenderRecursivelyStart(CallbackInfo ci) {
-		this._mhlib_callLayers(MHLibExtendedGeoLayer::onRenderRecursivelyStart);
+		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyStart);
 	}
 
 	@Inject(method = "renderRecursively", at = @At("TAIL"), remap = false)
 	private void mixinRenderRecursivelyEnd(CallbackInfo ci) {
-		this._mhlib_callLayers(MHLibExtendedGeoLayer::onRenderRecursivelyEnd);
+		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyEnd);
 	}
 	
 }
