@@ -1,6 +1,8 @@
 package de.dertoaster.multihitboxlib.client.azurelib;
 
-import de.dertoaster.multihitboxlib.api.alibplus.MHLibExtendedGeoLayer;
+import java.util.function.Consumer;
+
+import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.EntityRenderEventHandlerCommonLogic;
 import de.dertoaster.multihitboxlib.client.IBoneInformationCollectorLayerCommonLogic;
 
@@ -10,13 +12,11 @@ import mod.azure.azurelib.neoforge.event.GeoRenderEvent;
 
 import net.minecraft.world.entity.Entity;
 
-import java.util.function.Consumer;
-
 public class AzurelibEntityRenderEventHandler extends EntityRenderEventHandlerCommonLogic {
 
-	static void callLayers(GeoRenderer<?> renderer, Consumer<MHLibExtendedGeoLayer<?>> runPerLayer) {
+	static void callLayers(GeoRenderer<?> renderer, Consumer<IMHLibExtendedRenderLayer> runPerLayer) {
 		for(GeoRenderLayer<?> layerGeo : renderer.getRenderLayers()) {
-			if (layerGeo instanceof MHLibExtendedGeoLayer mhlibExtension) {
+			if (layerGeo instanceof IMHLibExtendedRenderLayer mhlibExtension) {
 				runPerLayer.accept(mhlibExtension);
 			}
 		}
@@ -29,21 +29,21 @@ public class AzurelibEntityRenderEventHandler extends EntityRenderEventHandlerCo
 		if (!event.getEntity().isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPostRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPostRender);
 	}
 
 	public static void onPreRenderEntity(GeoRenderEvent.Entity.Pre event) {
 		if (!event.getEntity().isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPreRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPreRender);
 	}
 
 	public static void onPreRenderReplacedEntity(GeoRenderEvent.ReplacedEntity.Pre event) {
 		if (!event.getReplacedEntity().isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPreRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPreRender);
 	}
 
 	public static void onPostRenderReplacedEntity(GeoRenderEvent.ReplacedEntity.Post event) {
@@ -52,7 +52,7 @@ public class AzurelibEntityRenderEventHandler extends EntityRenderEventHandlerCo
 		if (!animatable.isMultipartEntity()) {
 			return;
 		}
-		callLayers(event.getRenderer(), MHLibExtendedGeoLayer::onPostRender);
+		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPostRender);
 	}
 	
 	private static void performAlibLogic(GeoEntityRenderer<?> geoRenderer, Entity entitybeingRenderer) {
