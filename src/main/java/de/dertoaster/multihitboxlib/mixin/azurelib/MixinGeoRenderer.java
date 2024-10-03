@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
-import de.dertoaster.multihitboxlib.api.alibplus.MHLibExtendedGeoLayer;
 import mod.azure.azurelib.renderer.GeoRenderer;
 
 @Mixin(value = GeoRenderer.class, priority = Integer.MAX_VALUE - 1)
@@ -19,7 +18,7 @@ public interface MixinGeoRenderer {
 	default void _mhlib_callLayers(final Consumer<IMHLibExtendedRenderLayer> runPerLayer) {
 		GeoRenderer self = (GeoRenderer) this;
 		for (Object layerGeo : self.getRenderLayers()) {
-			if (layerGeo instanceof MHLibExtendedGeoLayer mhlibExtension) {
+			if (layerGeo instanceof IMHLibExtendedRenderLayer mhlibExtension) {
 				runPerLayer.accept(mhlibExtension);
 			}
 		}
