@@ -1,85 +1,18 @@
 plugins {
-    id 'net.minecraftforge.gradle' version "${forgegradle_version}"
-    id 'org.spongepowered.mixin' version "${mixingradle_version}"
-    id 'eclipse'
-    id 'idea'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
-    id 'org.parchmentmc.librarian.forgegradle' version "${parchmentmc_version}"
-    id 'me.modmuss50.mod-publish-plugin' version "${modmuss50_mod_publish_version}"
 }
 
-version = "${mc_version}-${mod_version}"
-group = mod_group
+version = project.mod_version
+group = project.maven_group
 
 base {
-    archivesName = modid
+    archivesName = project.archives_base_name
 }
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-jarJar.enable()
-
-tasks.named('jarJar').configure {
-	archiveClassifier = ''
-}
-
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-    mappings channel: mappings_channel, version: mappings_version
-
-    copyIdeResources = true
-
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    runs {
-        configureEach {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            arg "-mixin.config=${modid}.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            jvmArgs "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"
-            mods {
-                "${modid}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        client {
-            taskName 'runClient MHLib 1.20.1'
-
-            property 'forge.enabledGameTestNamespaces', modid
-        }
-
-        server {
-            taskName 'runServer MHLib 1.20.1'
-
-            property 'forge.enabledGameTestNamespaces', modid
-        }
-        gameTestServer {
-            taskName 'runTestServer MHLib 1.20.1'
-
-            property 'forge.enabledGameTestNamespaces', modid
-        }
-
-        data {
-            workingDirectory project.file('run-data')
-
-            taskName 'runData MHLib 1.20.1'
-
-            args '--mod', modid, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-        }
-    }
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    maven { url "https://maven.terraformersmc.com/releases" }
+
     maven {
         name = "CurseMaven Maven"
         url = "https://www.cursemaven.com"
@@ -89,13 +22,13 @@ repositories {
         name = "AzureDoom Maven"
         url = "https://libs.azuredoom.com:4443/mods"
     }
-	
+
     maven {
         name = "Geckolib Maven"
         url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven"
     }
 
-	maven {
+    maven {
         name = "CubicInterpolation Maven"
         url = "https://cubicinterpolation.net/maven/"
     }
@@ -112,168 +45,85 @@ repositories {
 }
 
 dependencies {
-    // Base
-    minecraft("net.minecraftforge:forge:${mc_version}-${forge_version}")
-    annotationProcessor("org.spongepowered:mixin:${mixin_version}:processor")
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Dependencies (Optional)
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
+    // Geckolib
+    modImplementation("software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}")
+    implementation("com.eliotlash.mclib:mclib:20")
 
-    implementation fg.deobf("mod.azure.azurelib:azurelib-neo-${azurelib_version}")
+    // AzureLib
+    modImplementation "mod.azure.azurelib:azurelib-fabric-${minecraft_version}:${azurelib_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    // Problem
+    // Just Enough Effects
+    //implementation ("curse.maven:just-enough-effect-descriptions-jeed-532286:${jeed_version}")
 
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    // Just Enough Items
+    //compileOnly ("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    //compileOnly ("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
 
-    implementation fg.deobf("curse.maven:just-enough-effect-descriptions-jeed-532286:${jeed_version}")
+    //runtimeOnly ("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
-    implementation fg.deobf("curse.maven:catalogue-459701:${catalogue_version}")
-    implementation fg.deobf("curse.maven:gamemenumodoption-353051:${gmmo_version}")
+    // ModMenu
+    //implementation("curse.maven:modmenu-308702:${modmenu_version}")
 
-    implementation fg.deobf("curse.maven:jade-324717:${jade_version}")
+    // Fabric API
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
-    runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}")
+    // Jade
+    //implementation ("curse.maven:jade-324717:${jade_version}")
+
+    // AppleSkin
+    // Problem
+    //compileOnly ("squeek.appleskin:appleskin-fabric:${appleskin_version}:api")
+    //runtimeOnly ("squeek.appleskin:appleskin-fabric:${appleskin_version}")
+
 }
 
-createMcpToSrg {
-    outputs.upToDateWhen {false}
+processResources {
+    inputs.property "version", project.version
 
-    doLast {
-        fixFG5TsrgForMixinAP(output.get().asFile, file("${buildDir}/fixMcpToSrg/output.tsrg"))
-    }
-}
-
-mixin {
-    add sourceSets.main, "${modid}.refmap.json"
-    config "${modid}.mixins.json"
-
-    reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
-
-    debug.verbose = true
-    debug.export = true
-    debug = true
-}
-
-tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-            mc_version: mc_version, mc_version_range: mc_version_range,
-            forge_version: forge_version, forge_version_range: forge_version_range,
-            loader_version: loader_version, mod_loader: mod_loader,
-            modid: modid, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-            mod_credits: mod_credits, mod_description: mod_description, mod_issueTrackerURL: mod_issueTrackerURL,
-            geckolib_version_range: geckolib_version_range, azurelib_version_range: azurelib_version_range,
-            jei_version_range: jei_version_range, jeed_version_range: jeed_version_range,
-            catalogue_version_range: catalogue_version_range, gmmo_version_range: gmmo_version_range,
-            jade_version_range: jade_version_range, appleskin_version_range: appleskin_version_range
-    ]
-    inputs.properties replaceProperties
-
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
-    }
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-tasks.named('jar', Jar).configure {
-	archiveClassifier = 'slim'
-    manifest {
-        attributes([
-                'Specification-Title'     : mod_name,
-                'Specification-Vendor'    : mod_credits,
-                'Specification-Version'   : mod_version,
-                'Implementation-Title'    : mod_name,
-                'Implementation-Version'  : mod_version,
-                'Implementation-Vendor'   : mod_credits,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'MixinConfigs'		  	  : "${modid}.mixins.json"
-        ])
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+    it.options.release = 17
 }
 
-// Function that actually fixes the TSRG file
-static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
-    // Make directory if needed
-    outFile.parentFile.mkdirs()
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
 
-    try (Scanner scanner = new Scanner(inFile); PrintWriter out = new PrintWriter(outFile)) {
-        boolean firstLine = true
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
-        while (scanner.hasNextLine()) {
-            String next = scanner.nextLine()
-
-            // Skip first 'tsrg left right' header line
-            if (firstLine) {
-                firstLine = false
-                continue
-            }
-
-            // Skip 'static' indicators
-            if (next.trim() == "static") continue
-
-            // Export line otherwise
-            out.println(next)
-        }
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}"}
     }
 }
 
-// Delete slim jar
-build.doLast {
-	delete "${project.projectDir}/build/libs/${modid}-${mc_version}-${mod_version}-slim.jar"
-}
-
-if (file('key.properties').exists()) {
-    publishMods {
-        def releaseProp = new Properties()
-        File secretPropsFile = file("key.properties")
-        releaseProp.load(secretPropsFile.newInputStream())
-        file = jar.archiveFile
-        changelog = rootProject.file("changelog.md").text
-        type = STABLE
-        modLoaders.add("neoforge")
-        modLoaders.add("forge")
-
-        curseforge {
-            projectId = project.curseforge_id
-            projectSlug = project.mod_id
-            accessToken = releaseProp.getProperty("curseKey")
-            minecraftVersions.add(project.minecraft_version)
-            optional {
-                slug = "azurelib"
-            }
-            optional {
-                slug = "geckolib"
-            }
+// configure the maven publication
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
+            from components.java
         }
-        modrinth {
-            projectId = project.modrinth_id
-            accessToken = releaseProp.getProperty('modrinthKey')
-            minecraftVersions.add(project.minecraft_version)
-            optional {
-                slug = "azurelib"
-            }
-            optional {
-                slug = "geckolib"
-            }
-        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
     }
 }

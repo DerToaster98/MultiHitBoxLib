@@ -1,13 +1,12 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
-import java.io.File;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.system.NonnullDefault;
+
+import java.io.File;
+import java.util.Optional;
 
 public abstract class MHLibEnforcementManager extends AbstractAssetEnforcementManager {
 
@@ -20,13 +19,13 @@ public abstract class MHLibEnforcementManager extends AbstractAssetEnforcementMa
 		return Optional.ofNullable(encodeToBytes(location.toPath()));
 	}
 
-	@Nonnull
+	@NonnullDefault
 	@Override
 	protected File createServerDirectory() {
 		return new File(Constants.MHLIB_ASSET_DIR, this.getSubDirectoryName());
 	}
 
-	@Nonnull
+	@NonnullDefault
 	@Override
 	protected File createSynchDirectory() {
 		return new File(Constants.MHLIB_SYNC_DIR, this.getSubDirectoryName());

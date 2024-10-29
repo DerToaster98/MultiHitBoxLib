@@ -58,7 +58,7 @@ public interface IRawAnimation {
      * attempt to stop <i>after</i> this animation instance is done (regardless of loop type). Otherwise, it will normally/forcefully
      * stop this animation instance.
      *
-     * @param lenientStop Whether this animation should leniently stop if its loop type is {@link software.bernie.geckolib.core.animation.Animation.LoopType#PLAY_ONCE}.
+     * @param lenientStop Whether this animation should leniently stop if its loop type is {@link Animation.LoopType#PLAY_ONCE}.
      */
     void stopAnimation(boolean lenientStop);
 }

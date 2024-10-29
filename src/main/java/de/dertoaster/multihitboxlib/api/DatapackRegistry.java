@@ -1,22 +1,20 @@
 package de.dertoaster.multihitboxlib.api;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
 import com.mojang.serialization.Codec;
-
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DataPackRegistryEvent.NewRegistry;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class DatapackRegistry<T> {
 		
@@ -41,19 +39,19 @@ public class DatapackRegistry<T> {
 		this.registryKey = resourceKey;
 	}
 
-	public void registerSynchable(NewRegistry registryEvent) {
-		register(registryEvent, true);
+	public void registerSynchable() {
+		register(true);
 	}
 	
-	public void register(NewRegistry registryEvent) {
-		register(registryEvent, false);
+	public void register() {
+		register(false);
 	}
 	
-	public void register(NewRegistry registryEvent, boolean synchable) {
+	public void register(boolean synchable) {
 		if (synchable) {
-			registryEvent.dataPackRegistry(registryKey, objectCodec, objectCodec);
+			DynamicRegistries.registerSynced(registryKey, objectCodec, objectCodec);
 		} else {
-			registryEvent.dataPackRegistry(registryKey, objectCodec);
+			DynamicRegistries.register(registryKey, objectCodec);
 		}
 	}
 	
@@ -99,7 +97,7 @@ public class DatapackRegistry<T> {
 	}
 	
 	protected static <V> Codec<V> createByNameCodec(DatapackRegistry<V> registry) {
-		return registry.registryCodec().xmap(Holder::get, Holder::direct);
+		return registry.registryCodec().xmap(Holder::value, Holder::direct);
 	}
 	
 }

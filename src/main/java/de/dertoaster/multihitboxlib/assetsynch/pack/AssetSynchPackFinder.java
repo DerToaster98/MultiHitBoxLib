@@ -1,7 +1,5 @@
 package de.dertoaster.multihitboxlib.assetsynch.pack;
 
-import java.util.function.Consumer;
-
 import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
 import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
 import net.minecraft.ChatFormatting;
@@ -13,6 +11,8 @@ import net.minecraft.server.packs.repository.Pack.Position;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.flag.FeatureFlagSet;
+
+import java.util.function.Consumer;
 
 public class AssetSynchPackFinder implements RepositorySource {
 	

@@ -1,18 +1,24 @@
 package de.dertoaster.multihitboxlib.api.event.client;
 
+import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+
 import java.util.Map;
 import java.util.function.Function;
 
-import de.dertoaster.multihitboxlib.api.event.AbstractRegistrationEvent;
-import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraftforge.fml.event.IModBusEvent;
+public interface PartRendererRegistrationEvent {
 
-public class PartRendererRegistrationEvent extends AbstractRegistrationEvent<Class<? extends MHLibPartEntity<?>>, Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>>> implements IModBusEvent {
+    Event<PartRendererRegistrationEvent> EVENT = EventFactory.createArrayBacked(
+            PartRendererRegistrationEvent.class,
+            (listeners) -> (map) -> {
+                for (PartRendererRegistrationEvent listener : listeners) {
+                    listener.register(map);
+                }
+            }
+    );
 
-	public PartRendererRegistrationEvent(Map<Class<? extends MHLibPartEntity<?>>, Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>>> map) {
-		super(map);
-	}
-
+    void register(Map<Class<? extends MHLibPartEntity<?>>, Function<EntityRenderDispatcher, ? extends EntityRenderer<? extends MHLibPartEntity<?>>>> map);
 }

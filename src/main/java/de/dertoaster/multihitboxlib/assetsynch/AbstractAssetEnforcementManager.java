@@ -1,5 +1,20 @@
 package de.dertoaster.multihitboxlib.assetsynch;
 
+import com.google.common.primitives.Bytes;
+import de.dertoaster.multihitboxlib.MHLibMod;
+import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
+import de.dertoaster.multihitboxlib.util.CompressionUtil;
+import de.dertoaster.multihitboxlib.util.LazyLoadField;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.BuiltInMetadata;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.server.packs.resources.IoSupplier;
+import org.lwjgl.system.NonnullDefault;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,23 +26,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.primitives.Bytes;
-
-import de.dertoaster.multihitboxlib.MHLibMod;
-import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
-import de.dertoaster.multihitboxlib.util.CompressionUtil;
-import de.dertoaster.multihitboxlib.util.LazyLoadField;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.BuiltInMetadata;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
-import net.minecraft.server.packs.resources.IoSupplier;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 
 public abstract class AbstractAssetEnforcementManager implements PackResources {
 
@@ -70,10 +68,10 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 		this.CURRENTLY_ENFORCED_ASSETS.clear();
 	}
 	
-	@Nonnull
+	@NonnullDefault
 	protected abstract File createServerDirectory();
 	
-	@Nonnull
+	@NonnullDefault
 	protected abstract File createSynchDirectory();
 
 	protected boolean initDirectories() {
@@ -100,15 +98,20 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 	}
 
 	protected File getSidedDirectory() {
-		if (FMLLoader.getDist().isDedicatedServer()) {
+		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER){
 			return this.directory;
 		} else {
-			// Check for logical server
-			if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER) {
-				return this.directory;
-			}
 			return this.syncDirectory;
 		}
+//		if (FMLLoader.getDist().isDedicatedServer()) {
+//			return this.directory;
+//		} else {
+//			// Check for logical server
+//			if (Minecraft.getInstance().isLogicalServer()) {
+//				return this.directory;
+//			}
+//			return this.syncDirectory;
+//		}
 	}
 	
 	public void reloadAll() {
@@ -274,11 +277,6 @@ public abstract class AbstractAssetEnforcementManager implements PackResources {
 	@Override
 	public void close() {
 		
-	}
-	
-	@Override
-	public boolean isHidden() {
-		return true;
 	}
 	
 	private BuiltInMetadata createBuiltInMetaData() {

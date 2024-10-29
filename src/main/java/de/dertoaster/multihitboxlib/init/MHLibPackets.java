@@ -1,91 +1,77 @@
 package de.dertoaster.multihitboxlib.init;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
+import de.dertoaster.multihitboxlib.api.network.PacketC2S;
+import de.dertoaster.multihitboxlib.api.network.PacketS2C;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
-import de.dertoaster.multihitboxlib.Constants;
-import de.dertoaster.multihitboxlib.MHLibMod;
-import de.dertoaster.multihitboxlib.api.network.IMessage;
-import de.dertoaster.multihitboxlib.api.network.IMessageHandler;
-import de.dertoaster.multihitboxlib.network.client.*;
-import de.dertoaster.multihitboxlib.network.client.assetsync.CPacketRequestSynch;
-import de.dertoaster.multihitboxlib.network.client.assetsync.SPacketHandlerSynchAssets;
-import de.dertoaster.multihitboxlib.network.server.CPacketHandlerBoneInformation;
-import de.dertoaster.multihitboxlib.network.server.SPacketFunctionalAnimProgress;
-import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
-import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
-import de.dertoaster.multihitboxlib.network.server.assetsync.CPacketHandlerRequestSynch;
-import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor.PacketTarget;
-import net.minecraftforge.network.simple.SimpleChannel;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MHLibPackets {
-	public static final SimpleChannel MHLIB_NETWORK = NetworkRegistry.newSimpleChannel(MHLibMod.prefix("main"), () -> Constants.NETWORK_VERSION, Constants.NETWORK_VERSION::equals, Constants.NETWORK_VERSION::equals);
-	// Start the IDs at 1 so any unregistered messages (ID 0) throw a more obvious exception when received
-	private static int MESSAGE_ID = 0;
+/**
+ * A new networking system!
+ * <br><br>
+ *
+ * You will need to use two different classes depending on what you want to do: {@link PacketC2S} and {@link PacketS2C}.
+ * <br><br>
+ *
+ * {@link PacketC2S} is used for packets sent from the client to the server <br>
+ * {@link PacketS2C} is used for packets sent from the server to the client <br>
+ *
+ * <br><br>
+ *
+ * To use this system, you will need to create a new class that extends {@link PacketC2S} or {@link PacketS2C}
+ * and implement the required methods. If you want to know more about this system please the docs for these classes.
+ */
+public final class MHLibPackets {
+    private static final List<PacketC2S> C2S_PACKETS = new ArrayList<>();
+    private static final List<PacketS2C> S2C_PACKETS = new ArrayList<>();
 
-	public static void init() {
-		registerClientToServer(CPacketBoneInformation.class, CPacketHandlerBoneInformation.class);
-		
-		registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
-		registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
-		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
-		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgressAL.class);
-		
-		// Asset Synch
-		registerClientToServer(CPacketRequestSynch.class, CPacketHandlerRequestSynch.class);
-		registerServerToClient(SPacketSynchAssets.class, SPacketHandlerSynchAssets.class);
-	}
-	
-	public static <T extends Object> void send(T packet, PacketTarget target) {
-		MHLIB_NETWORK.send(target, packet);
-	}
-	
-	public static <T extends Object> void sendToServer(T packet) {
-		MHLIB_NETWORK.sendToServer(packet);
-	}
-	
-	protected static <MSG> void registerClientToServer(Class<? extends IMessage<MSG>> clsMessage, Class<? extends IMessageHandler<MSG>> clsHandler) {
-		register(clsMessage, clsHandler, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-	}
+    /**
+     * Internal use only. Do not use this method.
+     * <br><br>
+     *
+     * Register a packet to be sent from the client to the server
+     * @param packet The packet to be sent
+     */
+    public static void registerClientToServerPacket(PacketC2S packet) {
+        C2S_PACKETS.add(packet);
+    }
 
-	protected static <MSG> void registerServerToClient(Class<? extends IMessage<MSG>> clsMessage, Class<? extends IMessageHandler<MSG>> clsHandler) {
-		register(clsMessage, clsHandler, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-	}
+    /**
+     * Internal use only. Do not use this method.
+     * <br><br>
+     *
+     * Register a packet to be sent from the server to the client
+     * @param packet The packet to be sent
+     */
+    public static void registerServerToClientPacket(PacketS2C packet) {
+        S2C_PACKETS.add(packet);
+    }
 
-	protected static <MSG> void register(Class<? extends IMessage<MSG>> clsMessage, Class<? extends IMessageHandler<MSG>> clsHandler) {
-		register(clsMessage, clsHandler, Optional.empty());
-	}
+    /**
+     * Internal use only. Do not use this method.
+     * <br><br>
+     *
+     * Register all packets to be received from the client to the server
+     */
+    public static void registerReceiveClientToServer(){
+        for(PacketC2S packet : C2S_PACKETS){
+            ServerPlayNetworking.registerGlobalReceiver(packet.getChannelName(), (server, player, handler, buf, responseSender) ->
+                    server.execute(() -> packet.receive(server, player, handler, buf, responseSender)));
+        }
+    }
 
-	protected static <MSG> void register(Class<? extends IMessage<MSG>> clsMessage, Class<? extends IMessageHandler<MSG>> clsHandler, final Optional<NetworkDirection> networkDirection) {
-		IMessage<MSG> message = null;
-		IMessageHandler<MSG> handler = null;
-		try {
-			message = clsMessage.getConstructor(new Class[] {}).newInstance();
-			handler = clsHandler.getConstructor(new Class[] {}).newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		}
-		if (handler != null && message != null) register(message, handler, networkDirection);
-	}
-	
-	protected static <MSG> void register(IMessage<MSG> message, IMessageHandler<MSG> handler) {
-		register(message, handler, Optional.empty());
-	}
-
-	protected static <MSG> void register(IMessage<MSG> message, IMessageHandler<MSG> handler, final Optional<NetworkDirection> networkDirection) {
-		MHLIB_NETWORK.registerMessage(MESSAGE_ID++, message.getPacketClass(), message::toBytes, message::fromBytes, handler::handlePacket, networkDirection);
-	}
+    /**
+     * Internal use only. Do not use this method.
+     * <br><br>
+     *
+     * Register a packet to be sent from the server to the client
+     */
+    public static void registerReceiveServerToClient(){
+        for(PacketS2C packet : S2C_PACKETS){
+            ClientPlayNetworking.registerGlobalReceiver(packet.getChannelName(), (client, handler, buf, responseSender) ->
+                    client.execute(() -> packet.receive(client, handler, buf, responseSender)));
+        }
+    }
 }

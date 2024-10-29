@@ -2,7 +2,6 @@ package de.dertoaster.multihitboxlib.entity.hitbox;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import de.dertoaster.multihitboxlib.util.UtilityCodecs;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;

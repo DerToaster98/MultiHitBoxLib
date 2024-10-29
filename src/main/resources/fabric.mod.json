@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "multihitboxlib",
+	"version": "${version}",
+	"name": "MultiHitBoxLib",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/multihitboxlib/logo.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+          "de.dertoaster.multihitboxlib.MHLibMod"
+		],
+		"client": [
+          "de.dertoaster.multihitboxlib.client.MHLibModClient"
+		]
+	},
+	"mixins": [
+		"multihitboxlib.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

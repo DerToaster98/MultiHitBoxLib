@@ -1,10 +1,9 @@
 package de.dertoaster.multihitboxlib.entity;
 
-import java.util.Optional;
-
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
-import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
+import de.dertoaster.multihitboxlib.networking.server.SPacketUpdateMultipart;
+import de.dertoaster.multihitboxlib.partentityimp.PartEntity;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -14,9 +13,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.entity.PartEntity;
+
+import java.util.Optional;
 
 public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 

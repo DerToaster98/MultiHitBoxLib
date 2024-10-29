@@ -1,17 +1,16 @@
 package de.dertoaster.multihitboxlib.assetsynch.impl;
 
+import de.dertoaster.multihitboxlib.Constants;
+import de.dertoaster.multihitboxlib.assetsynch.AbstractNInOneEntriesEnforcementManager;
+import de.dertoaster.multihitboxlib.assetsynch.client.TextureClientLogic;
+import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.system.NonnullDefault;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import de.dertoaster.multihitboxlib.Constants;
-import de.dertoaster.multihitboxlib.assetsynch.AbstractNInOneEntriesEnforcementManager;
-import de.dertoaster.multihitboxlib.assetsynch.client.TextureClientLogic;
-import net.minecraft.resources.ResourceLocation;
 
 public class TextureEnforcementManager extends AbstractNInOneEntriesEnforcementManager {
 
@@ -75,13 +74,13 @@ public class TextureEnforcementManager extends AbstractNInOneEntriesEnforcementM
 		return ensureFileFor(target, idToUse) && writeToFile(target, data);
 	}
 
-	@Nonnull
+	@NonnullDefault
 	@Override
 	protected File createServerDirectory() {
 		return new File(Constants.MHLIB_ASSET_DIR, this.getSubDirectoryName());
 	}
 
-	@Nonnull
+	@NonnullDefault
 	@Override
 	protected File createSynchDirectory() {
 		return new File(Constants.MHLIB_SYNC_DIR, this.getSubDirectoryName());

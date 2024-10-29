@@ -1,0 +1,74 @@
+{
+	"synched-assets": {
+		"models": [
+		],
+		"animations": [
+		],
+		"textures": [
+		]
+	},
+	"sync-with-model": true,
+	"part-update-steps": 3,
+	"trust-client": true,
+	"synched-part-update-steps": 1,
+	"synched-bones": [
+		"hbLeftLeg",
+		"hbLeftKnee"
+	],
+	"main-hitbox": {
+		"collidable": false,
+		"canReceiveDamage": false,
+		"size": [
+			7,
+			5.5
+		]
+	},
+	"parts": [
+		{
+			"name": "hbLeftKnee",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.5,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [
+					1,
+					2
+				],
+				"position": [
+					-1,
+					0,
+					1.5
+				],
+				"pivot-offset": [
+					0,
+					0,
+					0
+				]
+			}
+		},
+		{
+			"name": "hbLeftLeg",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.5,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [
+					1.25,
+					2
+				],
+				"position": [
+					-1,
+					2.1,
+					1.25
+				],
+				"pivot-offset": [
+					0,
+					0,
+					0
+				]
+			}
+		}
+	]
+}

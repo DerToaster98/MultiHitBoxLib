@@ -2,7 +2,7 @@ package de.dertoaster.multihitboxlib.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
+import de.dertoaster.multihitboxlib.PartEntityManager;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -29,7 +29,7 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 	
 	public default void onRenderBone(PoseStack poseStack, Entity entity, T bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 		// Only collect once per tick!
-		if (entity != null && (this.getCurrentTick() == entity.tickCount || this.getCurrentTick() < 0) && entity.isMultipartEntity()) {
+		if (entity != null && (this.getCurrentTick() == entity.tickCount || this.getCurrentTick() < 0) && PartEntityManager.isMultipartEntity(entity)) {
 			try {
 				IMultipartEntity<?> ime = (IMultipartEntity<?>) entity;
 				if (ime.getHitboxProfile().isPresent() && ime.getHitboxProfile().get().syncToModel()) {

@@ -1,14 +1,5 @@
 package de.dertoaster.multihitboxlib.assetsynch;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.zip.DataFormatException;
-
 import de.dertoaster.multihitboxlib.MHLibMod;
 import de.dertoaster.multihitboxlib.api.event.server.AssetEnforcementManagerRegistrationEvent;
 import de.dertoaster.multihitboxlib.api.event.server.SynchAssetFinderRegistrationEvent;
@@ -16,18 +7,20 @@ import de.dertoaster.multihitboxlib.assetsynch.assetfinders.AbstractAssetFinder;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataContainer;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchDataManagerData;
 import de.dertoaster.multihitboxlib.assetsynch.data.SynchEntryData;
-import de.dertoaster.multihitboxlib.init.MHLibPackets;
-import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSynchAssets;
+import de.dertoaster.multihitboxlib.networking.server.assetsync.SPacketSynchAssets;
 import de.dertoaster.multihitboxlib.util.CompressionUtil;
 import de.dertoaster.multihitboxlib.util.LazyLoadFieldFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.PacketDistributor;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.zip.DataFormatException;
 
 public class AssetEnforcement {
 	
@@ -46,17 +39,19 @@ public class AssetEnforcement {
 		REGISTERED_MANAGERS.values().forEach(result::add);
 		return result;
 	}
-	
+
 	private static void initializeAssetFinders() {
 		final Map<ResourceLocation, AbstractAssetFinder> map = new Object2ObjectArrayMap<>();
-		SynchAssetFinderRegistrationEvent event = new SynchAssetFinderRegistrationEvent(map);
-		Bus.MOD.bus().get().post(event);
+
+		SynchAssetFinderRegistrationEvent.EVENT.invoker().register(map);
+
 		if (map != null) {
 			map.entrySet().forEach(entry -> {
 				registerAssetFinder(entry.getKey(), entry.getValue());
 			});
 		}
 	}
+
 
 	protected static void registerAssetFinder(ResourceLocation key, AbstractAssetFinder value) {
 		if (key == null) {
@@ -72,9 +67,11 @@ public class AssetEnforcement {
 
 	private static void initializeManagers() {
 		final Map<ResourceLocation, AbstractAssetEnforcementManager> map = new Object2ObjectArrayMap<>();
-		AssetEnforcementManagerRegistrationEvent event = new AssetEnforcementManagerRegistrationEvent(map);
-		Bus.MOD.bus().get().post(event);
-		if (map != null) {
+
+		// Fire the event using Fabric's event system
+		boolean success = AssetEnforcementManagerRegistrationEvent.EVENT.invoker().register(map);
+
+		if (map != null && success) {
 			map.entrySet().forEach(entry -> {
 				try {
 					registerEnforcementManager(entry.getKey(), entry.getValue());
@@ -148,12 +145,12 @@ public class AssetEnforcement {
 	}
 	
 	private static void sendPacket(final ServerPlayer connection, final SynchDataContainer payload) {
-		SPacketSynchAssets packet = new SPacketSynchAssets(payload);
-		MHLibPackets.send(packet, PacketDistributor.PLAYER.with(() -> connection));
+		SPacketSynchAssets packet = new SPacketSynchAssets(connection, payload);
+		packet.send();
 	}
 	
 	public static boolean handleEntry(final SynchDataManagerData entry) {
-		if (FMLEnvironment.dist.isClient()) {
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			final AbstractAssetEnforcementManager manager = REGISTERED_MANAGERS.get(entry.manager());
 			if (manager == null) {
 				//TODO: Log

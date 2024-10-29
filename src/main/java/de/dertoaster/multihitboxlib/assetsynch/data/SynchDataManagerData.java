@@ -1,11 +1,10 @@
 package de.dertoaster.multihitboxlib.assetsynch.data;
 
-import java.util.List;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.List;
 
 public record SynchDataManagerData(
 		ResourceLocation manager,

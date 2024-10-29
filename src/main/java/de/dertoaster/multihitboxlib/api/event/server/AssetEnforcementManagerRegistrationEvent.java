@@ -1,16 +1,27 @@
 package de.dertoaster.multihitboxlib.api.event.server;
 
+import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.Map;
 
-import de.dertoaster.multihitboxlib.api.event.AbstractRegistrationEvent;
-import de.dertoaster.multihitboxlib.assetsynch.AbstractAssetEnforcementManager;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.event.IModBusEvent;
+public interface AssetEnforcementManagerRegistrationEvent {
 
-public class AssetEnforcementManagerRegistrationEvent extends AbstractRegistrationEvent<ResourceLocation, AbstractAssetEnforcementManager> implements IModBusEvent {
+    Event<AssetEnforcementManagerRegistrationEvent> EVENT = EventFactory.createArrayBacked(
+            AssetEnforcementManagerRegistrationEvent.class,
+            (listeners) -> (map) -> {
+                for (AssetEnforcementManagerRegistrationEvent listener : listeners) {
+                    boolean result = listener.register(map);
+                    if (!result) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+    );
 
-	public AssetEnforcementManagerRegistrationEvent(Map<ResourceLocation, AbstractAssetEnforcementManager> map) {
-		super(map);
-	}
-	
+    boolean register(Map<ResourceLocation, AbstractAssetEnforcementManager> map);
 }
+
