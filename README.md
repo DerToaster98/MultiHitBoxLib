@@ -51,6 +51,7 @@ multihitboxlib_version=1.6.0
 
 Please depend on the library like a normal mod!
 That in essence means add it to your mods requirements list and don't shadow or jar-in-jar or directly include it or similar in your mod's jar or source code.
+=======
 
 # Contact
 - Project discord server: [MHLib Discord](https://discord.com/invite/XxwCynDtf3)
