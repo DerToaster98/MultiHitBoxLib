@@ -1,8 +1,6 @@
 package de.dertoaster.multihitboxlib.mixin.azurelib;
 
-import mod.azure.azurelib.common.api.client.renderer.GeoReplacedEntityRenderer;
-import de.dertoaster.multihitboxlib.api.alibplus.MHLibExtendedGeoLayer;
-import mod.azure.azurelib.renderer.GeoRenderer;
+import java.util.function.Consumer;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -12,6 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.azurelib.renderlayer.AzurelibBoneInformationCollectorLayer;
+import mod.azure.azurelib.common.api.client.renderer.GeoReplacedEntityRenderer;
+import mod.azure.azurelib.common.internal.client.renderer.GeoRenderer;
 
 @Mixin(GeoReplacedEntityRenderer.class)
 public abstract class MixinGeoReplacedEntityRenderer {

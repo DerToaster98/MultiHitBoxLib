@@ -5,11 +5,10 @@ import java.util.function.Consumer;
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.EntityRenderEventHandlerCommonLogic;
 import de.dertoaster.multihitboxlib.client.IBoneInformationCollectorLayerCommonLogic;
-
 import mod.azure.azurelib.common.api.client.renderer.GeoEntityRenderer;
 import mod.azure.azurelib.common.api.client.renderer.layer.GeoRenderLayer;
-import mod.azure.azurelib.neoforge.event.GeoRenderEvent;
-
+import mod.azure.azurelib.common.internal.client.renderer.GeoRenderer;
+import mod.azure.azurelib.common.internal.common.event.GeoRenderEvent;
 import net.minecraft.world.entity.Entity;
 
 public class AzurelibEntityRenderEventHandler extends EntityRenderEventHandlerCommonLogic {

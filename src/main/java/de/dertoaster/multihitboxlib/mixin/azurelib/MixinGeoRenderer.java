@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
-import mod.azure.azurelib.renderer.GeoRenderer;
+import mod.azure.azurelib.common.internal.client.renderer.GeoRenderer;
 
 @Mixin(value = GeoRenderer.class, priority = Integer.MAX_VALUE - 1)
 public interface MixinGeoRenderer {

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.dertoaster.multihitboxlib.Constants;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.client.azurelib.AzurelibEntityRenderEventHandler;
 import de.dertoaster.multihitboxlib.client.geckolib.GeckolibEntityRenderEventHandler;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.mixin.accessor.AccessorEntityRenderer;
