@@ -1,51 +1,58 @@
 package de.dertoaster.multihitboxlib.network.server;
 
-import de.dertoaster.multihitboxlib.api.network.AbstractPacket;
+import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
+import de.dertoaster.multihitboxlib.init.MHLibNetwork;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public class SPacketFunctionalAnimProgress extends AbstractPacket<SPacketFunctionalAnimProgress> {
-    private final String wrappedControllerName;
-    private final int animatableOwnerId;
-    private final double clientUpdateTickDelta;
+public record SPacketFunctionalAnimProgress(
+		String wrappedControllerName, 
+		int animatableOwnerId, 
+		double clientUpdateTickDelta
+	) implements IMHLibCustomPacketPayload<SPacketFunctionalAnimProgress> {
 
-    public SPacketFunctionalAnimProgress() {
-        this.wrappedControllerName = "";
-        this.animatableOwnerId = -1;
-        this.clientUpdateTickDelta = -1;
-    }
+	public SPacketFunctionalAnimProgress() {
+		this("", -1, -1);
+	}
 
-    public SPacketFunctionalAnimProgress(String wrappedControllerName, int animatableOwnerId, double clientUpdateTickDelta) {
-        this.wrappedControllerName = wrappedControllerName;
-        this.animatableOwnerId = animatableOwnerId;
-        this.clientUpdateTickDelta = clientUpdateTickDelta;
-    }
+	public SPacketFunctionalAnimProgress(String wrappedControllerName, int animatableOwnerId, double clientUpdateTickDelta) {
+		this.wrappedControllerName = wrappedControllerName;
+		this.animatableOwnerId = animatableOwnerId;
+		this.clientUpdateTickDelta = clientUpdateTickDelta;
+	}
 
-    @Override
-    public Class<SPacketFunctionalAnimProgress> getPacketClass() {
-        return SPacketFunctionalAnimProgress.class;
-    }
+	public String getWrappedControllerName() {
+		return wrappedControllerName;
+	}
 
-    @Override
-    public SPacketFunctionalAnimProgress fromBytes(FriendlyByteBuf buffer) {
-        return new SPacketFunctionalAnimProgress(buffer.readUtf(), buffer.readInt(), buffer.readDouble());
-    }
+	public int getAnimatableOwnerId() {
+		return animatableOwnerId;
+	}
 
-    @Override
-    public void toBytes(SPacketFunctionalAnimProgress packet, FriendlyByteBuf buffer) {
-        buffer.writeUtf(packet.wrappedControllerName);
-        buffer.writeInt(packet.animatableOwnerId);
-        buffer.writeDouble(packet.clientUpdateTickDelta);
-    }
+	public double getClientUpdateTickDelta() {
+		return clientUpdateTickDelta;
+	}
 
-    public String getWrappedControllerName() {
-        return wrappedControllerName;
-    }
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return MHLibNetwork.S2C_FUNCTIONAL_ANIM_PROGRESS;
+	}
+	
+	public static final StreamCodec<FriendlyByteBuf, SPacketFunctionalAnimProgress> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8,
+			SPacketFunctionalAnimProgress::wrappedControllerName,
+			ByteBufCodecs.INT,
+			SPacketFunctionalAnimProgress::animatableOwnerId,
+			ByteBufCodecs.DOUBLE,
+			SPacketFunctionalAnimProgress::clientUpdateTickDelta,
+			SPacketFunctionalAnimProgress::new
+	);
 
-    public int getAnimatableOwnerId() {
-        return animatableOwnerId;
-    }
-
-    public double getClientUpdateTickDelta() {
-        return clientUpdateTickDelta;
-    }
+	@Override
+	public StreamCodec<FriendlyByteBuf, SPacketFunctionalAnimProgress> getStreamCodec() {
+		return STREAM_CODEC;
+	}
+	
 }

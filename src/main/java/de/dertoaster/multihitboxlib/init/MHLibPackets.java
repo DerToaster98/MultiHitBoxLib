@@ -30,8 +30,8 @@ public class MHLibPackets {
 		
 		//registerServerToClient(SPacketSetMaster.class, SPacketHandlerSetMaster.class);
 		//registerServerToClient(SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
-		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
-		registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgressAL.class);
+		//registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
+		//registerServerToClient(SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgressAL.class);
 		
 		// Asset Synch
 		//registerClientToServer(CPacketRequestSynch.class, CPacketHandlerRequestSynch.class);

@@ -1,7 +1,8 @@
 package de.dertoaster.multihitboxlib.network.server;
 
+import java.util.UUID;
+
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
-import de.dertoaster.multihitboxlib.api.network.AbstractPacketHandler;
 import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketHandler;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import net.minecraft.network.chat.Component;
@@ -11,11 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.ClientPayloadContext;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
-
-import java.util.UUID;
-import java.util.function.Supplier;
 
 public class CPacketHandlerBoneInformation implements IMHLibCustomPacketHandler<CPacketBoneInformation> {
 
