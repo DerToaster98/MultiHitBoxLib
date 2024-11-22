@@ -70,7 +70,7 @@ repositories {
 
     maven {
         name = "AzureDoom Maven"
-        url = "https://libs.azuredoom.com:4443/mods"
+        url = "https://maven.azuredoom.com/mods"
     }
 
     maven {
