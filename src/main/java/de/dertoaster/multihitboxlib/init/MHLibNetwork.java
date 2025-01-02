@@ -8,11 +8,13 @@ import de.dertoaster.multihitboxlib.network.client.SPacketHandlerFunctionalAnimP
 import de.dertoaster.multihitboxlib.network.client.SPacketHandlerSetMaster;
 import de.dertoaster.multihitboxlib.network.client.SPacketHandlerUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.client.assetsync.CPacketRequestSynch;
+import de.dertoaster.multihitboxlib.network.client.assetsync.SPacketHandlerSyncDataContent;
 import de.dertoaster.multihitboxlib.network.server.CPacketHandlerBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketFunctionalAnimProgress;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.network.server.assetsync.CPacketHandlerRequestSynch;
+import de.dertoaster.multihitboxlib.network.server.assetsync.SPacketSyncDataContent;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,6 +30,7 @@ public class MHLibNetwork implements IMHLibNetworkHelper {
     public static final CustomPacketPayload.Type<SPacketSetMaster> S2C_SET_MASTER = new CustomPacketPayload.Type<>(MHLibMod.prefix("s2c_set_master"));
     public static final CustomPacketPayload.Type<SPacketUpdateMultipart> S2C_UPDATE_MULTIPART = new CustomPacketPayload.Type<>(MHLibMod.prefix("s2c_update_multipart"));
     public static final CustomPacketPayload.Type<SPacketFunctionalAnimProgress> S2C_FUNCTIONAL_ANIM_PROGRESS = new CustomPacketPayload.Type<>(MHLibMod.prefix("s2c_functional_anim_progress"));
+    public static final CustomPacketPayload.Type<SPacketSyncDataContent> S2C_SYNCH_DATA_CONTENT = new CustomPacketPayload.Type<>(MHLibMod.prefix("s2c_synch_data_content"));
     
 
     @SubscribeEvent
@@ -40,5 +43,6 @@ public class MHLibNetwork implements IMHLibNetworkHelper {
         IMHLibNetworkHelper.registerS2C(NETWORK, SPacketSetMaster.class, SPacketHandlerSetMaster.class);
         IMHLibNetworkHelper.registerS2C(NETWORK, SPacketUpdateMultipart.class, SPacketHandlerUpdateMultipart.class);
         IMHLibNetworkHelper.registerS2C(NETWORK, SPacketFunctionalAnimProgress.class, SPacketHandlerFunctionalAnimProgress.class);
+        IMHLibNetworkHelper.registerS2C(NETWORK, SPacketSyncDataContent.class, SPacketHandlerSyncDataContent.class);
     }
 }

@@ -176,12 +176,11 @@ public class AssetEnforcement {
 		return false;
 	}
 	
-	public static boolean handlePacketData(final SynchDataContainer payload) {
-		boolean result = payload != null && !payload.payload().isEmpty();
-		for (SynchDataManagerData entry : payload.payload()) {
-			result &= handleEntry(entry);
+	public static boolean handlePacketData(final SynchDataManagerData payload) {
+		boolean result = payload != null;
+		if (result) {
+			result = handleEntry(payload);
 		}
-		
 		return result;
 	}
 	
