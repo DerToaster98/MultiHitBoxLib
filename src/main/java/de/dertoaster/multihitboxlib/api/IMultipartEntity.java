@@ -4,7 +4,6 @@ import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
-import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.util.BoneInformation;

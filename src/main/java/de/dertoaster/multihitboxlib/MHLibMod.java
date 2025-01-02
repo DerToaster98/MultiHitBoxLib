@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import de.dertoaster.multihitboxlib.assetsynch.AssetEnforcement;
-import de.dertoaster.multihitboxlib.init.MHLibPackets;
 import net.minecraft.resources.ResourceLocation;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -71,8 +70,6 @@ public class MHLibMod {
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
-		MHLibPackets.init();
-		
 		// Throws registration event and registers all asset enforcers
 		AssetEnforcement.init();
 	}
