@@ -22,7 +22,8 @@ In addition to that, the following points must be met too:
 In short: as a user installing this mod, just install it normally. If you are a developer that wants to use this library in their mod: don't be a dick, depend on it NORMALLY without including this jar or the source code in your stuff and if you make profits via some "40k$ mr beast mod" stuff then please ask in before if it is alright. Leeching from the work of others isn't cool.
 
 # Using (for mod developers)
-To use MHLib, either use cursemaven or ivy.
+To use MHLib, use cursemaven for mixinbooster and either ivy or cursemaven for the main library itself.
+
 For ivy, you need to do this:
 ```
 repositories {
@@ -36,10 +37,16 @@ repositories {
 
             metadataSources { artifact() }
         }
+    maven {
+        name "CurseMaven"
+        url "https://cursemaven.com"
+    }
 }
 
 dependencies {
     implementation fg.deobf("dertoaster98:multihitboxlib:${mc_version}-${multihitboxlib_version}@jar")
+    // This is the 0.1.0 version for 1.20.1 https://www.curseforge.com/minecraft/mc-mods/mixinbooster/files/5146058
+    implementation fg.deobf("curse.maven:mixinbooster-980731:5146058")
 }
 ```
 ${mc_version} and ${multihitboxlib_version} are parameters drawn from gradle.properties, so set them there.
@@ -47,6 +54,23 @@ Example:
 ```
 mc_version=1.20.1
 multihitboxlib_version=1.6.0
+```
+
+For just cursemaven, you need to do this:
+```
+repositories {
+    maven {
+        name "CurseMaven"
+        url "https://cursemaven.com"
+    }
+}
+
+dependencies {
+    // This is the 1.8.1 version for 1.20.1 https://www.curseforge.com/minecraft/mc-mods/multihitboxlib/files/5779529
+    implementation fg.deobf("curse.maven:multihitboxlib-899090:5779529")
+    // This is the 0.1.0 version for 1.20.1 https://www.curseforge.com/minecraft/mc-mods/mixinbooster/files/5146058
+    implementation fg.deobf("curse.maven:mixinbooster-980731:5146058")
+}
 ```
 
 Please depend on the library like a normal mod!
